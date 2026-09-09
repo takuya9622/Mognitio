@@ -1,0 +1,7 @@
+(require :asdf)
+(let* ((capture (make-string-output-stream))
+       (*standard-output* capture) (*error-output* capture) (*trace-output* capture)
+       (*compile-verbose* nil) (*compile-print* nil))
+  (asdf:load-asd (truename (merge-pathnames "../mognitio.asd" *load-truename*)))
+  (asdf:load-system "mognitio/tests"))
+(funcall (find-symbol "FAULT-MAIN" "MOGNITIO.TESTS"))
