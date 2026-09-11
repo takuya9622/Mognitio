@@ -1,0 +1,55 @@
+(in-package #:mognitio.tests)
+
+;; Independent trees and evaluator deliberately do not use production AST/checker.
+(defun oracle (tree)
+  (if (atom tree) tree
+      (if (eq (oracle (first tree)) :true)
+          (oracle (second tree))
+          (oracle (third tree)))))
+(defun render-tree (tree)
+  (if (atom tree) (string-downcase tree)
+      (format nil "if(~A){~A}else{~A}"
+              (render-tree (first tree))
+              (render-tree (second tree))
+              (render-tree (third tree)))))
+
+(deftest v21-bounded-generated-programs
+  (dolist (leaf '(:true :false)) (same leaf (compiled-result (render-tree leaf))))
+  (dolist (condition '(:true :false))
+    (dolist (then '(:true :false))
+      (dolist (else '(:true :false))
+        (let ((tree (list condition then else)))
+          (same (oracle tree) (compiled-result (render-tree tree)))))))
+  (let ((seed 9622) (state 9622) (depth 5))
+    (labels ((next-number ()
+               (setf state (mod (+ (* state 1664525) 1013904223) 4294967296)))
+             (tree (remaining)
+               (if (or (zerop remaining) (< (mod (ash (next-number) -16) 8) 3))
+                   (if (evenp (ash (next-number) -16)) :true :false)
+                   (list (tree (1- remaining)) (tree (1- remaining))
+                         (tree (1- remaining))))))
+      (dotimes (index 128)
+        (let* ((tree (tree depth)) (source (render-tree tree)))
+          (handler-case (same (oracle tree) (compiled-result source))
+            (error (condition)
+              (error "seed=~D depth=~D sample=~D: ~A" seed depth index condition)))
+          (when (< index 12) (expect-source source (oracle tree))))))))
+
+(deftest v21-repetition-and-grammar-mutations
+  (let* ((source "if(if(true){false}else{true}){true}else{false}")
+         (path (put-text (fresh-path) source))
+         (baseline (compiled-result source)))
+    (dotimes (index 3)
+      (declare (ignorable index))
+      (same baseline (compiled-result source))
+      (expect-cli (list "run" (namestring path)) 0 :output (format nil "false~%")))
+    (loop for index below (length source)
+          when (find (char source index) "(){}")
+          do (signals source-failure
+               (parse-text (concatenate 'string (subseq source 0 index)
+                                        (subseq source (1+ index))))))
+    (let ((position (search "else" source)))
+      (signals source-failure
+        (parse-text (concatenate 'string (subseq source 0 position)
+                                 (subseq source (+ position 4))))))
+    (signals source-failure (parse-text (concatenate 'string source " true")))))
