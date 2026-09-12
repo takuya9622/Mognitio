@@ -32,3 +32,32 @@ malformed internal ASTs must produce internal failures instead.
 The host result alone cannot show that an unselected pure branch was not
 evaluated. Tests check generated CL:IF forms and observe evaluation with
 test-only host effects. Production execution always calls the host compiler.
+
+## Native compiler coverage
+
+| Acceptance IDs | Coverage |
+|---|---|
+| N01–N08 | Both literals, every shallow conditional, nested/generated programs, source regression |
+| N09–N11, N26–N28 | Required options, exact suffix, literal filenames and other working directories |
+| N12–N14, N29 | Permissions, aliases, symlinks, safe replacement, cleanup and executable mode |
+| N15–N17 | Silent build, phase stopping, native fault subprocesses, bootstrap failures |
+| N21–N22 | ELF header/segment parsing, direct execution without source, clean environment |
+| N23 | Actual executable under short writes, EINTR before/after a prefix, zero/error returns, broken stdout |
+| N24 | Byte equality across relocated compiler/source paths and cold/warm caches |
+| D01–D02 | SSA validity, dominance, edges, machine operands, fixups and integer/image bounds |
+| D03, D05 | Hand-reviewed instruction goldens, branches for every if, no compile-time execution |
+| D04 | Build with only launcher tools on PATH; process-launch traps during native compilation |
+| D06–D08 | Publication faults, internal diagnostic positions, bootstrap and cache isolation |
+
+The native generated suite executes both literals, all eight shallow if
+combinations, and 128 fixed-seed trees. Every result is compared with both
+the independent tree evaluator and the Common Lisp backend. Each source if
+must have a corresponding SSA branch and machine conditional jump.
+The golden fixtures include nested forward/backward branch displacements.
+
+The runtime helper uses Python's standard library and Linux ptrace to control
+write results in the actual executable. Short writes perform real kernel
+writes. EINTR is injected both before output and after a partial prefix.
+Zero and error returns must not report success. Missing ptrace permission
+fails the test instead of silently skipping it. No fault option is exposed
+by the compiler CLI.

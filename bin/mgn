@@ -5,4 +5,8 @@ if ! command -v sbcl >/dev/null 2>&1; then
     exit 3
 fi
 root=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd) || exit 3
+if [ ! -r "$root/scripts/cli-entry.lisp" ]; then
+    printf '%s\n' 'mgn: internal: Compiler bootstrap failed' >&2
+    exit 3
+fi
 exec sbcl --noinform --script "$root/scripts/cli-entry.lisp" "$@"

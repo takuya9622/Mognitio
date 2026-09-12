@@ -36,3 +36,32 @@
 (defpackage #:mognitio.cli
   (:use #:cl)
   (:export #:main))
+
+(defpackage #:mognitio.ir
+  (:use #:cl #:mognitio.diagnostics #:mognitio.source #:mognitio.syntax
+        #:mognitio.semantic)
+  (:export #:instruction #:make-instruction #:instruction-result #:instruction-type
+           #:instruction-op #:instruction-value #:instruction-span
+           #:basic-block #:make-basic-block #:basic-block-id #:basic-block-parameters
+           #:basic-block-instructions #:basic-block-terminator #:basic-block-span
+           #:module #:make-module #:module-blocks #:module-entry #:module-span
+           #:lower-program #:verify-module #:successors))
+(defpackage #:mognitio.machine
+  (:use #:cl #:mognitio.diagnostics)
+  (:export #:instruction #:make-instruction #:instruction-opcode
+           #:instruction-operands #:instruction-span #:lower-module))
+(defpackage #:mognitio.amd64
+  (:use #:cl #:mognitio.diagnostics)
+  (:export #:encode #:little-endian))
+(defpackage #:mognitio.elf
+  (:use #:cl #:mognitio.diagnostics)
+  (:export #:make-image))
+(defpackage #:mognitio.backend.native
+  (:use #:cl #:mognitio.diagnostics)
+  (:export #:compile-program))
+(defpackage #:mognitio.artifact
+  (:use #:cl #:mognitio.diagnostics)
+  (:export #:validate-paths #:publish-image))
+(defpackage #:mognitio.target
+  (:use #:cl #:mognitio.diagnostics)
+  (:export #:target #:linux-amd64 #:target-os #:target-arch #:target-abi #:target-artifact))

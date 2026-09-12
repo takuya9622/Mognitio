@@ -1,8 +1,8 @@
 # Verification
 
 Run these commands from the repository root. SBCL must be available on
-`PATH`. The subprocess and file-permission tests require a non-root Unix
-environment with SBCL's bundled SB-POSIX facilities.
+`PATH`. The full suite requires a non-root Linux amd64 environment, bundled
+SB-POSIX, Python 3, and permission to ptrace its own children.
 
 ## Automated tests
 
@@ -48,6 +48,25 @@ Subprocess tests independently capture stdout, stderr, and exit status for
 source failures (1), invocation or I/O failures (2), and internal failures (3).
 Internal faults are injected through a test-only entry, not public CLI options.
 
+## Native checks
+
+```sh
+./bin/mgn build --target linux/amd64 --output example examples/nested.mgn
+./example
+readelf -h -l example
+```
+
+Build must leave both output streams empty and exit 0. Execution prints
+`true` and exits 0. `readelf` is an optional inspection tool, never part of
+code generation. The automated suite checks the ELF fields independently.
+
+Determinism is defined by source bytes, target, and compiler build/revision
+identity. Matching semantic versions alone does not establish matching
+identities. Record the revision, content manifest (including uncommitted
+changes), SBCL/ASDF versions, and any code-generation configuration.
+Paths, timestamps, process IDs, and cache contents are not embedded in the
+executable. See the [current validation record](v0.2.0.md).
+
 ## Repository checks
 
 - Run `git diff --check` for whitespace errors.
@@ -74,5 +93,6 @@ logs and pull requests. Do not publish local setup details or session records.
 
 Generated programs cover bounded samples, not every possible nesting depth.
 The test bound is not a language limit. Operating-system termination,
-uncatchable resource exhaustion, and delivery through broken output streams
-are outside the guarantees established by the test suite.
+uncatchable resource exhaustion, and simultaneous filesystem changes by other processes
+are outside the guarantees established by the test suite. Native broken-output
+handling is tested separately from successful delivery.
