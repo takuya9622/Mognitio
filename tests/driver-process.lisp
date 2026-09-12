@@ -145,7 +145,7 @@
 (deftest v20-paths-cwd-and-caches
   (let ((other (merge-pathnames "different cwd/" *temp*)))
     (ensure-directories-exist other)
-    (dolist (name '("space file.mgn" "日本語.mgn" "*.mgn" "file[1]?.mgn" "-"))
+    (dolist (name '("space file.mgn" "日本語.mgn" "*.mgn" "file[1]?.mgn" "-.mgn"))
       (let ((path (merge-pathnames (sb-ext:parse-native-namestring name) other)))
         (put-text path "false")
         (expect-cli (list "run" name) 0 :output (format nil "false~%") :directory other)))
@@ -202,7 +202,7 @@
 (deftest io-errors-preserve-internal-failures
   (let ((path (put-text (fresh-path) "true")))
     (multiple-value-bind (out err code)
-        (driver-result (list "run" (format nil "invalid~Cpath" (code-char 0))))
+        (driver-result (list "run" (format nil "invalid~Cpath.mgn" (code-char 0))))
       (same 2 code) (same "" out) (same 1 (count #\Newline err)))
     (replacing (mognitio.source::decode-source
                 (lambda (&rest args) (declare (ignore args)) (error "Decoder host failure")))
