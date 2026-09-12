@@ -1,7 +1,7 @@
 (in-package #:mognitio.artifact)
 
 (defun io-failure (path)
-  (fail 'usage-or-io-failure nil "Artifact I/O failed" :path path))
+  (fail 'usage-or-io-failure nil "File I/O failed" :path path))
 
 (defun call-with-io-errors (path thunk)
   (handler-case (funcall thunk)
@@ -21,28 +21,36 @@
       (unless (= (sb-posix:syscall-errno condition) sb-posix:enoent)
         (error condition)))))
 
-(defun validate-paths (source output)
+(defun validated-source-stat (source)
   (call-with-io-errors
-   output
+   source
    (lambda ()
-     (let* ((source-path (native-path source)) (output-path (native-path output))
-            (input-stat (sb-posix:stat source-path))
-            (output-stat (existing-stat output-path))
-            (parent (sb-ext:native-namestring
-                     (uiop:pathname-directory-pathname
-                      (sb-ext:parse-native-namestring output-path))))
-            (parent-stat (sb-posix:stat parent)))
-       (unless (and (sb-posix:s-isreg (sb-posix:stat-mode input-stat))
-                    (sb-posix:s-isdir (sb-posix:stat-mode parent-stat)))
-         (io-failure output))
-       (when output-stat
-         (unless (sb-posix:s-isreg (sb-posix:stat-mode output-stat))
+     (let ((stat (sb-posix:stat (native-path source))))
+       (unless (sb-posix:s-isreg (sb-posix:stat-mode stat))
+         (io-failure source))
+       stat))))
+
+(defun validate-paths (source output)
+  (let ((input-stat (validated-source-stat source)))
+    (call-with-io-errors
+     output
+     (lambda ()
+       (let* ((output-path (native-path output))
+              (output-stat (existing-stat output-path))
+              (parent (sb-ext:native-namestring
+                       (uiop:pathname-directory-pathname
+                        (sb-ext:parse-native-namestring output-path))))
+              (parent-stat (sb-posix:stat parent)))
+         (unless (sb-posix:s-isdir (sb-posix:stat-mode parent-stat))
            (io-failure output))
-         (when (and (= (sb-posix:stat-dev input-stat) (sb-posix:stat-dev output-stat))
-                    (= (sb-posix:stat-ino input-stat) (sb-posix:stat-ino output-stat)))
-           (fail 'usage-or-io-failure nil "Source and output refer to the same file"
-                 :path output)))
-       (values output-path parent)))))
+         (when output-stat
+           (unless (sb-posix:s-isreg (sb-posix:stat-mode output-stat))
+             (io-failure output))
+           (when (and (= (sb-posix:stat-dev input-stat) (sb-posix:stat-dev output-stat))
+                      (= (sb-posix:stat-ino input-stat) (sb-posix:stat-ino output-stat)))
+             (fail 'usage-or-io-failure nil "Source and output refer to the same file"
+                   :path output)))
+         (values output-path parent))))))
 
 ;; Narrow operations provide fault-injection seams without adding CLI switches.
 (defun write-image (image stream) (write-sequence image stream))

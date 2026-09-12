@@ -323,3 +323,39 @@
       (if existing (same "keep" (uiop:read-file-string output))
           (is (not (probe-file output))))
       (same nil (temporary-images)))))
+
+(deftest n12-n16-io-diagnostic-attribution
+  (let ((source (put-text (fresh-path) "true"))
+        (output (put-text (fresh-path ".out") "keep")))
+    (labels ((check-path (input destination expected)
+               (let ((diagnostic
+                       (diagnostic-of
+                        (lambda ()
+                          (mognitio.artifact:validate-paths
+                           (namestring input) (namestring destination))))))
+                 (same (namestring expected) (diagnostic-path diagnostic)))
+               (let ((stderr (expect-cli (build-args input destination) 2)))
+                 (is (eql 0 (search (concatenate 'string
+                                                (one-line (namestring expected)) ":")
+                                     stderr))))
+               (same "keep" (uiop:read-file-string output))))
+      (let ((missing (fresh-path)))
+        (check-path missing output missing))
+      (let ((directory (fresh-path)))
+        (sb-posix:mkdir (namestring directory) #o700)
+        (check-path directory output directory))
+      (let ((missing-parent (merge-pathnames "absent-directory/output" *temp*)))
+        (check-path source missing-parent missing-parent)
+        (is (not (probe-file missing-parent))))
+      (check-path source *temp* *temp*)
+      (let* ((directory (merge-pathnames "no-search-permission/" *temp*))
+             (hidden (merge-pathnames "hidden.mgn" directory)))
+        (ensure-directories-exist directory)
+        (put-text hidden "true")
+        (is (not (zerop (sb-posix:getuid))) "Permission case requires non-root")
+        (unwind-protect
+             (progn
+               (sb-posix:chmod (namestring directory) 0)
+               (check-path hidden output hidden)
+               (check-path source hidden hidden))
+          (sb-posix:chmod (namestring directory) #o700))))))
