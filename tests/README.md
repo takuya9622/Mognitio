@@ -90,3 +90,23 @@ cold/warm-cache determinism now exercise integer values and mutation.
 The production byte writer has a small write-chunk adapter for in-process
 fault tests; no fault switch is exposed by the CLI. The same finite retry
 budget is used by the host and native integer-failure paths.
+
+## v0.3.0 acceptance traceability
+
+| Acceptance IDs | Executable fixtures |
+|---|---|
+| V03-01, V03-20, V03-22 | Existing source/frontend, CLI and native regression groups |
+| V03-02 through V03-17 | `v03-positive-kernel`, `v03-contract-boundaries`, existing source-format fixtures |
+| V03-18, V03-21, V03-23 through V03-29, V03-38, V03-39 | `v03-rejection-kernel` |
+| V03-30 through V03-37 | `v03-runtime-arithmetic`, mutable-value cases in `v03-contract-boundaries` |
+| D03-01 through D03-05 | Frontend/semantic/backend groups and the positive/rejection kernels |
+| D03-06 through D03-10 | SSA verifier, machine goldens, generated source branches and contract boundaries |
+| D03-11 | `v03-runtime-output-faults` |
+| D03-12 | Existing ELF and publication-fault groups |
+
+The contract-boundary group also checks ordered edge arguments, duplicate SSA
+definitions, typed jump rejection, adjacent overflow checks, division guards,
+failure-artifact determinism, successful replacement before runtime failure,
+and execution with the source removed and an empty environment.
+Old word/grouping rejections changed under V03-15 and V03-21 through V03-23;
+the corresponding native compatibility cases are N05 through N07.
