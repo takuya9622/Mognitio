@@ -1,6 +1,6 @@
 # Mognitio
 
-Mognitio v0.2.0 is a small boolean language with a Common Lisp compiler.
+Mognitio v0.3.0 adds integers and local bindings to a small expression-first language.
 It can run an expression through SBCL or build a standalone Linux amd64 executable.
 
 ## Requirements
@@ -56,20 +56,32 @@ spaces or shell metacharacters as one argument.
 
 ## Language
 
-A program contains a single boolean expression:
+A program has local declarations and assignments followed by a boolean result.
+Blocks also end in an expression; both branches of an `if` must produce the
+same type.
 
 ```mgn
-if (true) {
-    false
-} else {
-    true
-}
+let unitPrice = 120;
+var count = 2;
+count = count + 1;
+count * unitPrice == 360
 ```
 
-Expressions may nest in the condition and either branch. Every branch is
-checked. This version adds no language features beyond the v0.1 kernel:
-there are no variables, comments, operators, standalone grouping parentheses,
-or optional `else` branches.
+`let` is immutable; `var` can be assigned a value of its original inferred
+type. Names use ASCII letters, digits, and underscores, without a `$` prefix.
+A local cannot redeclare a visible or currently initializing outer name.
+Separate sibling scopes and scopes that have already ended may reuse names.
+
+Integers are signed 64-bit values. Decimal literals, arithmetic
+(`+ - * / %`), comparisons (`< <= > >= == !=`), and grouping are supported.
+Division truncates toward zero; nonzero remainders have the dividend's sign.
+Operands are evaluated left to right. Only the selected branch executes,
+while both branches are checked before execution.
+
+Arithmetic overflow and division or remainder by zero stop execution.
+Even a constant arithmetic failure is detected when evaluated, not during
+build. There are no comments, functions, loops, strings, or optional
+`else` branches in this version.
 
 ## Results
 
@@ -85,6 +97,11 @@ Compiler exit statuses:
 | 1 | Source encoding, lexical, syntax, or semantic failure |
 | 2 | Invalid invocation, target, source path, or output I/O |
 | 3 | Internal compilation, execution, or bootstrap failure |
+| 4 | Integer arithmetic failure during execution |
+
+Integer failures print a fixed runtime diagnostic to stderr, leave stdout
+empty, and do not resume evaluation. Building such a program succeeds;
+running it reports the failure.
 
 Diagnostics go to stderr. Source diagnostics include a filename, 1-based
 line and column, and phase. Message wording is not a stable interface.

@@ -9,8 +9,12 @@
     (same (tree-if-count tree)
           (count :branch (mognitio.ir:module-blocks ir)
                  :key (lambda (block) (first (mognitio.ir:basic-block-terminator block)))))
-    (same (+ 2 (tree-if-count tree))
-          (count :jz machine :key #'mognitio.machine:instruction-opcode))
+    (same (tree-if-count tree)
+          (count-if (lambda (inst)
+                      (let ((target (first (mognitio.machine:instruction-operands inst))))
+                        (and (eq (mognitio.machine:instruction-opcode inst) :jz)
+                             (consp target) (eq (first target) :block) (plusp (second target)))))
+                    machine))
     (expect-artifact (build-text text) expected)))
 
 (deftest n01-n03-d03-generated-native
@@ -35,7 +39,7 @@
 (deftest n24-d08-deterministic-cold-warm-relocation
   (let* ((copy (merge-pathnames "compiler 日本語 copy/" *temp*))
          (cache (merge-pathnames "native-cache/" *temp*))
-         (source (put-text (fresh-path) "if(true){if(false){true}else{false}}else{true}"))
+         (source (put-text (fresh-path) "var x = 1; let n = if(true){x = 2; 3}else{4}; x + n == 6"))
          (output (fresh-path ".elf")) (baseline nil))
     (dolist (file (append (list (root-path "mognitio.asd") (root-path "bin/mgn"))
                           (directory (merge-pathnames (make-pathname :name :wild :type "lisp")

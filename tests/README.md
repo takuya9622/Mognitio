@@ -61,3 +61,53 @@ writes. EINTR is injected both before output and after a partial prefix.
 Zero and error returns must not report success. Missing ptrace permission
 fails the test instead of silently skipping it. No fault option is exposed
 by the compiler CLI.
+
+## Integer and local-binding coverage
+
+| Test group | Coverage |
+|---|---|
+| `v03-positive-kernel` | Precedence, signed comparisons, local values, assignment, scope, operand order and branch merges |
+| `v03-rejection-kernel` | Token and grammar boundaries, types, names reserved during initialization, shadowing, literal range and output preservation |
+| `v03-runtime-arithmetic` | Checked arithmetic, intermediate failures, unselected branches, unused results, host/runtime classification |
+| `v03-integer-machine-goldens` | Independent instruction bytes, typed SSA edges, malformed operands, large entry frames |
+| `v03-runtime-output-faults` | Actual executable stderr writes under short writes, interruptions, zero/error returns, retry exhaustion and broken streams |
+| `v03-equal-incoming-values` | Shared incoming SSA values after branch assignments, int/bool, both conditions, nested and mixed merges, earlier operands |
+| `v03-generated-oracle` | 128 fixed-seed integer trees with nested branches and mutation, compared against a separate mathematical evaluator |
+
+The integer generator uses seed 314159265 and depth 3. The oracle operates on
+test-only trees, computes truncating division from absolute magnitudes, and
+checks each intermediate mathematical result. It does not call production
+arithmetic or reuse the compiler's AST, symbol table, or SSA. Failures report
+the seed, sample, and rendered input.
+
+Earlier rejection fixtures were updated only where the language expanded:
+ordinary words are now identifiers (unresolved names are semantic errors),
+integer tokens and operators reach the parser, and grouping is accepted.
+The semantic traversal test now checks the complete side table. Native
+goldens reflect the entry frame, and generated-branch checks distinguish
+source branches from runtime and frame-control branches. Relocation and
+cold/warm-cache determinism now exercise integer values and mutation.
+
+The production byte writer has a small write-chunk adapter for in-process
+fault tests; no fault switch is exposed by the CLI. The same finite retry
+budget is used by the host and native integer-failure paths.
+
+## v0.3.0 acceptance traceability
+
+| Acceptance IDs | Executable fixtures |
+|---|---|
+| V03-01, V03-20, V03-22 | Existing source/frontend, CLI and native regression groups |
+| V03-02 through V03-17 | `v03-positive-kernel`, `v03-contract-boundaries`, `v03-equal-incoming-values`, existing source-format fixtures |
+| V03-18, V03-21, V03-23 through V03-29, V03-38, V03-39 | `v03-rejection-kernel` |
+| V03-30 through V03-37 | `v03-runtime-arithmetic`, mutable-value cases in `v03-contract-boundaries` |
+| D03-01 through D03-05 | Frontend/semantic/backend groups and the positive/rejection kernels |
+| D03-06 through D03-10 | SSA verifier, machine goldens, generated source branches, contract boundaries and equal-incoming-value regressions |
+| D03-11 | `v03-runtime-output-faults` |
+| D03-12 | Existing ELF and publication-fault groups |
+
+The contract-boundary group also checks ordered edge arguments, duplicate SSA
+definitions, typed jump rejection, adjacent overflow checks, division guards,
+failure-artifact determinism, successful replacement before runtime failure,
+and execution with the source removed and an empty environment.
+Old word/grouping rejections changed under V03-15 and V03-21 through V03-23;
+the corresponding native compatibility cases are N05 through N07.
