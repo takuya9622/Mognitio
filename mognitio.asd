@@ -1,10 +1,12 @@
 (asdf:defsystem "mognitio"
-  :description "Mognitio boolean compiler"
-  :version "0.2.0"
+  :description "Mognitio compiler"
+  :version "0.3.0"
   :depends-on ("sb-posix")
   :serial t
   :components ((:file "src/packages")
                (:file "src/diagnostics")
+               (:file "src/runtime-failure")
+               (:file "src/integer")
                (:file "src/source")
                (:file "src/syntax")
                (:file "src/lexer")
@@ -32,7 +34,10 @@
                (:file "tests/generated")
                (:file "tests/native-ir")
                (:file "tests/native-process")
-               (:file "tests/native-generated"))
+               (:file "tests/native-generated")
+               (:file "tests/v03-kernel")
+               (:file "tests/v03-merge")
+               (:file "tests/v03-generated"))
   :perform (asdf:test-op (op system)
              (declare (ignore op system))
              (uiop:symbol-call :mognitio.tests :run-tests)))

@@ -29,8 +29,11 @@ def trace(request, pid, data=None):
 
 
 def main():
-    artifact, mode = sys.argv[1:]
-    if mode not in ("partial-eintr", "zero", "error"):
+    artifact, mode, *options = sys.argv[1:]
+    runtime_failure = options == ["runtime"]
+    if options and not runtime_failure:
+        raise ValueError("Unknown runtime option")
+    if mode not in ("partial-eintr", "zero", "error", "eintr-budget"):
         raise ValueError("Unknown injection mode")
     pid = os.fork()
     if pid == 0:
@@ -52,10 +55,10 @@ def main():
             if os.WIFEXITED(status):
                 reaped = True
                 code = os.WEXITSTATUS(status)
-                expected_calls = 5 if mode == "partial-eintr" else 1
+                expected_calls = 5 if mode == "partial-eintr" else (16 if mode == "eintr-budget" else 1)
                 if writes != expected_calls:
                     raise RuntimeError(f"Expected {expected_calls} writes, got {writes}")
-                if (code == 0) != (mode == "partial-eintr"):
+                if (runtime_failure and code != 4) or (not runtime_failure and ((code == 0) != (mode == "partial-eintr"))):
                     raise RuntimeError(f"Unexpected artifact exit {code}")
                 return code
             if os.WIFSIGNALED(status):
@@ -67,10 +70,12 @@ def main():
             trace(12, pid, ctypes.byref(regs))  # GETREGS
             if entering and regs.orig_rax == 1:
                 writes += 1
+                if regs.rdi != (2 if runtime_failure else 1):
+                    raise RuntimeError("Unexpected output descriptor")
                 original_count = regs.rdx
                 injected = None
                 if mode != "partial-eintr":
-                    injected = 0 if mode == "zero" else -5
+                    injected = -4 if mode == "eintr-budget" else (0 if mode == "zero" else -5)
                 elif writes in (1, 3):
                     injected = -4  # EINTR before and after a written prefix.
                 else:
