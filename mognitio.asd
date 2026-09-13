@@ -36,6 +36,7 @@
                (:file "tests/native-process")
                (:file "tests/native-generated")
                (:file "tests/v03-kernel")
+               (:file "tests/v03-merge")
                (:file "tests/v03-generated"))
   :perform (asdf:test-op (op system)
              (declare (ignore op system))

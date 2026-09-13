@@ -71,6 +71,7 @@ by the compiler CLI.
 | `v03-runtime-arithmetic` | Checked arithmetic, intermediate failures, unselected branches, unused results, host/runtime classification |
 | `v03-integer-machine-goldens` | Independent instruction bytes, typed SSA edges, malformed operands, large entry frames |
 | `v03-runtime-output-faults` | Actual executable stderr writes under short writes, interruptions, zero/error returns, retry exhaustion and broken streams |
+| `v03-equal-incoming-values` | Shared incoming SSA values after branch assignments, int/bool, both conditions, nested and mixed merges, earlier operands |
 | `v03-generated-oracle` | 128 fixed-seed integer trees with nested branches and mutation, compared against a separate mathematical evaluator |
 
 The integer generator uses seed 314159265 and depth 3. The oracle operates on
@@ -96,11 +97,11 @@ budget is used by the host and native integer-failure paths.
 | Acceptance IDs | Executable fixtures |
 |---|---|
 | V03-01, V03-20, V03-22 | Existing source/frontend, CLI and native regression groups |
-| V03-02 through V03-17 | `v03-positive-kernel`, `v03-contract-boundaries`, existing source-format fixtures |
+| V03-02 through V03-17 | `v03-positive-kernel`, `v03-contract-boundaries`, `v03-equal-incoming-values`, existing source-format fixtures |
 | V03-18, V03-21, V03-23 through V03-29, V03-38, V03-39 | `v03-rejection-kernel` |
 | V03-30 through V03-37 | `v03-runtime-arithmetic`, mutable-value cases in `v03-contract-boundaries` |
 | D03-01 through D03-05 | Frontend/semantic/backend groups and the positive/rejection kernels |
-| D03-06 through D03-10 | SSA verifier, machine goldens, generated source branches and contract boundaries |
+| D03-06 through D03-10 | SSA verifier, machine goldens, generated source branches, contract boundaries and equal-incoming-value regressions |
 | D03-11 | `v03-runtime-output-faults` |
 | D03-12 | Existing ELF and publication-fault groups |
 

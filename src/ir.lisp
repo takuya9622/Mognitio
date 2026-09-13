@@ -78,6 +78,9 @@
                                  (args-a (list a)) (args-b (list b)) (merged condition-env))
                             (dolist (id (sort (remove-duplicates (mapcar #'car condition-env)) #'<))
                               (let ((va (value-for id a-env)) (vb (value-for id b-env)))
+                                ;; Equal incoming IDs can still replace the pre-branch value.
+                                (when (and (= va vb) (/= va (value-for id condition-env)))
+                                  (setf merged (acons id va merged)))
                                 (unless (= va vb)
                                   (let ((parameter (new-value))
                                         (symbol (aref (checked-program-bindings checked) id)))
