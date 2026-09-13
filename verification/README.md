@@ -45,7 +45,7 @@ Each command must print exactly one result line, leave stderr empty, and
 exit with status 0.
 
 Subprocess tests independently capture stdout, stderr, and exit status for
-source failures (1), invocation or I/O failures (2), and internal failures (3).
+source failures (1), invocation or I/O failures (2), internal failures (3), and evaluated integer failures (4).
 Internal faults are injected through a test-only entry, not public CLI options.
 
 ## Native checks
@@ -65,7 +65,7 @@ identity. Matching semantic versions alone does not establish matching
 identities. Record the revision, content manifest (including uncommitted
 changes), SBCL/ASDF versions, and any code-generation configuration.
 Paths, timestamps, process IDs, and cache contents are not embedded in the
-executable. See the [current validation record](v0.2.0.md).
+executable. See the [v0.3.0 validation record](v0.3.0.md).
 
 ## Repository checks
 

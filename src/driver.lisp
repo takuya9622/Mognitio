@@ -59,6 +59,8 @@
              (handler-case (progn (render-diagnostic diagnostic stderr) code)
                (error () 3))))
     (handler-case (run-pipeline argv stdout)
+      (mognitio.runtime:integer-runtime-failure (condition)
+        (mognitio.runtime:write-runtime-failure condition stderr))
       (source-failure (condition)
         (report-failure (failure-diagnostic condition) 1))
       (usage-or-io-failure (condition)

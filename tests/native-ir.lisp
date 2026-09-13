@@ -42,7 +42,7 @@
                              (second (mognitio.ir:module-blocks ir))))) 0))
             (lambda (ir)
               (setf (mognitio.ir:basic-block-terminator
-                     (third (mognitio.ir:module-blocks ir))) '(:return 2)))
+                     (third (mognitio.ir:module-blocks ir))) '(:return 1)))
             (lambda (ir)
               (setf (mognitio.ir:basic-block-terminator
                      (first (mognitio.ir:module-blocks ir))) '(:branch 0 0 2)))))
@@ -84,15 +84,11 @@
   (signals internal-failure (mognitio.elf::image-size (- (expt 2 64) #x400000 #x80)))
   (signals internal-failure (mognitio.elf::image-size 0))
   (signals internal-failure (mognitio.amd64:little-endian (expt 2 64) 8))
-  (dolist (pair
-           '(("true" "48c7c001000000e900000000")
-             ("if(true){false}else{true}"
-              "48c7c0010000004885c00f8411000000e90000000048c7c000000000e90c00000048c7c001000000e900000000e900000000")
-             ("if(true){if(false){true}else{false}}else{true}"
-              "48c7c0010000004885c00f841a000000e90000000048c7c0000000004885c00f8422000000e91100000048c7c001000000e900000000e91d00000048c7c001000000e90c00000048c7c000000000e900000000e9deffffff")))
-    (let* ((code (mognitio.amd64:encode (mognitio.machine:lower-module (native-ir (first pair)))))
-           (expected (hex-bytes (second pair))))
-      (same expected (subseq code 0 (length expected))))))
+  ;; Entry reserves and touches one slot before evaluating the bool result.
+  (let* ((code (mognitio.amd64:encode (mognitio.machine:lower-module (native-ir "true"))))
+         (expected (hex-bytes "48b901000000000000004885c90f84100000006a0048ffc90f85f5ffffffe90000000048b801000000000000004889842400000000488b842400000000e900000000")))
+    (same expected (subseq code 0 (length expected)))))
+
 
 (deftest n21-elf-layout
   (let* ((image (native-image "true")) (size (length image)))
@@ -108,4 +104,4 @@
     (is (< (image-integer image 24 8)
            (+ (image-integer image 80 8) (image-integer image 104 8))))
     (same 0 (mod (image-integer image 80 8) (image-integer image 112 8)))
-    (same (hex-bytes "48c7c001000000") (subseq image 128 135))))
+    (same (hex-bytes "48b90100000000000000") (subseq image 128 138))))

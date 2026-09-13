@@ -99,12 +99,15 @@
                 1 :phase "lex")))
 
 (deftest v06-invalid-words-and-characters
-  (dolist (text '("foo" "truefalse" "trueif" "True" "TRUE" "true1" "1"
-                  ";" "// comment" "/*x*/" "_" "#.(quit)" "+" "null"))
-    (expect-invalid text "lex"))
-  (let* ((source (text-source "truefalse"))
-         (diag (diagnostic-of (lambda () (lex-source source)))))
-    (same 1 (diagnostic-column diag))))
+  ;; v0.3 identifiers are lexically valid; unresolved names fail semantically.
+  (dolist (text '("foo" "truefalse" "trueif" "True" "TRUE" "true1" "1" "_" "null"))
+    (expect-invalid text "semantic"))
+  (dolist (text '("$x" "@" "#.(quit)")) (expect-invalid text "lex"))
+  (dolist (text '(";" "// comment" "/*x*/" "+")) (expect-invalid text "parse"))
+  (let* ((source (text-source "truefalse")) (tokens (lex-source source)))
+    (same :identifier (token-kind (aref tokens 0)))
+    (same 0 (span-start (token-span (aref tokens 0))))
+    (same 9 (span-end (token-span (aref tokens 0))))))
 
 (deftest v09-v12-invalid-grammar
   (dolist (text '("" " " "if(true){}else{false}" "if(true){true false}else{false}"
@@ -113,7 +116,7 @@
                   "if(true){true}" "if(true){true}else false}"
                   "if(true){true}else{false" "true)" "true false"
                   "if(true){true}else{false}if(false){false}else{true}"
-                  "(true)" "if(true){true}else if(false){true}else{false}"
+                  "if(true){true}else if(false){true}else{false}"
                   "if(true){true}else{}"))
     (expect-invalid text "parse")))
 
