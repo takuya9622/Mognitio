@@ -79,7 +79,7 @@
                  (source
                    (with-output-to-string (out)
                      (dolist (id (if (evenp sample) '(0 1 2 3) '(3 2 1 0)))
-                       (format out "function f~D(int n, bool flag): int { var x = n; ~A } " id (v04-render (aref functions id))))
+                       (format out "function f~D(n: int, flag: bool): int { var x = n; ~A } " id (v04-render (aref functions id))))
                      (format out "let result = ~A; ~A" (v04-render entry)
                              (if (listp expected) (format nil "result == ~D" (first expected)) "true")))))
             (handler-case

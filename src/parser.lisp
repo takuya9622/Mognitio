@@ -56,9 +56,11 @@
                  (fail-at (token-span (peek)) :parse "Expected bool or int"))
                (take))
              (parameter-node ()
-               (let* ((type (type-name)) (name (expect :identifier)))
-                 (make-parameter :type type :name name
-                   :span (cover (span-start (token-span type)) (span-end (token-span name))))))
+               (let ((name (expect :identifier)))
+                 (expect :colon)
+                 (let ((type (type-name)))
+                   (make-parameter :type type :name name
+                     :span (cover (span-start (token-span name)) (span-end (token-span type)))))))
              (declaration-node ()
                (let* ((keyword (expect :function)) (name (expect :identifier)))
                  (expect :left-paren)
