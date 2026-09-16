@@ -3,5 +3,5 @@
 (defstruct (target (:constructor linux-amd64 ()))
   (os :linux :read-only t)
   (arch :amd64 :read-only t)
-  (abi :mognitio-entry-v0 :read-only t)
+  (abi :mognitio-internal-v1 :read-only t)
   (artifact :elf64-executable :read-only t))

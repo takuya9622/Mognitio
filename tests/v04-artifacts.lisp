@@ -1,0 +1,35 @@
+(in-package #:mognitio.tests)
+
+(deftest v04-artifact-publication-and-output-faults
+  (dolist (failure '(nil t))
+    (let* ((text (if failure "function f(): int { g() } function g(): int { 1 / 0 } f() == 0"
+                     "function f(): bool { return true; } f()"))
+           (source (put-text (fresh-path) text)) (output (fresh-path ".elf")))
+      (dolist (existing '(nil t))
+        (when (probe-file output) (delete-file output))
+        (when existing (put-text output "previous"))
+        (expect-cli (build-args source output) 0)
+        (let ((bytes (read-bytes output)))
+          (same #(127 69 76 70 2 1 1 0) (subseq bytes 0 8))
+          (same (length bytes) (image-integer bytes 96 8)))
+        (if failure
+            (multiple-value-bind (out err code) (process-result (list (namestring output)))
+              (same 4 code) (same "" out) (same (format nil "runtime: division by zero~%") err))
+            (expect-artifact output :true)))
+      (dolist (mode '("partial-eintr" "zero" "error" "eintr-budget"))
+        ;; Normal output retries EINTR indefinitely, so its finite-budget case is not applicable.
+        (unless (and (not failure) (string= mode "eintr-budget"))
+          (multiple-value-bind (out err code)
+              (process-result (append (list "python3" (namestring (root-path "tests/runtime-syscalls.py"))
+                                           (namestring output) mode)
+                                     (when failure (list "runtime"))))
+            (if failure
+                (progn (same 4 code) (same "" out)
+                       (same (if (string= mode "partial-eintr") (format nil "runtime: division by zero~%") "") err))
+                (progn (same (if (string= mode "partial-eintr") 0 1) code)
+                       (same (if (string= mode "partial-eintr") (format nil "true~%") "") out) (same "" err))))))
+      (let ((before (read-bytes output)))
+        (replacing (mognitio.elf:make-image (lambda (&rest args) (declare (ignore args)) (error "Image fault")))
+          (expect-driver (build-args source output) 3 "internal:"))
+        (same before (read-bytes output)))
+      (same nil (temporary-images)))))

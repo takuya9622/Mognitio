@@ -6,6 +6,19 @@
     (internal-error "Integer does not fit the encoded field"))
   (loop for index below width collect (ldb (byte 8 (* 8 index)) value)))
 
+(defun register-code (name)
+  (or (position name '(:rax :rcx :rdx :rbx :rsp :rbp :rsi :rdi :r8 :r9 :r10 :r11))
+      (internal-error "Invalid machine register")))
+
+(defun memory-template (opcode register base displacement)
+  (let ((reg (register-code register)))
+    (unless (and (typep displacement '(signed-byte 32)) (zerop (mod displacement 8)))
+      (internal-error "Invalid frame displacement"))
+    (append (list (logior #x48 (if (>= reg 8) 4 0)) opcode
+                  (logior #x80 (ash (mod reg 8) 3) (ecase base (:rbp 5) (:rsp 4))))
+            (when (eq base :rsp) (list #x24))
+            (little-endian displacement 4 t))))
+
 (defun instruction-template (instruction)
   ;; Returns bytes and, for PC-relative instructions, the unresolved label.
   (let ((op (mognitio.machine:instruction-opcode instruction))
@@ -26,16 +39,25 @@
                (append prefix (little-endian (first args) 4)))
              (relative (prefix)
                (arity 1)
-               (unless (or (and (listp (first args)) (= (length (first args)) 2)
-                                (eq (caar args) :data)
-                                (member (second (first args)) '(:overflow :division-by-zero :remainder-by-zero)))
-                           (keywordp (first args))
-                           (and (listp (first args)) (= (length (first args)) 2)
-                                (member (caar args) '(:block :internal))
-                                (typep (second (first args)) '(integer 0 *))))
-                 (internal-error "Invalid machine label"))
+               (mognitio.object:symbol-kind (first args))
                (values (append prefix '(0 0 0 0)) (first args))))
       (case op
+        (:mov-reg
+         (arity 2)
+         (let ((dst (register-code (first args))) (src (register-code (second args))))
+           (list (logior #x48 (if (>= src 8) 4 0) (if (>= dst 8) 1 0)) #x89
+                 (logior #xc0 (ash (mod src 8) 3) (mod dst 8)))))
+        (:load-frame (arity 2) (memory-template #x8b (first args) :rbp (second args)))
+        (:store-frame (arity 2) (memory-template #x89 (second args) :rbp (first args)))
+        (:store-out (arity 2)
+         (unless (typep (first args) '(integer 0 *)) (internal-error "Invalid outgoing offset"))
+         (memory-template #x89 (second args) :rsp (first args)))
+        (:align-stack (fixed '(#x48 #x83 #xe4 #xf0)))
+        (:clear-frame (fixed '(#x48 #x31 #xed)))
+        (:push-rbp (fixed '(#x55)))
+        (:pop-rbp (fixed '(#x5d)))
+        (:ret (fixed '(#xc3)))
+        (:call (relative '(#xe8)))
         (:imm-rax (imm64 '(#x48 #xb8)))
         (:imm-rcx (imm64 '(#x48 #xb9)))
         (:imm-rdx (imm64 '(#x48 #xba)))
@@ -102,11 +124,14 @@
             (let ((name (first (mognitio.machine:instruction-operands inst))))
               (when (nth-value 1 (gethash name labels))
                 (internal-error "Duplicate machine label"))
-              (setf (gethash name labels) position))
+              (setf (gethash name labels)
+                    (mognitio.object:make-image-symbol :name name
+                      :kind (mognitio.object:symbol-kind name) :offset position)))
             (progn
               (when target
-                (push (list (+ position (- (length bytes) 4))
-                            (+ position (length bytes)) target) fixups))
+                (push (mognitio.object:make-fixup :offset (+ position (- (length bytes) 4))
+                        :end (+ position (length bytes)) :target target
+                        :use (mognitio.machine:instruction-opcode inst)) fixups))
               (push bytes chunks)
               (incf position (length bytes))))))
     (let ((image (make-array position :element-type '(unsigned-byte 8)))
@@ -114,10 +139,16 @@
       (dolist (chunk (nreverse chunks))
         (dolist (byte chunk) (setf (aref image cursor) byte) (incf cursor)))
       (dolist (fixup fixups)
-        (destructuring-bind (offset end target) fixup
-          (multiple-value-bind (address found) (gethash target labels)
-            (unless found (internal-error "Unresolved machine label"))
-            (replace image (little-endian (- address end) 4 t) :start1 offset))))
+        (let* ((target (mognitio.object:fixup-target fixup)) (symbol (gethash target labels))
+               (use (mognitio.object:fixup-use fixup)))
+          (unless symbol (internal-error "Unresolved machine label"))
+          (when (or (and (eq use :call) (not (eq (mognitio.object:image-symbol-kind symbol) :function)))
+                    (and (member use '(:call :jmp :jo :jz :jnz :jle))
+                         (eq (mognitio.object:image-symbol-kind symbol) :data)))
+            (internal-error "Invalid fixup target kind"))
+          (replace image (little-endian (- (mognitio.object:image-symbol-offset symbol)
+                                          (mognitio.object:fixup-end fixup)) 4 t)
+                   :start1 (mognitio.object:fixup-offset fixup))))
       (values image labels))))
 
 (defun encode (code)

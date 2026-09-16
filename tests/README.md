@@ -111,3 +111,44 @@ failure-artifact determinism, successful replacement before runtime failure,
 and execution with the source removed and an empty environment.
 Old word/grouping rejections changed under V03-15 and V03-21 through V03-23;
 the corresponding native compatibility cases are N05 through N07.
+
+## v0.4.0 functions and returns
+
+| Acceptance IDs | Executable fixtures |
+|---|---|
+| V04-01 | All preceding boolean/integer groups, including equal incoming values |
+| V04-02 through V04-07, V04-15 through V04-19 | `v04-typed-functions-and-order`, `v04-call-barriers-and-pressure`, `v04-name-type-and-flow-boundaries`, `v04-large-argument-frame-and-host-symbols` |
+| V04-08 through V04-14 | `v04-return-paths`, `v04-name-type-and-flow-boundaries` |
+| V04-20 through V04-29 | `v04-reserved-words-and-grammar`, `v04-static-errors-and-cycles`, `v04-name-type-and-flow-boundaries`, preceding source and integer rejection groups |
+| V04-30 through V04-33 | `v04-call-runtime-order`, `v04-name-type-and-flow-boundaries`, `v04-return-paths` |
+| V04-34, V04-37 | `v04-artifact-publication-and-output-faults`, preceding publication and ELF groups |
+| V04-35, V04-36 | `v04-deterministic-standalone`, preceding standalone and relocation groups |
+| V04-38 | `v04-generated-independent-oracle`, preceding boolean and integer oracles |
+| D04-01 through D04-06 | Frontend/semantic cases and `v04-checked-and-ir-boundaries` |
+| D04-07 through D04-11 | IR boundary cases, return paths, host symbol identity, runtime-order cases |
+| D04-12 through D04-16 | Allocation intervals, independent map validator, symbolic parallel copies, call pressure, handwritten ABI, 600-argument frame |
+| D04-17, D04-18 | Frame instruction and relocation goldens, ELF fields, all-functions IR checks |
+| D04-19, D04-20 | Output/publication faults, relocation and independent generators |
+
+The function generator uses seed 20260916, depth 3 and 128 programs, each
+with four acyclic functions. Its own call frames and lexical return targets
+model mutation, ordered arguments, nested calls, early exits and the first
+arithmetic failure. It does not use production syntax, semantic, arithmetic
+or IR data. Generated failures include seed, sample and complete source.
+
+The native backend now uses linear scan with whole-interval call spills.
+A separate pairwise checker validates allocation maps, and symbolic tuples
+check parallel copies including register/memory cycles. The handwritten
+machine caller/callee independently checks stack alignment, incoming offsets,
+all allocatable register clobbers, and RSP/RBP restoration after two calls.
+Fixed fixtures include mixed arguments, signed boundaries, 24-function chains,
+600 simultaneous live values and 600 arguments. These are test bounds.
+
+The v0.3 successful `int` identifier fixture now uses `intValue`; the exact
+old `int` and `bool` names are covered by v0.4 parse rejections. All four
+new keywords are tested at function, parameter, let and var name positions.
+Historical validation records retain their original results.
+
+Instruction goldens use the [Intel instruction reference](https://www.intel.com/content/www/us/en/developer/articles/technical/intel-sdm.html),
+including CALL rel32, REX.W/R/B, ModR/M and SIB addressing. Host lexical
+function declarations follow [Common Lisp LABELS](https://www.lispworks.com/documentation/HyperSpec/Body/s_flet_.htm).

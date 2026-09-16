@@ -6,14 +6,27 @@
   (function nil :read-only t) (span nil :read-only t)
   (warnings-p nil :read-only t) (compiler-output "" :read-only t))
 
-(defun expression-form (node checked names)
-  (labels ((form (child) (expression-form child checked names))
+(defun expression-form (node checked names functions exits)
+  (labels ((form (child) (expression-form child checked names functions exits))
            (symbol-for (child)
              (or (gethash (local-symbol-id (checked-symbol checked child)) names)
                  (internal-error "Missing host binding")))
+           (ordered (children build)
+             (let ((bindings nil) (args nil))
+               (dolist (child children)
+                 (unless (checked-normal-type checked child)
+                   (return-from ordered (list 'cl:let* (nreverse bindings) (form child))))
+                 (let ((name (make-symbol "ARG")))
+                   (push (list name (form child)) bindings) (push name args)))
+               (list 'cl:let* (nreverse bindings) (funcall build (nreverse args)))))
            (sequence-form (statements tail index)
              (if (= index (length statements)) (form tail)
-                 (let ((statement (aref statements index)))
+                 (let* ((statement (aref statements index))
+                        (rhs (etypecase statement
+                               (local-binding (local-binding-initializer statement))
+                               (assignment (assignment-rhs statement)))))
+                   (unless (checked-normal-type checked rhs)
+                     (return-from sequence-form (form rhs)))
                    (etypecase statement
                      (local-binding
                       (list 'cl:let
@@ -26,38 +39,61 @@
       (boolean-literal (ecase (boolean-literal-value node) (:true t) (:false nil)))
       (integer-literal (checked-literal checked node))
       (variable-reference (symbol-for node))
-      (sequence-node (sequence-form (sequence-node-statements node) (sequence-node-tail node) 0))
+      (sequence-node (sequence-form (sequence-node-statements node) (sequence-node-terminal node) 0))
       (grouping (form (grouping-expression node)))
+      (return-statement
+       (let ((value (return-statement-value node)))
+         (if (checked-normal-type checked value)
+             (list 'cl:return-from (gethash (checked-return checked node) exits) (form value))
+             (form value))))
+      (call-expression
+       (ordered (coerce (call-expression-arguments node) 'list)
+                (lambda (args) (cons (gethash (signature-id (checked-call checked node)) functions) args))))
       (if-expression
-       (list 'cl:if (form (if-expression-condition node))
-                   (form (if-expression-then-branch node)) (form (if-expression-else-branch node))))
+       (if (null (checked-normal-type checked (if-expression-condition node)))
+           (form (if-expression-condition node))
+           (list 'cl:if (form (if-expression-condition node))
+                   (form (if-expression-then-branch node)) (form (if-expression-else-branch node)))))
       (unary-expression
        (if (checked-literal-p checked node) (checked-literal checked node)
-           (list 'mognitio.integer:checked-arithmetic :neg (form (unary-expression-operand node)))))
+           (if (checked-normal-type checked (unary-expression-operand node))
+               (list 'mognitio.integer:checked-arithmetic :neg (form (unary-expression-operand node)))
+               (form (unary-expression-operand node)))))
       (binary-expression
-       (let* ((a (make-symbol "LEFT")) (b (make-symbol "RIGHT"))
-              (op (token-kind (binary-expression-operator node)))
-              (body
-                (if (member op '(:add :sub :mul :div :rem))
-                    (list 'mognitio.integer:checked-arithmetic op a b)
-                    (let ((comparison
-                            (list (case op
-                                    ((:eq :ne) (if (eq (checked-type checked (binary-expression-left node)) :bool)
-                                                   'cl:eq 'cl:=))
-                                    (:lt 'cl:<) (:le 'cl:<=) (:gt 'cl:>) (:ge 'cl:>=))
-                                  a b)))
-                      (if (eq op :ne) (list 'cl:not comparison) comparison)))))
-         (list 'cl:let* (list (list a (form (binary-expression-left node)))
-                              (list b (form (binary-expression-right node)))) body)))
+       (ordered (list (binary-expression-left node) (binary-expression-right node))
+         (lambda (args)
+           (let ((op (token-kind (binary-expression-operator node))))
+             (if (member op '(:add :sub :mul :div :rem))
+                 (list* 'mognitio.integer:checked-arithmetic op args)
+                 (let ((comparison
+                         (cons (case op
+                                 ((:eq :ne) (if (eq (checked-normal-type checked (binary-expression-left node)) :bool)
+                                                'cl:eq 'cl:=))
+                                 (:lt 'cl:<) (:le 'cl:<=) (:gt 'cl:>) (:ge 'cl:>=)) args)))
+                   (if (eq op :ne) (list 'cl:not comparison) comparison)))))))
       (t (internal-error "Invalid checked AST")))))
 
 (defun program-form (checked)
-  (let ((names (make-hash-table)) (program (checked-program-program checked)))
+  (let ((names (make-hash-table)) (functions (make-hash-table)) (exits (make-hash-table))
+        (program (checked-program-program checked)))
     (loop for symbol across (checked-program-bindings checked)
           do (setf (gethash (local-symbol-id symbol) names) (make-symbol "LOCAL")))
-    (expression-form (make-sequence-node :statements (program-statements program)
-                                         :tail (program-root program))
-                     checked names)))
+    (loop for signature across (checked-program-signatures checked) do
+      (setf (gethash (signature-id signature) functions) (make-symbol "FUNCTION")
+            (gethash (signature-id signature) exits) (make-symbol "RETURN")))
+    (let ((definitions
+            (loop for signature across (checked-program-signatures checked)
+                  for declaration = (signature-declaration signature) when declaration collect
+              (list (gethash (signature-id signature) functions)
+                    (map 'list (lambda (p) (gethash (local-symbol-id (checked-symbol checked p)) names))
+                         (function-declaration-parameters declaration))
+                    (list 'cl:block (gethash (signature-id signature) exits)
+                          (expression-form (function-declaration-body declaration) checked names functions exits)))))
+          (entry (expression-form (make-sequence-node :statements (program-statements program)
+                                    :terminal (program-root program)) checked names functions exits)))
+      (if definitions
+          (list 'cl:labels definitions (list 'cl:declare (cons 'cl:notinline (mapcar #'first definitions))) entry)
+          entry))))
 
 (defun host-compile (form)
   (with-compilation-unit (:override t)
@@ -76,8 +112,7 @@
         (fail-at span :internal "Host compilation or execution failed" 'internal-failure)))))
 
 (defun compile-program (checked)
-  (unless (typep checked 'checked-program)
-    (internal-error "Backend requires CheckedProgram"))
+  (verify-checked-program checked)
   (let* ((root (program-root (checked-program-program checked)))
          (span (node-span root)))
     (call-isolated

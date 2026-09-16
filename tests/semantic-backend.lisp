@@ -6,10 +6,10 @@
          (checked (check-program program))
          (nodes (list root (if-expression-condition root)
                       (if-expression-then-branch root) (if-expression-else-branch root)
-                      (sequence-node-tail (if-expression-then-branch root))
-                      (sequence-node-tail (if-expression-else-branch root)))))
+                      (sequence-node-terminal (if-expression-then-branch root))
+                      (sequence-node-terminal (if-expression-else-branch root)))))
     (same program (checked-program-program checked))
-    (dolist (node nodes) (same :bool (checked-type checked node)))
+    (dolist (node nodes) (same :bool (checked-normal-type checked node)))
     (dolist (bad (list nil 17
                       (make-boolean-literal :value :invalid :span (node-span root))))
       (signals internal-failure (check-program (make-program :source (program-source program)

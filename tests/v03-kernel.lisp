@@ -29,6 +29,7 @@
         (same 4 code) (same "" out) (same expected err)))
     artifact))
 
+;; int was a valid v0.3 name; v0.4 reserves it. Rejection coverage is in v04-functions.
 (deftest v03-positive-kernel
   (dolist (text
             '("(true)" "let unitPrice = 120; var count = 2; count = count + 1; count * unitPrice == 360"
@@ -50,7 +51,7 @@
               "if (true) { 1 } else { 1 % 0 } == 1"
               "let x = 1; let y = if (true) { var localX = 2; localX = 3; localX } else { 0 }; if (y == 3) { x == 1 } else { false }"
               "var ok = false; ok = true; ok"
-              "let true1 = 1; let Let = 2; let int = 3; let _a2 = 4; true1 + Let + int + _a2 == 10"
+              "let true1 = 1; let Let = 2; let intValue = 3; let _a2 = 4; true1 + Let + intValue + _a2 == 10"
               "let x = 1; let X = 2; x + X == 3"
               "let first = if (true) { let item = 1; item } else { 0 }; let item = 2; if (first == 1) { item == 2 } else { false }"
               "var a = 1; var b = 2; let x = if (true) { a = 3; b = 4; a + b } else { b = 9; 0 }; if (x == 7) { a * b == 12 } else { false }"
@@ -138,15 +139,15 @@
     (signals internal-failure (mognitio.amd64:encode (machine form))))
   (let* ((ir (native-ir "var x = 1; let y = if(true){x = 2; 3}else{4}; x + y == 5"))
          (join (find-if (lambda (b) (= 2 (length (mognitio.ir:basic-block-parameters b))))
-                        (mognitio.ir:module-blocks ir))))
+                        (entry-blocks ir))))
     (is join)
     (let* ((edge (find-if (lambda (b) (eq :jump (first (mognitio.ir:basic-block-terminator b))))
-                          (mognitio.ir:module-blocks ir)))
+                          (entry-blocks ir)))
            (old (mognitio.ir:basic-block-terminator edge)))
       (setf (mognitio.ir:basic-block-terminator edge) (list :jump (second old) nil))
       (signals internal-failure (mognitio.ir:verify-module ir))))
   (let* ((ir (native-ir "1 + 2 == 3"))
-         (inst (find :add (mognitio.ir:basic-block-instructions (first (mognitio.ir:module-blocks ir)))
+         (inst (find :add (mognitio.ir:basic-block-instructions (first (entry-blocks ir)))
                      :key #'mognitio.ir:instruction-op)))
     (is inst)
     (setf (mognitio.ir:instruction-operands inst) '(999 0))
@@ -216,7 +217,7 @@
       (same 4 code) (same "" out) (same (format nil "runtime: division by zero~%") err)))
   ;; Hand-derived edge arguments: result, then outer symbols in declaration order.
   (let* ((ir (native-ir "var a = 10; var b = 20; let x = if(true){a = 30; b = 40; let local = 99; 50}else{b = 60; 70}; a + b == x"))
-         (blocks (mognitio.ir:module-blocks ir))
+         (blocks (entry-blocks ir))
          (join (find-if #'mognitio.ir:basic-block-parameters blocks))
          (edges (remove-if-not (lambda (b) (eq :jump (first (mognitio.ir:basic-block-terminator b)))) blocks))
          (constants (make-hash-table)))

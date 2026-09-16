@@ -1,6 +1,6 @@
 # Mognitio
 
-Mognitio v0.3.0 adds integers and local bindings to a small expression-first language.
+Mognitio v0.4.0 adds typed functions and lexical returns to a small expression-first language.
 It can run an expression through SBCL or build a standalone Linux amd64 executable.
 
 ## Requirements
@@ -56,9 +56,10 @@ spaces or shell metacharacters as one argument.
 
 ## Language
 
-A program has local declarations and assignments followed by a boolean result.
-Blocks also end in an expression; both branches of an `if` must produce the
-same type.
+A program starts with optional function declarations, then local declarations
+and assignments, followed by a boolean result. Blocks end in an expression
+or, inside a function, a value-bearing `return`. Both normally completing
+branches of an `if` must produce the same type.
 
 ```mgn
 let unitPrice = 120;
@@ -80,8 +81,42 @@ while both branches are checked before execution.
 
 Arithmetic overflow and division or remainder by zero stop execution.
 Even a constant arithmetic failure is detected when evaluated, not during
-build. There are no comments, functions, loops, strings, or optional
+build. There are no comments, loops, strings, or optional
 `else` branches in this version.
+
+### Functions and returns
+
+```mgn
+function magnitude(int value): int {
+    if (value < 0) { return -value; } else { value }
+}
+function twice(int value): int { value * 2 }
+twice(magnitude(-6)) == 12
+```
+
+Parameters and results have explicit `int` or `bool` types. Parameters are
+immutable value copies. Arguments evaluate once, left to right, and retain
+their values across later arguments and nested calls. A return inside an
+argument exits its enclosing function; returning from the called function
+continues the caller. Locals and parameters are isolated per invocation.
+
+Functions may call later declarations. Function names are unique throughout
+the source and cannot also name a parameter or local. Function values,
+captures, overloading, and recursion are unsupported. Every call-graph cycle
+is rejected, including cycles in unused functions and unselected branches.
+
+A return occupies the end of a block and requires a value and semicolon.
+An initializer needs a normal `int` or `bool` result on at least one path;
+other paths may return from its function. All source is checked, including
+code after an expression that always returns. The entry result remains
+boolean and cannot use return. No `void` or `never` source type is introduced.
+
+The ten reserved words are `true`, `false`, `if`, `else`, `let`, `var`,
+`function`, `return`, `int`, and `bool`. Reserving the last four breaks
+compatibility with v0.3.0 locals using those names, including `int` and `bool`.
+Other names such as `Int`, `bool1`, `void`, `never`, and `string` remain
+identifiers; only lowercase `int` and `bool` are valid in type positions.
+These namespace and feature boundaries describe v0.4.0.
 
 ## Results
 

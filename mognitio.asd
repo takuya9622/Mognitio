@@ -1,6 +1,6 @@
 (asdf:defsystem "mognitio"
   :description "Mognitio compiler"
-  :version "0.3.0"
+  :version "0.4.0"
   :depends-on ("sb-posix")
   :serial t
   :components ((:file "src/packages")
@@ -12,9 +12,12 @@
                (:file "src/lexer")
                (:file "src/parser")
                (:file "src/semantic")
+               (:file "src/checked-program")
                (:file "src/backend-common-lisp")
                (:file "src/target")
                (:file "src/ir")
+               (:file "src/register-allocation")
+               (:file "src/object-model")
                (:file "src/machine-ir")
                (:file "src/amd64")
                (:file "src/elf")
@@ -37,7 +40,12 @@
                (:file "tests/native-generated")
                (:file "tests/v03-kernel")
                (:file "tests/v03-merge")
-               (:file "tests/v03-generated"))
+               (:file "tests/v03-generated")
+               (:file "tests/v04-allocation")
+               (:file "tests/v04-functions")
+               (:file "tests/v04-generated")
+               (:file "tests/v04-boundaries")
+               (:file "tests/v04-artifacts"))
   :perform (asdf:test-op (op system)
              (declare (ignore op system))
              (uiop:symbol-call :mognitio.tests :run-tests)))

@@ -1,0 +1,7 @@
+function magnitude(int value): int {
+    if (value < 0) { return -value; } else { value }
+}
+function twice(int value): int {
+    value * 2
+}
+twice(magnitude(-6)) == 12

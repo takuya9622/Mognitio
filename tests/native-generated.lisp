@@ -7,13 +7,13 @@
          (ir (native-ir text)) (machine (mognitio.machine:lower-module ir)))
     (same expected (compiled-result text))
     (same (tree-if-count tree)
-          (count :branch (mognitio.ir:module-blocks ir)
+          (count :branch (entry-blocks ir)
                  :key (lambda (block) (first (mognitio.ir:basic-block-terminator block)))))
     (same (tree-if-count tree)
           (count-if (lambda (inst)
                       (let ((target (first (mognitio.machine:instruction-operands inst))))
                         (and (eq (mognitio.machine:instruction-opcode inst) :jz)
-                             (consp target) (eq (first target) :block) (plusp (second target)))))
+                             (consp target) (eq (first target) :block) (plusp (third target)))))
                     machine))
     (expect-artifact (build-text text) expected)))
 
@@ -36,10 +36,10 @@
               (error "seed=9622 depth=5 sample=~D input=~A: ~A"
                      index (render-tree tree) condition))))))))
 
-(deftest n24-d08-deterministic-cold-warm-relocation
+(defun check-native-relocation (text expected)
   (let* ((copy (merge-pathnames "compiler 日本語 copy/" *temp*))
          (cache (merge-pathnames "native-cache/" *temp*))
-         (source (put-text (fresh-path) "var x = 1; let n = if(true){x = 2; 3}else{4}; x + n == 6"))
+         (source (put-text (fresh-path) text))
          (output (fresh-path ".elf")) (baseline nil))
     (dolist (file (append (list (root-path "mognitio.asd") (root-path "bin/mgn"))
                           (directory (merge-pathnames (make-pathname :name :wild :type "lisp")
@@ -74,4 +74,15 @@
     ;; The executable remains usable after its source and copied compiler are removed.
     (uiop:delete-directory-tree copy :validate t)
     (uiop:delete-directory-tree cache :validate t)
-    (expect-artifact output :false)))
+    (multiple-value-bind (out err code)
+        (process-result (list "env" "-i" "PATH=/nonexistent" (namestring output) "ignored") :directory *temp*)
+      (if (stringp expected)
+          (progn (same 4 code) (same "" out) (same (format nil "runtime: ~A~%" expected) err))
+          (progn (same 0 code) (same "" err) (same (format nil "~(~A~)~%" expected) out))))))
+
+(deftest n24-d08-deterministic-cold-warm-relocation
+  (check-native-relocation "var x = 1; let n = if(true){x = 2; 3}else{4}; x + n == 6" :false))
+
+(deftest v04-deterministic-standalone
+  (check-native-relocation "function f(int n): int { g(n) + 1 } function g(int n): int { if(n < 0){return -n;}else{n} } f(-3) == 4" :true)
+  (check-native-relocation "function f(int n): int { g(n) } function g(int n): int { return 1 / n; } f(0) == 0" "division by zero"))

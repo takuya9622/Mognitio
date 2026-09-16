@@ -19,7 +19,7 @@
   ;; Matching values need no extra block parameter, but later uses must resolve
   ;; to that value rather than the old environment entry.
   (let* ((ir (native-ir "var a = 1; let b = 2; let result = if(true){a = b; true}else{a = b; false}; a == b"))
-         (join (find-if #'mognitio.ir:basic-block-parameters (mognitio.ir:module-blocks ir)))
+         (join (find-if #'mognitio.ir:basic-block-parameters (entry-blocks ir)))
          (comparison (find :eq (mognitio.ir:basic-block-instructions join)
                            :key #'mognitio.ir:instruction-op)))
     (same 1 (length (mognitio.ir:basic-block-parameters join)))
