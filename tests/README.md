@@ -149,6 +149,8 @@ old `int` and `bool` names are covered by v0.4 parse rejections. All four
 new keywords are tested at function, parameter, let and var name positions.
 Historical validation records retain their original results.
 
+## v0.4.1 parameter syntax
+
 The parameter syntax correction uses `name: type` throughout fixed fixtures,
 large-argument builders, and the independent generator. The
 `v04-parameter-annotations` group checks both types, whitespace around colons,

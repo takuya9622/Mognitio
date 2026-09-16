@@ -1,6 +1,7 @@
 # Mognitio
 
-Mognitio v0.4.0 adds typed functions and lexical returns to a small expression-first language.
+Mognitio is a small expression-first language with typed functions and lexical returns.
+Version 0.4.1 changes parameter annotations to `name: type`.
 It can run an expression through SBCL or build a standalone Linux amd64 executable.
 
 ## Requirements
@@ -118,7 +119,9 @@ The ten reserved words are `true`, `false`, `if`, `else`, `let`, `var`,
 compatibility with v0.3.0 locals using those names, including `int` and `bool`.
 Other names such as `Int`, `bool1`, `void`, `never`, and `string` remain
 identifiers; only lowercase `int` and `bool` are valid in type positions.
-These namespace and feature boundaries describe v0.4.0.
+These namespace and feature boundaries are retained from v0.4.0.
+Version 0.4.1 changes only parameter annotation syntax; v0.4.0 sources
+using `type name` parameters must migrate to `name: type`.
 
 ## Results
 
