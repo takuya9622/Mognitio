@@ -7,7 +7,7 @@
          (ir (native-ir text)) (machine (mognitio.machine:lower-module ir)))
     (same expected (compiled-result text))
     (same (tree-if-count tree)
-          (count :branch (mognitio.ir:module-blocks ir)
+          (count :branch (entry-blocks ir)
                  :key (lambda (block) (first (mognitio.ir:basic-block-terminator block)))))
     (same (tree-if-count tree)
           (count-if (lambda (inst)

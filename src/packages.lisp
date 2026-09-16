@@ -55,7 +55,9 @@
            #:instruction-op #:instruction-value #:instruction-operands #:instruction-span
            #:basic-block #:make-basic-block #:basic-block-id #:basic-block-parameters
            #:basic-block-instructions #:basic-block-terminator #:basic-block-span
-           #:module #:make-module #:module-blocks #:module-entry #:module-span
+           #:module #:make-module #:module-functions #:module-entry #:module-span
+           #:ir-function #:make-ir-function #:ir-function-id #:ir-function-parameter-types
+           #:ir-function-result-type #:ir-function-blocks #:ir-function-entry #:ir-function-span
            #:lower-program #:verify-module #:successors))
 (defpackage #:mognitio.machine
   (:use #:cl #:mognitio.diagnostics)

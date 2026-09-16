@@ -1,6 +1,8 @@
 (in-package #:mognitio.tests)
 
 (defun native-ir (text) (mognitio.ir:lower-program (check-program (parse-text text))))
+(defun entry-blocks (module)
+  (mognitio.ir:ir-function-blocks (first (mognitio.ir:module-functions module))))
 (defun native-image (text)
   (mognitio.backend.native:compile-program
    (check-program (parse-text text)) (mognitio.target:linux-amd64)))
@@ -23,29 +25,29 @@
             (lambda (ir)
               (setf (mognitio.ir:instruction-type
                      (first (mognitio.ir:basic-block-instructions
-                             (first (mognitio.ir:module-blocks ir))))) :int))
+                             (first (entry-blocks ir))))) :int))
             (lambda (ir)
               (setf (mognitio.ir:basic-block-terminator
-                     (first (mognitio.ir:module-blocks ir))) '(:return 999)))
+                     (first (entry-blocks ir))) '(:return 999)))
             (lambda (ir)
               (setf (mognitio.ir:basic-block-terminator
-                     (first (mognitio.ir:module-blocks ir))) nil))
+                     (first (entry-blocks ir))) nil))
             (lambda (ir)
               (setf (mognitio.ir:basic-block-terminator
-                     (first (mognitio.ir:module-blocks ir))) '(:branch 0 999 2)))
+                     (first (entry-blocks ir))) '(:branch 0 999 2)))
             (lambda (ir)
               (setf (mognitio.ir:basic-block-parameters
-                     (second (mognitio.ir:module-blocks ir))) '(100)))
+                     (second (entry-blocks ir))) '(100)))
             (lambda (ir)
               (setf (mognitio.ir:instruction-result
                      (first (mognitio.ir:basic-block-instructions
-                             (second (mognitio.ir:module-blocks ir))))) 0))
+                             (second (entry-blocks ir))))) 0))
             (lambda (ir)
               (setf (mognitio.ir:basic-block-terminator
-                     (third (mognitio.ir:module-blocks ir))) '(:return 1)))
+                     (third (entry-blocks ir))) '(:return 1)))
             (lambda (ir)
               (setf (mognitio.ir:basic-block-terminator
-                     (first (mognitio.ir:module-blocks ir))) '(:branch 0 0 2)))))
+                     (first (entry-blocks ir))) '(:branch 0 0 2)))))
     (let ((ir (native-ir "if(true){false}else{true}")))
       (funcall mutation ir)
       (signals internal-failure (mognitio.ir:verify-module ir))))
@@ -105,3 +107,16 @@
            (+ (image-integer image 80 8) (image-integer image 104 8))))
     (same 0 (mod (image-integer image 80 8) (image-integer image 112 8)))
     (same (hex-bytes "48b90100000000000000") (subseq image 128 138))))
+
+(deftest v04-function-core-boundary
+  (let* ((module (native-ir "true"))
+         (entry (first (mognitio.ir:module-functions module))))
+    (same 0 (mognitio.ir:module-entry module))
+    (same :bool (mognitio.ir:ir-function-result-type entry))
+    (dolist (mutation
+             (list (lambda () (setf (mognitio.ir:ir-function-result-type entry) :int))
+                   (lambda () (setf (mognitio.ir:ir-function-result-type entry) :bool
+                                    (mognitio.ir:ir-function-parameter-types entry) '(:int)))
+                   (lambda () (setf (mognitio.ir:module-functions module) (list entry entry)))))
+      (funcall mutation)
+      (signals internal-failure (mognitio.ir:verify-module module)))))
