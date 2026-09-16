@@ -149,6 +149,15 @@ old `int` and `bool` names are covered by v0.4 parse rejections. All four
 new keywords are tested at function, parameter, let and var name positions.
 Historical validation records retain their original results.
 
+## v0.4.1 parameter syntax
+
+The parameter syntax correction uses `name: type` throughout fixed fixtures,
+large-argument builders, and the independent generator. The
+`v04-parameter-annotations` group checks both types, whitespace around colons,
+parameter/token spans, and parse diagnostic locations. Old `type name`, mixed
+syntax, and missing names, colons, or types are rejected by run and build,
+including preservation of an existing output.
+
 Instruction goldens use the [Intel instruction reference](https://www.intel.com/content/www/us/en/developer/articles/technical/intel-sdm.html),
 including CALL rel32, REX.W/R/B, ModR/M and SIB addressing. Host lexical
 function declarations follow [Common Lisp LABELS](https://www.lispworks.com/documentation/HyperSpec/Body/s_flet_.htm).

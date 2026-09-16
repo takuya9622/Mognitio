@@ -1,6 +1,7 @@
 # Mognitio
 
-Mognitio v0.4.0 adds typed functions and lexical returns to a small expression-first language.
+Mognitio is a small expression-first language with typed functions and lexical returns.
+Version 0.4.1 changes parameter annotations to `name: type`.
 It can run an expression through SBCL or build a standalone Linux amd64 executable.
 
 ## Requirements
@@ -87,15 +88,17 @@ build. There are no comments, loops, strings, or optional
 ### Functions and returns
 
 ```mgn
-function magnitude(int value): int {
+function magnitude(value: int): int {
     if (value < 0) { return -value; } else { value }
 }
-function twice(int value): int { value * 2 }
+function twice(value: int): int { value * 2 }
 twice(magnitude(-6)) == 12
 ```
 
-Parameters and results have explicit `int` or `bool` types. Parameters are
-immutable value copies. Arguments evaluate once, left to right, and retain
+Parameters use `name: type`, with a required colon and an explicit `int`
+or `bool` type. Results retain the `: type` annotation after the closing
+parenthesis. The earlier `type name` parameter syntax is rejected.
+Parameters are immutable value copies. Arguments evaluate once, left to right, and retain
 their values across later arguments and nested calls. A return inside an
 argument exits its enclosing function; returning from the called function
 continues the caller. Locals and parameters are isolated per invocation.
@@ -116,7 +119,9 @@ The ten reserved words are `true`, `false`, `if`, `else`, `let`, `var`,
 compatibility with v0.3.0 locals using those names, including `int` and `bool`.
 Other names such as `Int`, `bool1`, `void`, `never`, and `string` remain
 identifiers; only lowercase `int` and `bool` are valid in type positions.
-These namespace and feature boundaries describe v0.4.0.
+These namespace and feature boundaries are retained from v0.4.0.
+Version 0.4.1 changes only parameter annotation syntax; v0.4.0 sources
+using `type name` parameters must migrate to `name: type`.
 
 ## Results
 
