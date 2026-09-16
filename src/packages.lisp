@@ -59,6 +59,11 @@
            #:ir-function #:make-ir-function #:ir-function-id #:ir-function-parameter-types
            #:ir-function-result-type #:ir-function-blocks #:ir-function-entry #:ir-function-span
            #:lower-program #:verify-module #:successors))
+(defpackage #:mognitio.regalloc
+  (:use #:cl #:mognitio.diagnostics)
+  (:export #:allocate-function #:verify-allocation #:allocation-locations #:allocation-intervals
+           #:allocation-barriers #:allocation-spill-count #:allocation-order #:parallel-copies
+           #:live-intervals #:interval-id #:interval-start #:interval-end))
 (defpackage #:mognitio.object
   (:use #:cl #:mognitio.diagnostics)
   (:export #:code-unit #:make-code-unit #:code-unit-owner #:code-unit-instructions
