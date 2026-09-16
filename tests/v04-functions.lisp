@@ -109,9 +109,36 @@
     (v03-reject source "semantic")))
 
 (deftest v04-call-runtime-order
-  (dolist (pair '(("function f(int a, int b): int { 1 % 0 } f(1 / 0, 9223372036854775807 + 1) == 0" "division by zero")
+  (dolist (pair '(("function f(int a, int b): int { 9223372036854775807 + 1 } f(1 / 0, 1 % 0) == 0" "division by zero")
                   ("function f(int a): int { 1 % 0 } f(1) == 0" "remainder by zero")
                   ("function f(): int { return 9223372036854775807 + 1; } f() == 0" "integer overflow")
                   ("function f(): int { 1 / 0 } let unused = f(); true" "division by zero")
                   ("function f(): int { 1 % 0 } function g(): int { f() + if(true){return 1;}else{return 2;} } g() == 0" "remainder by zero")))
     (v03-runtime (first pair) (second pair) t)))
+
+(deftest v04-name-type-and-flow-boundaries
+  (dolist (name '("Function" "Int" "Bool" "return1" "intValue" "bool1" "void" "never" "string"))
+    (v03-positive (format nil "function ~A(): bool { true } ~A()" name name) :true)
+    (v03-positive (format nil "function f(bool ~A): bool { ~A } f(true)" name name) :true)
+    (v03-positive (format nil "let ~A = true; ~A" name name) :true))
+  (dolist (name '("Int" "void" "never" "Unknown"))
+    (v03-reject (format nil "function f(~A n): int { 1 } true" name) "parse")
+    (v03-reject (format nil "function f(): ~A { 1 } true" name) "parse"))
+  (dolist (text '("let int = 1; int == 1" "let bool = true; bool"
+                  "function f(int x = 1): int { x } true" "function f(int x): int { x } f(x: 1) == 1"
+                  "function f(): int { return 1 } true" "function f(): int { } true"))
+    (v03-reject text "parse"))
+  (dolist (text '("function f(int x): int { if(true){if(false){let x = 2; x}else{1}}else{1} } true"
+                  "function f(int x): int { let y = if(true){let x = 2; x}else{1}; y } true"
+                  "function a(): int { b() } function b(): int { c() } function c(): int { a() } true"
+                  "function f(): int { 1 } f(1) == 1"
+                  "function f(): int { var x = if(true){return 1;}else{return 2;}; x } true"
+                  "function g(int a, int b): int { a + b } function f(): int { g(if(true){return 1;}else{return 2;}, true) } true"
+                  "function f(): int { if(false){return false;}else{1} } true"))
+    (v03-reject text "semantic"))
+  (v03-positive "function f(bool stop): int { if(stop){return 3;}else{4} } f(true) + f(false) == 7" :true)
+  (v03-positive "function f(int a, bool b, int c, bool d, int e, bool z, int g, bool h): bool { if(a == -9223372036854775808){if(b){if(c == 9223372036854775807){if(d){false}else{if(e == 3){if(z){if(g == -7){h == false}else{false}}else{false}}else{false}}}else{false}}else{false}}else{false} } f(-9223372036854775808, true, 9223372036854775807, false, 3, true, -7, false)" :true)
+  (v03-runtime "function f(int a, int b): int { 1 / 0 } f(1, 1 % 0) == 0" "remainder by zero")
+  (v03-runtime "function f(): int { g() } function g(): int { 1 / 0 } f() == 0" "division by zero")
+  (v03-positive "function f(bool stop): int { if(stop){return 3;}else{1 / 0} } f(true) == 3" :true)
+  (v03-runtime "function f(bool stop): int { if(stop){return 3;}else{1 / 0} } f(false) == 3" "division by zero"))

@@ -42,7 +42,7 @@
 (defpackage #:mognitio.semantic
   (:use #:cl #:mognitio.diagnostics #:mognitio.source #:mognitio.syntax)
   (:export #:check-program #:checked-program #:checked-program-program #:checked-normal-type #:checked-symbol #:checked-literal #:checked-literal-p #:checked-program-bindings #:local-symbol-id #:local-symbol-type #:local-symbol-mutability
-           #:local-symbol-owner #:checked-completion #:completion-normal-type #:completion-may-return
+           #:local-symbol-owner #:verify-checked-program #:checked-completion #:completion-normal-type #:completion-may-return
            #:checked-call #:checked-return #:checked-program-signatures #:signature-id
            #:signature-declaration #:signature-parameter-types #:signature-result-type #:check-call-graph))
 (defpackage #:mognitio.backend.cl

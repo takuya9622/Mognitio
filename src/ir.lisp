@@ -139,7 +139,7 @@
                           :entry (basic-block-id entry) :blocks (nreverse blocks) :span span)))))
 
 (defun lower-program (checked)
-  (unless (typep checked 'checked-program) (internal-error "Expected CheckedProgram"))
+  (verify-checked-program checked)
   (make-module :functions (map 'list (lambda (signature) (lower-function checked signature))
                                (checked-program-signatures checked))
                :span (node-span (program-root (checked-program-program checked)))))

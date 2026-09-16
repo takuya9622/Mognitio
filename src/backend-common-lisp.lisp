@@ -112,8 +112,7 @@
         (fail-at span :internal "Host compilation or execution failed" 'internal-failure)))))
 
 (defun compile-program (checked)
-  (unless (typep checked 'checked-program)
-    (internal-error "Backend requires CheckedProgram"))
+  (verify-checked-program checked)
   (let* ((root (program-root (checked-program-program checked)))
          (span (node-span root)))
     (call-isolated
