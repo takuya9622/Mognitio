@@ -6,13 +6,14 @@
 (defun word-start-p (ch) (or (ascii-letter-p ch) (char= ch #\_)))
 (defparameter *keywords*
   '(("true" . :true) ("false" . :false) ("if" . :if) ("else" . :else)
-    ("let" . :let) ("var" . :var)))
+    ("let" . :let) ("var" . :var)
+    ("function" . :function) ("return" . :return) ("int" . :int) ("bool" . :bool)))
 (defparameter *operators*
   '(("==" . :eq) ("!=" . :ne) ("<=" . :le) (">=" . :ge)
     ("=" . :assign) ("+" . :add) ("-" . :sub) ("*" . :mul)
     ("/" . :div) ("%" . :rem) ("<" . :lt) (">" . :gt)
     ("(" . :left-paren) (")" . :right-paren)
-    ("{" . :left-brace) ("}" . :right-brace) (";" . :semicolon)))
+    ("{" . :left-brace) ("}" . :right-brace) (";" . :semicolon) ("," . :comma) (":" . :colon)))
 (defun lex-source (source)
   (let ((text (source-text source)) (cursor 0)
         (tokens (make-array 0 :adjustable t :fill-pointer 0)))
