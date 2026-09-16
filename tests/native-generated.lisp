@@ -13,7 +13,7 @@
           (count-if (lambda (inst)
                       (let ((target (first (mognitio.machine:instruction-operands inst))))
                         (and (eq (mognitio.machine:instruction-opcode inst) :jz)
-                             (consp target) (eq (first target) :block) (plusp (second target)))))
+                             (consp target) (eq (first target) :block) (plusp (third target)))))
                     machine))
     (expect-artifact (build-text text) expected)))
 

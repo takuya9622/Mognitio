@@ -59,6 +59,12 @@
            #:ir-function #:make-ir-function #:ir-function-id #:ir-function-parameter-types
            #:ir-function-result-type #:ir-function-blocks #:ir-function-entry #:ir-function-span
            #:lower-program #:verify-module #:successors))
+(defpackage #:mognitio.object
+  (:use #:cl #:mognitio.diagnostics)
+  (:export #:code-unit #:make-code-unit #:code-unit-owner #:code-unit-instructions
+           #:code-unit-entry #:layout-units #:image-symbol #:make-image-symbol
+           #:image-symbol-name #:image-symbol-kind #:image-symbol-offset #:symbol-kind
+           #:fixup #:make-fixup #:fixup-offset #:fixup-end #:fixup-target #:fixup-kind #:fixup-use))
 (defpackage #:mognitio.machine
   (:use #:cl #:mognitio.diagnostics)
   (:export #:instruction #:make-instruction #:instruction-opcode

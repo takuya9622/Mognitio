@@ -15,6 +15,7 @@
                (:file "src/backend-common-lisp")
                (:file "src/target")
                (:file "src/ir")
+               (:file "src/object-model")
                (:file "src/machine-ir")
                (:file "src/amd64")
                (:file "src/elf")
