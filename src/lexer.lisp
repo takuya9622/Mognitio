@@ -7,9 +7,9 @@
 (defparameter *keywords*
   '(("true" . :true) ("false" . :false) ("if" . :if) ("else" . :else)
     ("let" . :let) ("var" . :var)
-    ("while" . :while) ("loop" . :loop) ("break" . :break) ("continue" . :continue) ("void" . :void) ("function" . :function) ("return" . :return) ("int" . :int) ("bool" . :bool)))
+    ("while" . :while) ("loop" . :loop) ("break" . :break) ("continue" . :continue) ("string" . :string) ("void" . :void) ("function" . :function) ("return" . :return) ("int" . :int) ("bool" . :bool)))
 (defparameter *operators*
-  '(("==" . :eq) ("!=" . :ne) ("<=" . :le) (">=" . :ge)
+  '(("->" . :arrow) ("==" . :eq) ("!=" . :ne) ("<=" . :le) (">=" . :ge)
     ("=" . :assign) ("+" . :add) ("-" . :sub) ("*" . :mul)
     ("/" . :div) ("%" . :rem) ("<" . :lt) (">" . :gt)
     ("(" . :left-paren) (")" . :right-paren)
@@ -17,12 +17,38 @@
 (defun lex-source (source)
   (let ((text (source-text source)) (cursor 0)
         (tokens (make-array 0 :adjustable t :fill-pointer 0)))
-    (labels ((emit (kind start)
+    (labels ((emit (kind start &optional payload)
                (vector-push-extend
-                (make-token :kind kind :span (make-span source start cursor)) tokens)))
+                (make-token :kind kind :span (make-span source start cursor) :payload payload) tokens))
+             (scan-string ()
+               (let ((start cursor) (chars (make-array 0 :element-type 'character :adjustable t :fill-pointer 0)))
+                 (incf cursor)
+                 (loop
+                   (when (= cursor (length text))
+                     (fail-at (make-span source start (1+ start)) :lex "Unterminated string literal"))
+                   (let ((ch (char text cursor)) (at cursor))
+                     (incf cursor)
+                     (cond
+                       ((char= ch #\") (return))
+                       ((char= ch #\\)
+                        (when (= cursor (length text))
+                          (fail-at (make-span source start (1+ start)) :lex "Unterminated string literal"))
+                        (let* ((escape (char text cursor))
+                               (value (case escape
+                                        (#\" #\") (#\\ #\\) (#\n #\Newline)
+                                        (#\r #\Return) (#\t #\Tab) (#\0 (code-char 0)))))
+                          (unless value (fail-at (make-span source at (1+ cursor)) :lex "Invalid string escape"))
+                          (incf cursor) (vector-push-extend value chars)))
+                       ((or (< (char-code ch) 32) (= (char-code ch) 127))
+                        (fail-at (make-span source at cursor) :lex "Raw control in string literal"))
+                       (t (vector-push-extend ch chars)))))
+                 (emit :string-literal start
+                       (make-text-payload :octets (sb-ext:string-to-octets chars :external-format :utf-8)
+                                          :scalar-count (length chars))))))
       (loop while (< cursor (length text)) for ch = (char text cursor) do
         (cond
           ((find ch '(#\Space #\Tab #\Newline #\Return)) (incf cursor))
+          ((char= ch #\") (scan-string))
           ((word-start-p ch)
            (let ((start cursor))
              (loop while (and (< cursor (length text))

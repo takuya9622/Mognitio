@@ -1,6 +1,10 @@
 (in-package #:mognitio.syntax)
 
-(defstruct token (kind nil :read-only t) (span nil :read-only t))
+(defstruct text-payload (octets #() :read-only t) (scalar-count 0 :read-only t))
+(defstruct token (kind nil :read-only t) (span nil :read-only t) (payload nil :read-only t))
+(defstruct string-literal (payload nil :read-only t) (span nil :read-only t))
+(defstruct method-call (receiver nil :read-only t) (name nil :read-only t)
+  (arguments #() :read-only t) (span nil :read-only t))
 (defstruct loop-expression (body nil :read-only t) (condition nil :read-only t) (span nil :read-only t))
 (defstruct break-statement (value nil :read-only t) (span nil :read-only t))
 (defstruct continue-statement (span nil :read-only t))
@@ -25,6 +29,8 @@
   (statements #() :read-only t))
 (defun node-span (node)
   (typecase node
+    (string-literal (string-literal-span node))
+    (method-call (method-call-span node))
     (loop-expression (loop-expression-span node))
     (break-statement (break-statement-span node))
     (continue-statement (continue-statement-span node))
