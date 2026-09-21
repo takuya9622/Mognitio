@@ -298,3 +298,10 @@
                         (lambda (span) (fail-at span :semantic "Recursive call graph")))
       (%make-checked-program :program program :summaries summaries :symbols resolved
         :literals literals :consumed consumed :bindings bindings :signatures signatures :calls calls :returns returns :functions functions :loops loops :controls controls :operations operations))))
+
+(defun checked-string-literals (checked)
+  ;; Checked summaries cover every child, including nonexecuted prefixes and
+  ;; nested function bodies. Sort by source span, never hash enumeration order.
+  (sort (loop for node being the hash-keys of (checked-program-summaries checked)
+              when (typep node 'string-literal) collect node)
+        #'< :key (lambda (node) (span-start (node-span node)))))
