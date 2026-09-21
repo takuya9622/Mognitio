@@ -8,6 +8,10 @@
 (defun symbol-kind (name)
   (cond
     ((keywordp name) :code)
+    ((and (listp name) (= (length name) 2) (eq (first name) :text)
+          (typep (second name) '(integer 0 *))) :text)
+    ((and (listp name) (= (length name) 2) (eq (first name) :helper)
+          (member (second name) '(:text.length :text.equal :text.not-equal :text.concat :text.slice))) :helper)
     ((and (listp name)
           (case (first name)
             (:function (and (= 2 (length name)) (typep (second name) '(integer 0 *))))
