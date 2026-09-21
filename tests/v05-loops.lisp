@@ -110,7 +110,7 @@
     (is (mognitio.ir:verify-module module))))
 
 (deftest v05-dispatch-call-loop-composite
-  (dolist (pressure '(0 32))
+  (dolist (pressure '(0 32 600))
     (v03-positive
      (with-output-to-string (out)
        (write-string "let add = function(a: int,b: int): int {a+b}; let sub = function(a: int,b: int): int {a-b}; let identity = function(value: int): int {value}; let base = 100; " out)
@@ -119,3 +119,8 @@
        (dotimes (i pressure) (format out "saved~D + " i))
        (format out "base == ~D}else{false}" (+ 100 (/ (* pressure (1- pressure)) 2))))
      :true)))
+
+(deftest v05-condition-continue-has-no-exit
+  (let* ((module (native-ir "loop while({continue;}){break;}")) (blocks (entry-blocks module)))
+    (same 2 (length blocks))
+    (is (every (lambda (b) (eq :jump (first (mognitio.ir:basic-block-terminator b)))) blocks))))

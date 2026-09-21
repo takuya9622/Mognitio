@@ -69,3 +69,13 @@
       (signals internal-failure (mognitio.regalloc:verify-allocation allocation)))
     (setf (mognitio.ir:ir-function-blocks (first (mognitio.ir:module-functions module))) (reverse bs))
     (v05-run-module module)))
+
+(deftest v05-alternative-rpo
+  (let* ((module (v05-loop-module)) (function (first (mognitio.ir:module-functions module)))
+         (header (second (entry-blocks module)))
+         (before (mapcar #'mognitio.ir:basic-block-id (mognitio.regalloc::block-order function))))
+    (setf (mognitio.ir:instruction-op (first (mognitio.ir:basic-block-instructions header))) :ge
+          (mognitio.ir:basic-block-terminator header) '(:branch 4 3 2))
+    (is (not (equal before (mapcar #'mognitio.ir:basic-block-id (mognitio.regalloc::block-order function)))))
+    (is (mognitio.ir:verify-module module))
+    (v05-run-module module)))

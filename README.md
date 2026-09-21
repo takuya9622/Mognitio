@@ -1,7 +1,7 @@
 # Mognitio
 
-Mognitio is a small expression-first language with typed functions and lexical returns.
-Version 0.4.1 changes parameter annotations to `name: type`.
+Mognitio is a small language with typed function values and structured iteration.
+This development branch implements v0.5.0; it is not a release announcement.
 It can run an expression through SBCL or build a standalone Linux amd64 executable.
 
 ## Requirements
@@ -57,10 +57,9 @@ spaces or shell metacharacters as one argument.
 
 ## Language
 
-A program starts with optional function declarations, then local declarations
-and assignments, followed by a boolean result. Blocks end in an expression
-or, inside a function, a value-bearing `return`. Both normally completing
-branches of an `if` must produce the same type.
+A program ends in a boolean expression. Declarations and statements use
+semicolons. Blocks can have a final expression, or produce `void` when
+they finish without one.
 
 ```mgn
 let unitPrice = 120;
@@ -69,59 +68,90 @@ count = count + 1;
 count * unitPrice == 360
 ```
 
-`let` is immutable; `var` can be assigned a value of its original inferred
-type. Names use ASCII letters, digits, and underscores, without a `$` prefix.
-A local cannot redeclare a visible or currently initializing outer name.
-Separate sibling scopes and scopes that have already ended may reuse names.
+`let` is immutable. A `var` holds `int`, `bool`, or `void` and assignments
+preserve its type. Visible names, including a binding being initialized,
+cannot be redeclared in nested scopes. Sibling scopes may reuse names.
 
-Integers are signed 64-bit values. Decimal literals, arithmetic
-(`+ - * / %`), comparisons (`< <= > >= == !=`), and grouping are supported.
-Division truncates toward zero; nonzero remainders have the dividend's sign.
-Operands are evaluated left to right. Only the selected branch executes,
-while both branches are checked before execution.
+Integers are signed 64-bit values. Arithmetic (`+ - * / %`), comparisons
+(`< <= > >= == !=`), and grouping are supported. Division truncates toward
+zero; nonzero remainders have the dividend's sign. Overflow and division
+or remainder by zero fail only when evaluated. Consecutive minus tokens
+are rejected even across whitespace: write `-(-1)` or `10 - (-2)`.
 
-Arithmetic overflow and division or remainder by zero stop execution.
-Even a constant arithmetic failure is detected when evaluated, not during
-build. There are no comments, loops, strings, or optional
-`else` branches in this version.
-
-### Functions and returns
+### Function values
 
 ```mgn
-function magnitude(value: int): int {
-    if (value < 0) { return -value; } else { value }
-}
-function twice(value: int): int { value * 2 }
+let magnitude = function(value: int): int {
+    if (value < 0) { return -value; };
+    value
+};
+let twice = function(value: int): int { value * 2 };
 twice(magnitude(-6)) == 12
 ```
 
-Parameters use `name: type`, with a required colon and an explicit `int`
-or `bool` type. Results retain the `: type` annotation after the closing
-parenthesis. The earlier `type name` parameter syntax is rejected.
-Parameters are immutable value copies. Arguments evaluate once, left to right, and retain
-their values across later arguments and nested calls. A return inside an
-argument exits its enclosing function; returning from the called function
-continues the caller. Locals and parameters are isolated per invocation.
+Function expressions have explicit `name: type` parameters and a result
+type (`int`, `bool`, or `void`). Bind them with `let`, alias them, choose
+between matching signatures with `if`, or return a function value from
+a block or a value-producing loop. A function cannot itself accept or
+return a function value. Mutable function values and recursion are excluded.
 
-Functions may call later declarations. Function names are unique throughout
-the source and cannot also name a parameter or local. Function values,
-captures, overloading, and recursion are unsupported. Every call-graph cycle
-is rejected, including cycles in unused functions and unselected branches.
+Names become visible in source order. A function may refer to an earlier
+direct function binding or its static aliases. It cannot capture outer
+primitive values or functions selected by a block, `if`, or loop.
+Nested functions use the same rule. There are no forward declarations.
 
-A return occupies the end of a block and requires a value and semicolon.
-An initializer needs a normal `int` or `bool` result on at least one path;
-other paths may return from its function. All source is checked, including
-code after an expression that always returns. The entry result remains
-boolean and cannot use return. No `void` or `never` source type is introduced.
+The callee is evaluated once, before arguments. Arguments are evaluated
+once from left to right. An early exit inside a callee or argument belongs
+to that expression's enclosing function or loop. A called function has
+its own local variables and return target.
 
-The ten reserved words are `true`, `false`, `if`, `else`, `let`, `var`,
-`function`, `return`, `int`, and `bool`. Reserving the last four breaks
-compatibility with v0.3.0 locals using those names, including `int` and `bool`.
-Other names such as `Int`, `bool1`, `void`, `never`, and `string` remain
-identifiers; only lowercase `int` and `bool` are valid in type positions.
-These namespace and feature boundaries are retained from v0.4.0.
-Version 0.4.1 changes only parameter annotation syntax; v0.4.0 sources
-using `type name` parameters must migrate to `name: type`.
+### Void, blocks and exits
+
+`void` is both a type name and its single value; `()` is not an expression.
+A void function may have an empty body or use `return;` or `return void;`.
+A value can be discarded as an expression statement only when its type is
+void. Assignment and declaration remain statements.
+
+An `if` requires a boolean condition. Its normally completing branches
+must have identical types. An omitted `else` acts as a void branch.
+A branch that returns or never finishes does not supply a normal type.
+Statements or a tail after an unconditional exit are semantic errors.
+Both branches, all arguments and unused functions are still checked.
+
+### Loops
+
+```mgn
+var count = 0;
+let result = loop {
+    count = count + 1;
+    if (count < 4) { continue; };
+    break count * 10;
+};
+result == 40
+```
+
+`loop while (condition) { ... }` checks its condition before every round
+and returns void when the condition is false or a plain `break;` is taken.
+`continue;` restarts the condition, including when used inside a block in
+the condition itself. A conditional loop does not allow a valued break.
+
+`loop { ... }` runs until a break or an enclosing function return.
+Its valued breaks must have matching types. Plain and valued breaks
+cannot be mixed, including `break;` with `break void;`. A loop without
+a normal exit may be used as a function or program tail.
+
+A loop body must produce void when it completes normally. Body locals
+are initialized each round; updates to outer variables survive.
+Break and continue target the nearest loop in the same function.
+
+The reserved words are `true false if else let var function return int bool
+loop while break continue void`. Names are ASCII and case-sensitive.
+Comments, strings, collections and a `never` source type are not supported.
+
+v0.4.1 programs need explicit migration of named function declarations to
+`let name = function(...) { ... };`, forward references to source order,
+new keyword names, consecutive minus, and unreachable sequence elements.
+See [test coverage](tests/README.md) for the retained regression cases.
 
 ## Results
 

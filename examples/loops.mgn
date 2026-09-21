@@ -1,0 +1,7 @@
+var count = 0;
+let result = loop {
+    count = count + 1;
+    if (count < 4) { continue; };
+    break count * 10;
+};
+result == 40

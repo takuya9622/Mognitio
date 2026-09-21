@@ -82,7 +82,10 @@
                    (let* ((type (type-name)) (body (body-block)))
                      (make-function-expression :parameters parameters :result-type type :body body
                        :span (cover (span-start (token-span keyword)) (end-of body)))))))
-             (body-block () (expect :left-brace) (sequence-body :right-brace))
+             (body-block ()
+               (let* ((open (expect :left-brace)) (body (sequence-body :right-brace)))
+                 (make-sequence-node :statements (sequence-node-statements body) :terminal (sequence-node-terminal body)
+                   :span (cover (span-start (token-span open)) (end-of body)))))
              (primary ()
                (let ((token (peek)))
                  (case (kind)
