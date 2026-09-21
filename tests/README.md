@@ -161,3 +161,70 @@ including preservation of an existing output.
 Instruction goldens use the [Intel instruction reference](https://www.intel.com/content/www/us/en/developer/articles/technical/intel-sdm.html),
 including CALL rel32, REX.W/R/B, ModR/M and SIB addressing. Host lexical
 function declarations follow [Common Lisp LABELS](https://www.lispworks.com/documentation/HyperSpec/Body/s_flet_.htm).
+
+## v0.5.0 function values, void and loops
+
+| Acceptance IDs | Executable groups |
+|---|---|
+| V05-01 through V05-08 | `v05-function-values-and-scope`, `v05-function-and-flow-contracts`, `v05-dispatch-call-loop-composite` |
+| V05-09 through V05-13 | `v05-void-blocks-and-flow`, `v05-function-and-flow-contracts`, `v05-large-mixed-void-call` |
+| V05-14 through V05-23 | `v05-unconditional-loops`, `v05-conditional-and-valued-loops`, `v05-function-and-flow-contracts` |
+| V05-24 through V05-26 | `v05-function-and-flow-contracts`, `v05-unconditional-loops`, `v05-loop-completion-boundary` |
+| V05-27 through V05-33 | `v05-keywords-and-source-shapes`, `v05-void-blocks-and-flow`, retained grammar and annotation groups |
+| V05-34 through V05-44 | `v05-function-values-and-scope`, `v05-function-and-flow-contracts`, `v05-void-blocks-and-flow` |
+| V05-45 through V05-52 | `v05-unconditional-loops`, `v05-conditional-and-valued-loops`, `v05-condition-termination-has-no-false-exit` |
+| V05-53 through V05-56 | `v05-void-blocks-and-flow`, `v05-runtime-order-and-artifacts`, retained arithmetic/return groups |
+| V05-57 | `v05-dispatch-call-loop-composite`, `v05-generated-control-oracle` |
+| V05-58 through V05-60 | `v05-runtime-order-and-artifacts`, updated `v04-artifact-publication-and-output-faults`, retained native fault/standalone groups |
+| V05-61 | All preceding boolean, integer, function, allocation and artifact groups |
+
+| Internal IDs | Checks |
+|---|---|
+| D05-01, D05-02 | Keyword/token boundaries, spans, optional AST children, general callees and statement parsing |
+| D05-03 through D05-07 | Source-order visibility, static aliases, signatures, early exits, loop targets and function candidates |
+| D05-08 | `v05-checked-metadata-mutations` and retained checked-boundary corruption |
+| D05-09, D05-10 | Typed constants/joins, call operands, loop entry/backedge/exit environments |
+| D05-11 | `v05-cyclic-core-verifier`, `v05-independent-dominance`, no-exit CFG observations |
+| D05-12 | `v05-core-function-candidates`, `v05-cyclic-function-candidate-fixed-point` |
+| D05-13 through D05-15 | `v05-cyclic-allocation`, pressure/call composite, retained symbolic copy checks |
+| D05-16, D05-17 | Host/native function dispatch, callee ordering, lexical exits, first/middle/last dispatch arms |
+| D05-18 | `v05-handwritten-void-abi`, `v05-large-mixed-void-call`, retained handwritten call/frame tests |
+| D05-19 through D05-21 | No-exit loops, branch fixups, runtime ordering, publication, relocated cold/warm builds and write faults |
+| D05-22 | `v05-generated-control-oracle` plus the fixed acceptance cases above |
+
+The new oracle uses seed 20260920 and 128 programs. Generated expressions
+have maximum depth 4 inside fixed control-flow templates; loop bodies run
+at most eight rounds. Separate test trees, mutable cells and explicit
+normal/return/break/continue records model function selection, nested calls,
+mutation and early exits. Arithmetic uses the independent mathematical
+test helper, not production arithmetic. Failures report the seed, sample,
+source and expected completion.
+
+Cyclic Core tests independently check dominance by removing a proposed
+dominator and testing reachability. Function candidate propagation starts
+from constants and must reject unsupported cycles even with call metadata.
+The allocation checker reconstructs live demands from instruction events;
+a negative test truncates an interval while retaining its assigned location.
+The dispatch/loop composite expects 305 and repeats with 32 and 600 live
+values. Handwritten machine code checks void argument slots, zero results,
+clobbers, alignment and frame preservation across repeated calls.
+
+Nontermination observations first require a successful build, then inspect
+separate host/native processes for one second, requiring no output and a
+still-running process before forced cleanup. This is a bounded observation,
+not a termination proof or a language timeout. No-exit CFG assertions supply
+separate structural evidence. A million-round finite loop checks that
+iteration does not consume a fresh call frame each round.
+
+Compatibility fixtures now bind function expressions explicitly and place
+dependencies before use. Former forward-reference success is separately
+rejected. The old `void` identifier uses `Void` in positive fixtures.
+Consecutive minus arithmetic uses explicit grouping; original token shapes
+have parse-negative tests. Empty blocks, optional else and statements after
+an exit now reach semantic checks. Function aliases and grouped calls are
+positive cases; immutable reassignment and mutable function values remain
+negative. Historical verification records are unchanged.
+
+`v05-public-examples` executes every checked-in example and every README
+language example through host execution, silent build and direct native
+execution. The complete suite retains a single entry point.

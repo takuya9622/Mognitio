@@ -79,7 +79,7 @@
                     (#(64) "lex")))
       (let ((source (put-bytes (fresh-path) (first case))))
         (expect-cli (build-args source output) 1 :phase (second case))))
-    (dolist (text '("" "true false" "if(true){}else{false}"
+    (dolist (text '("" "true false"
                     "if(true){true}else if(false){true}else{false}"
                     "if(true){true}else{true false}" "if(false){@}else{true}"))
       (let ((source (put-text (fresh-path) text)))

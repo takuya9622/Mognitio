@@ -1,13 +1,15 @@
 (in-package #:mognitio.backend.cl)
 
+(defvar *void-value* (make-symbol "VOID"))
+
 (defstruct (compiled-program
              (:constructor %make-compiled-program
                  (function span &optional warnings-p compiler-output)))
   (function nil :read-only t) (span nil :read-only t)
   (warnings-p nil :read-only t) (compiler-output "" :read-only t))
 
-(defun expression-form (node checked names functions exits)
-  (labels ((form (child) (expression-form child checked names functions exits))
+(defun expression-form (node checked names functions exits &optional loops)
+  (labels ((form (child) (if child (expression-form child checked names functions exits loops) (list 'cl:quote *void-value*)))
            (symbol-for (child)
              (or (gethash (local-symbol-id (checked-symbol checked child)) names)
                  (internal-error "Missing host binding")))
@@ -21,34 +23,57 @@
                (list 'cl:let* (nreverse bindings) (funcall build (nreverse args)))))
            (sequence-form (statements tail index)
              (if (= index (length statements)) (form tail)
-                 (let* ((statement (aref statements index))
-                        (rhs (etypecase statement
-                               (local-binding (local-binding-initializer statement))
-                               (assignment (assignment-rhs statement)))))
-                   (unless (checked-normal-type checked rhs)
-                     (return-from sequence-form (form rhs)))
-                   (etypecase statement
-                     (local-binding
-                      (list 'cl:let
-                            (list (list (symbol-for statement) (form (local-binding-initializer statement))))
-                            (sequence-form statements tail (1+ index))))
-                     (assignment
-                      (list 'cl:progn (list 'cl:setq (symbol-for statement) (form (assignment-rhs statement)))
-                            (sequence-form statements tail (1+ index)))))))))
+                 (let ((statement (aref statements index)))
+                   (unless (checked-normal-type checked statement) (return-from sequence-form (form statement)))
+                   (if (typep statement 'local-binding)
+                       (list 'cl:let (list (list (symbol-for statement) (form (local-binding-initializer statement))))
+                             (sequence-form statements tail (1+ index)))
+                       (list 'cl:progn (form statement) (sequence-form statements tail (1+ index))))))))
     (typecase node
+      (loop-expression
+       (let* ((id (loop-info-id (checked-loop checked node))) (exit (make-symbol "BREAK")) (again (make-symbol "CONTINUE"))
+              (inner (acons id (cons exit again) loops)))
+         (let* ((condition (loop-expression-condition node))
+                (condition-form (when condition (expression-form condition checked names functions exits inner))))
+           (list 'cl:block exit
+                 (append (list 'cl:tagbody again)
+                         (when condition
+                           (list (if (checked-normal-type checked condition)
+                                     (list 'cl:unless condition-form (list 'cl:return-from exit (list 'cl:quote *void-value*)))
+                                     condition-form)))
+                         (when (or (null condition) (checked-normal-type checked condition))
+                           (list (expression-form (loop-expression-body node) checked names functions exits inner)))
+                         (when (and (or (null condition) (checked-normal-type checked condition))
+                                    (checked-normal-type checked (loop-expression-body node)))
+                           (list (list 'cl:go again))))))))
+      (break-statement
+       (let ((value (break-statement-value node)))
+         (if (or (null value) (checked-normal-type checked value))
+             (list 'cl:return-from (cadr (assoc (loop-info-id (checked-control checked node)) loops)) (form value))
+             (form value))))
+      (continue-statement
+       (list 'cl:go (cddr (assoc (loop-info-id (checked-control checked node)) loops))))
+      (void-literal (list 'cl:quote *void-value*))
+      (expression-statement (form (expression-statement-expression node)))
+      (assignment (list 'cl:progn (list 'cl:setq (symbol-for node) (form (assignment-rhs node))) (list 'cl:quote *void-value*)))
       (boolean-literal (ecase (boolean-literal-value node) (:true t) (:false nil)))
       (integer-literal (checked-literal checked node))
-      (variable-reference (symbol-for node))
+      (function-expression (signature-id (checked-function checked node)))
+      (variable-reference (or (local-symbol-static-target (checked-symbol checked node)) (symbol-for node)))
       (sequence-node (sequence-form (sequence-node-statements node) (sequence-node-terminal node) 0))
       (grouping (form (grouping-expression node)))
       (return-statement
        (let ((value (return-statement-value node)))
-         (if (checked-normal-type checked value)
+         (if (or (null value) (checked-normal-type checked value))
              (list 'cl:return-from (gethash (checked-return checked node) exits) (form value))
              (form value))))
       (call-expression
-       (ordered (coerce (call-expression-arguments node) 'list)
-                (lambda (args) (cons (gethash (signature-id (checked-call checked node)) functions) args))))
+       (ordered (cons (call-expression-callee node) (coerce (call-expression-arguments node) 'list))
+                (lambda (args)
+                  (list* 'cl:case (first args)
+                         (append (loop for id in (call-info-targets (checked-call checked node))
+                                       collect (list id (cons (gethash id functions) (rest args))))
+                                 (list (list 'cl:otherwise (list 'mognitio.diagnostics:internal-error "Invalid function value"))))))))
       (if-expression
        (if (null (checked-normal-type checked (if-expression-condition node)))
            (form (if-expression-condition node))
@@ -86,9 +111,9 @@
                   for declaration = (signature-declaration signature) when declaration collect
               (list (gethash (signature-id signature) functions)
                     (map 'list (lambda (p) (gethash (local-symbol-id (checked-symbol checked p)) names))
-                         (function-declaration-parameters declaration))
+                         (function-expression-parameters declaration))
                     (list 'cl:block (gethash (signature-id signature) exits)
-                          (expression-form (function-declaration-body declaration) checked names functions exits)))))
+                          (expression-form (function-expression-body declaration) checked names functions exits)))))
           (entry (expression-form (make-sequence-node :statements (program-statements program)
                                     :terminal (program-root program)) checked names functions exits)))
       (if definitions

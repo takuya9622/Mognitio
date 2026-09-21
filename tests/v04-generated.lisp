@@ -37,7 +37,7 @@
                   (v04-math (first tree) a b))))))))
 
 (defun v04-render (tree)
-  (cond ((integerp tree) (format nil "~D" tree))
+  (cond ((integerp tree) (if (minusp tree) (format nil "(~D)" tree) (format nil "~D" tree)))
         ((keywordp tree) (string-downcase (symbol-name tree)))
         (t (case (first tree)
              (:call (format nil "f~D(~A, ~A)" (second tree) (v04-render (third tree)) (v04-render (fourth tree))))
@@ -78,8 +78,8 @@
                  (expected (catch 'v04-failure (list (v04-evaluate entry functions (make-hash-table) nil))))
                  (source
                    (with-output-to-string (out)
-                     (dolist (id (if (evenp sample) '(0 1 2 3) '(3 2 1 0)))
-                       (format out "function f~D(n: int, flag: bool): int { var x = n; ~A } " id (v04-render (aref functions id))))
+                     (dolist (id '(3 2 1 0))
+                       (format out "let f~D = function(n: int, flag: bool): int { var x = n; ~A }; " id (v04-render (aref functions id))))
                      (format out "let result = ~A; ~A" (v04-render entry)
                              (if (listp expected) (format nil "result == ~D" (first expected)) "true")))))
             (handler-case
