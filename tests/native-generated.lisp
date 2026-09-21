@@ -84,5 +84,5 @@
   (check-native-relocation "var x = 1; let n = if(true){x = 2; 3}else{4}; x + n == 6" :false))
 
 (deftest v04-deterministic-standalone
-  (check-native-relocation "function f(n: int): int { g(n) + 1 } function g(n: int): int { if(n < 0){return -n;}else{n} } f(-3) == 4" :true)
-  (check-native-relocation "function f(n: int): int { g(n) } function g(n: int): int { return 1 / n; } f(0) == 0" "division by zero"))
+  (check-native-relocation "let g = function(n: int): int { if(n < 0){return -n;}else{n} }; let f = function(n: int): int { g(n) + 1 }; f(-3) == 4" :true)
+  (check-native-relocation "let g = function(n: int): int { return 1 / n; }; let f = function(n: int): int { g(n) }; f(0) == 0" "division by zero"))

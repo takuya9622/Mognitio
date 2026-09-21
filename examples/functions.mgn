@@ -1,7 +1,7 @@
-function total(price: int, count: int): int {
+let total = function(price: int, count: int): int {
     price * count
-}
-function payable(amount: int, discount: bool): int {
+};
+let payable = function(amount: int, discount: bool): int {
     if (discount) { amount - 25 } else { amount }
-}
+};
 payable(total(75, 4), true) == 275

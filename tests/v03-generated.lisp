@@ -27,7 +27,7 @@
                        (if (eq (first tree) :div) q (- a (* q b)))))
                     (otherwise (error "Invalid oracle node"))))))))))
 (defun v03-render (tree)
-  (cond ((integerp tree) (format nil "~D" tree)) ((eq tree :x) "x")
+  (cond ((integerp tree) (if (minusp tree) (format nil "(~D)" tree) (format nil "~D" tree))) ((eq tree :x) "x")
         ((eq (first tree) :if)
          (format nil "if(~A){~A}else{~A}" (v03-render (second tree))
                  (v03-render (third tree)) (v03-render (fourth tree))))

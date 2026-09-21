@@ -2,8 +2,8 @@
 
 (deftest v04-artifact-publication-and-output-faults
   (dolist (failure '(nil t))
-    (let* ((text (if failure "function f(): int { g() } function g(): int { 1 / 0 } f() == 0"
-                     "function f(): bool { return true; } f()"))
+    (let* ((text (if failure "let g = function(): int { 1 / 0 }; loop {break g();} == 0"
+                     "let f = function(): void { return; }; loop {f(); break;}; true"))
            (source (put-text (fresh-path) text)) (output (fresh-path ".elf")))
       (dolist (existing '(nil t))
         (when (probe-file output) (delete-file output))

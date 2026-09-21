@@ -10,7 +10,8 @@
                       (sequence-node-terminal (if-expression-else-branch root)))))
     (same program (checked-program-program checked))
     (dolist (node nodes) (same :bool (checked-normal-type checked node)))
-    (dolist (bad (list nil 17
+    (signals internal-failure (check-program (make-program :source (program-source program))))
+    (dolist (bad (list 17
                       (make-boolean-literal :value :invalid :span (node-span root))))
       (signals internal-failure (check-program (make-program :source (program-source program)
                                                              :root bad)))

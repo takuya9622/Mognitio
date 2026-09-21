@@ -83,8 +83,9 @@
         (emit :push-rbp) (emit :mov-reg :rbp :rsp)
         (let* ((arity (loop for b in (mognitio.ir:ir-function-blocks function)
                             maximize (loop for i in (mognitio.ir:basic-block-instructions b)
-                              when (eq (mognitio.ir:instruction-op i) :call)
-                              maximize (length (mognitio.ir:instruction-operands i)) into maximum
+                              when (member (mognitio.ir:instruction-op i) '(:call :call.value))
+                              maximize (- (length (mognitio.ir:instruction-operands i))
+                                          (if (eq (mognitio.ir:instruction-op i) :call.value) 1 0)) into maximum
                               finally (return (or maximum 0)))))
                (frame (* 16 (ceiling (+ (* 8 arity) (- temporary)) 16)))
                (loop-label (fresh-label)))
@@ -102,11 +103,21 @@
         (dolist (inst (mognitio.ir:basic-block-instructions block))
           (setf span (mognitio.ir:instruction-span inst))
           (case (mognitio.ir:instruction-op inst)
-            (:constant (emit :imm-rax (mognitio.ir:instruction-value inst)))
+            ((:constant :function) (emit :imm-rax (mognitio.ir:instruction-value inst)))
             (:call
              (loop for argument in (mognitio.ir:instruction-operands inst) for offset from 0 by 8 do
                (load-value argument) (emit :store-out offset :rax))
              (emit :call (list :function (mognitio.ir:instruction-value inst))))
+            (:call.value
+             (loop for argument in (rest (mognitio.ir:instruction-operands inst)) for offset from 0 by 8 do
+               (load-value argument) (emit :store-out offset :rax))
+             (let ((done (fresh-label)) (targets (second (mognitio.ir:instruction-value inst))))
+               (load-value (first (mognitio.ir:instruction-operands inst)))
+               (loop for tail on targets for id = (car tail) do
+                 (let ((next (fresh-label)))
+                   (when (cdr tail) (emit :imm-rcx id) (emit :cmp) (emit :jnz next))
+                   (emit :call (list :function id)) (emit :jmp done) (emit :label next)))
+               (emit :label done)))
             (otherwise
              (load-value (first (mognitio.ir:instruction-operands inst)))
              (when (second (mognitio.ir:instruction-operands inst))

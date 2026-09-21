@@ -1,6 +1,6 @@
 (asdf:defsystem "mognitio"
   :description "Mognitio compiler"
-  :version "0.4.1"
+  :version "0.5.0"
   :depends-on ("sb-posix")
   :serial t
   :components ((:file "src/packages")
@@ -45,7 +45,14 @@
                (:file "tests/v04-functions")
                (:file "tests/v04-generated")
                (:file "tests/v04-boundaries")
-               (:file "tests/v04-artifacts"))
+               (:file "tests/v04-artifacts")
+               (:file "tests/v05-core")
+               (:file "tests/v05-functions")
+               (:file "tests/v05-values")
+               (:file "tests/v05-loops")
+               (:file "tests/v05-generated")
+               (:file "tests/v05-conformance")
+               (:file "tests/v05-boundaries"))
   :perform (asdf:test-op (op system)
              (declare (ignore op system))
              (uiop:symbol-call :mognitio.tests :run-tests)))
