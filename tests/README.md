@@ -188,9 +188,19 @@ function declarations follow [Common Lisp LABELS](https://www.lispworks.com/docu
 | D05-12 | `v05-core-function-candidates`, `v05-cyclic-function-candidate-fixed-point` |
 | D05-13 through D05-15 | `v05-cyclic-allocation`, pressure/call composite, retained symbolic copy checks |
 | D05-16, D05-17 | Host/native function dispatch, callee ordering, lexical exits, first/middle/last dispatch arms |
-| D05-18 | `v05-handwritten-void-abi`, `v05-large-mixed-void-call`, retained handwritten call/frame tests |
+| D05-18 | `v05-handwritten-caller-generated-callee`, `v05-generated-caller-handwritten-callee`, `v05-handwritten-void-abi`, `v05-large-mixed-void-call`, retained call/frame tests |
 | D05-19 through D05-21 | No-exit loops, branch fixups, runtime ordering, publication, relocated cold/warm builds and write faults |
 | D05-22 | `v05-generated-control-oracle` plus the fixed acceptance cases above |
+
+The two ABI cross-tests replace only one code unit after production
+`lower-module` runs. A handwritten caller checks the generated callee's mixed
+eight-argument positions, zero void result and RSP/RBP restoration over two
+calls. A generated caller runs three loop iterations against a handwritten
+callee that checks every incoming slot and alignment, then clobbers R8-R11.
+Six live integer values and the loop state must survive each call.
+Compacted argument-slot mutations on each generated side and a nonzero
+generated void return are rejected. The handwritten-only fixture remains an
+encoder/ABI check; it does not independently validate production lowering.
 
 The new oracle uses seed 20260920 and 128 programs. Generated expressions
 have maximum depth 4 inside fixed control-flow templates; loop bodies run
