@@ -139,3 +139,14 @@
     (sb-posix:chmod (namestring path) #o700)
     (multiple-value-bind (out err code) (process-result (list (namestring path)))
       (same 0 code) (same "" out) (same "" err))))
+
+(deftest v05-host-void-and-dispatch-boundary
+  (is (null (symbol-package mognitio.backend.cl::*void-value*)))
+  (let* ((checked (check-program (parse-text "let f=function(): bool {true}; f()")))
+         (form (mognitio.backend.cl::program-form checked)))
+    (labels ((corrupt-dispatch (node)
+               (cond ((atom node) node)
+                     ((eq (first node) 'cl:case) (cons 'cl:case (cons 999 (cddr node))))
+                     (t (mapcar #'corrupt-dispatch node)))))
+      (let ((function (compile nil (list 'lambda nil (corrupt-dispatch form)))))
+        (signals internal-failure (funcall function))))))
