@@ -1,14 +1,13 @@
 # Mognitio
 
-Mognitio is a small language with typed function values and structured iteration.
-The released baseline is v0.5.0. This development branch starts v0.6.0
-with string parsing, static checks, the Common Lisp `run` backend,
-Core text operations, and independently verified safepoint root plans.
-Native ABI v3, root publication, and static literal objects are implemented.
-Native text helpers and mark-and-sweep collection are implemented and tested.
-This is development work toward v0.6.0; the released version remains v0.5.0.
-See [development progress](verification/v0.6.0-progress.md).
+Mognitio is a small language with typed function values, structured iteration,
+and immutable UTF-8 strings. Version 0.6.0 adds string concatenation, content
+equality, Unicode scalar length and slicing, and automatic memory reclamation
+in both execution backends.
+
 It can run an expression through SBCL or build a standalone Linux amd64 executable.
+See the [v0.6.0 validation record](verification/v0.6.0.md) for coverage,
+compatibility, and verification boundaries.
 
 ## Requirements
 
