@@ -150,3 +150,115 @@
                      (t (mapcar #'corrupt-dispatch node)))))
       (let ((function (compile nil (list 'lambda nil (corrupt-dispatch form)))))
         (signals internal-failure (funcall function))))))
+
+(defun v05-cross-abi (source owner handwritten &optional mutate)
+  ;; Replace one unit only, after production lowering has generated both sides.
+  ;; The opposite side retains production allocation, frame and call lowering.
+  (let ((layout (fdefinition 'mognitio.object:layout-units)) (seen nil) code)
+    (replacing (mognitio.object:layout-units
+                 (lambda (units)
+                   (dolist (unit units)
+                     (let ((id (mognitio.object:code-unit-owner unit)))
+                       (cond
+                         ((eql id owner)
+                          (is (not seen)) (setf seen t)
+                          (setf (mognitio.object:code-unit-instructions unit)
+                                (apply #'machine handwritten)))
+                         ((and mutate (eql id (- 1 owner)))
+                          (setf (mognitio.object:code-unit-instructions unit)
+                                (apply #'machine
+                                  (funcall mutate
+                                    (mapcar (lambda (i)
+                                              (cons (mognitio.machine:instruction-opcode i)
+                                                    (copy-list (mognitio.machine:instruction-operands i))))
+                                            (mognitio.object:code-unit-instructions unit)))))))))
+                   (funcall layout units)))
+      (setf code (mognitio.machine:lower-module (native-ir source))))
+    (is seen)
+    (let ((path (put-bytes (fresh-path ".elf")
+                  (mognitio.elf:make-image (mognitio.amd64:encode code)))))
+      (sb-posix:chmod (namestring path) #o700)
+      (process-result (list (namestring path))))))
+
+(defun v05-cross-abi-source (body tail)
+  (format nil "let probe = function(v0: void, a: int, v1: void, b: bool,
+                                   c: int, v2: void, d: bool, e: int): void { ~A };
+               ~A" body tail))
+
+(deftest v05-handwritten-caller-generated-callee
+  (let ((source (v05-cross-abi-source
+                 "if(a != 7){let bad=1/0;}; if(b){}else{let bad=1/0;};
+                  if(c != 11){let bad=1/0;}; if(d){let bad=1/0;};
+                  if(e != 13){let bad=1/0;};" "true"))
+        (caller
+          (append
+            '((:label (:function 0)) (:push-rbp) (:mov-reg :rbp :rsp))
+            (loop repeat 12 collect '(:push-zero))
+            '((:store-frame -8 :rsp) (:store-frame -16 :rbp)
+              (:imm-rax 2) (:store-frame -24 :rax) (:label :again)
+              (:imm-rax 0) (:store-out 0 :rax) (:imm-rax 7) (:store-out 8 :rax)
+              (:imm-rax 0) (:store-out 16 :rax) (:imm-rax 1) (:store-out 24 :rax)
+              (:imm-rax 11) (:store-out 32 :rax) (:imm-rax 0) (:store-out 40 :rax)
+              (:store-out 48 :rax) (:imm-rax 13) (:store-out 56 :rax)
+              (:call (:function 1)) (:test) (:jnz :bad)
+              (:mov-reg :rax :rsp) (:load-frame :rcx -8) (:cmp) (:jnz :bad)
+              (:mov-reg :rax :rbp) (:load-frame :rcx -16) (:cmp) (:jnz :bad)
+              (:load-frame :rax -24) (:imm-rcx 1) (:sub)
+              (:store-frame -24 :rax) (:test) (:jnz :again)
+              (:imm-rax 1) (:mov-reg :rsp :rbp) (:pop-rbp) (:ret)
+              (:label :bad) (:mov-edi 99) (:mov-eax 60) (:syscall) (:ud2)))))
+    (multiple-value-bind (out err code) (v05-cross-abi source 0 caller)
+      (same 0 code) (same (format nil "true~%") out) (same "" err))
+    ;; Compacting the first int over its preceding void slot must be detected.
+    (multiple-value-bind (out err code)
+        (v05-cross-abi source 0 caller
+          (lambda (forms)
+            (let ((load (find '(:load-frame :rax 24) forms :test #'equal)))
+              (is load) (setf (third load) 16))
+            forms))
+      (same 4 code) (same "" out) (is (search "division by zero" err)))
+    ;; A nonzero void result must fail the independent caller's RAX check.
+    (multiple-value-bind (out err code)
+        (v05-cross-abi source 0 caller
+          (lambda (forms)
+            (is (member '(:ret) forms :test #'equal))
+            (loop for form in forms
+                  when (equal form '(:ret)) collect '(:imm-rax 9)
+                  collect form)))
+      (same 99 code) (same "" out) (same "" err))))
+
+(deftest v05-generated-caller-handwritten-callee
+  (let ((source (v05-cross-abi-source ""
+                 "var i=0; var total=0;
+                  loop while(i < 3){
+                    let a=i+10; let b=i+20; let c=i+30;
+                    let d=i+40; let e=i+50; let f=i+60;
+                    probe(void, 7, void, true, 11, void, false, 13);
+                    total=total+a+b+c+d+e+f;
+                    i=i+1;
+                  };
+                  total == 648"))
+        (callee
+          (append
+            '((:label (:function 1)) (:push-rbp) (:mov-reg :rbp :rsp)
+              (:mov-reg :rax :rsp) (:imm-rcx 16) (:cqo) (:idiv)
+              (:mov-rax-rdx) (:test) (:jnz :bad))
+            ;; These offsets and values are ABI expectations, not lowerer output.
+            (loop for offset in '(16 24 32 40 48 56 64 72)
+                  for value in '(0 7 0 1 11 0 0 13)
+                  append (list (list :load-frame :rax offset)
+                               (list :imm-rcx value) '(:cmp) '(:jnz :bad)))
+            '((:imm-rax 99) (:mov-reg :r8 :rax) (:mov-reg :r9 :rax)
+              (:mov-reg :r10 :rax) (:mov-reg :r11 :rax)
+              (:imm-rax 0) (:mov-reg :rsp :rbp) (:pop-rbp) (:ret)
+              (:label :bad) (:mov-edi 99) (:mov-eax 60) (:syscall) (:ud2)))))
+    (multiple-value-bind (out err code) (v05-cross-abi source 1 callee)
+      (same 0 code) (same (format nil "true~%") out) (same "" err))
+    ;; The same compacted-slot mistake on the generated caller is also rejected.
+    (multiple-value-bind (out err code)
+        (v05-cross-abi source 1 callee
+          (lambda (forms)
+            (let ((store (find '(:store-out 8 :rax) forms :test #'equal)))
+              (is store) (setf (second store) 0))
+            forms))
+      (same 99 code) (same "" out) (same "" err))))
