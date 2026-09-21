@@ -57,7 +57,7 @@
   (labels ((report-failure (diagnostic code)
              ;; A broken diagnostic stream must not cause recursive reporting.
              (handler-case (progn (render-diagnostic diagnostic stderr) code)
-               (error () 3))))
+               ((or error storage-condition) () 3))))
     (handler-case (run-pipeline argv stdout)
       (mognitio.runtime:program-runtime-failure (condition)
         (mognitio.runtime:write-runtime-failure condition stderr))

@@ -45,5 +45,5 @@
             ;; In-memory adapters preserve the driver test interface.
             (progn (write-string (sb-ext:octets-to-string bytes :external-format :utf-8) stream)
                    (finish-output stream)))
-      (error () nil)))
+      ((or error storage-condition) () nil)))
   (failure-status (failure-kind condition)))

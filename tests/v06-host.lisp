@@ -111,3 +111,29 @@
         (same (second test) code) (same "" out) (same 1 (count #\Newline err))
         (is (search (third test) err))
         (is (not (search "division by zero" err)))))))
+
+
+(deftest v06-diagnostic-storage-failures
+  (let ((path (put-text (fresh-path) "let unused=\"a\"+\"b\"; let later=1/0; true")))
+    (dolist (pair '(("allocation-report" 4) ("compiler-report" 3) ("source-report" 3)))
+      (multiple-value-bind (out err code)
+          (process-result (list "sbcl" "--noinform" "--script"
+                                (namestring (root-path "tests/v06-host-fault-entry.lisp"))
+                                (first pair) (namestring path)))
+        (same (second pair) code) (same "" out) (same "" err)))))
+
+(deftest v06-concat-independent-size-boundaries
+  ;; Impossible metadata is test-only, and must fail before allocation/copy.
+  (let* ((bytes (make-array 1 :element-type '(unsigned-byte 8) :initial-element 65))
+         (left (mognitio.text::%make-text-value bytes mognitio.integer:+maximum+))
+         (right (mognitio.text::%make-text-value bytes 1)) (allocated nil))
+    (replacing (mognitio.text::allocate-text
+                 (lambda (&rest args) (declare (ignore args)) (setf allocated t) (error "Unexpected allocation")))
+      (handler-case (progn (mognitio.text:text-concat left right) (is nil))
+        (mognitio.runtime:program-runtime-failure (c)
+          (same :string-size-overflow (mognitio.runtime:failure-kind c)))))
+    (same nil allocated)
+    (let ((boundary (mognitio.text:text-concat
+                     (mognitio.text::%make-text-value bytes (1- mognitio.integer:+maximum+)) right)))
+      (same mognitio.integer:+maximum+ (mognitio.text:text-length boundary))
+      (same #(65 65) (mognitio.text:text-value-octets boundary)))))
