@@ -310,3 +310,9 @@ padding, fixup target kinds, and deterministic encoding.
 
 Internal options and heap records are test adapters, not public language or CLI
 features. Normal artifacts retain boolean stdout and empty stderr on success.
+
+Debug root classification tests reject a four-byte object's interior pointer
+whose apparent flags contain the static bit, as well as freed interiors,
+forged static headers and unmapped addresses. Known literal starts (including
+empty), zero slots and duplicate dynamic roots remain valid. Validation checks
+address membership before reading candidate metadata.

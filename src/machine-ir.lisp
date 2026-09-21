@@ -188,7 +188,8 @@
                                     collect (mognitio.ir:instruction-op i))))))
              (operations (remove-if-not (lambda (op) (member op required-operations))
                            '(:text.length :text.equal :text.not-equal :text.concat :text.slice)))
-             (helpers (mognitio.native.runtime:text-helper-units operations))
+             (helpers (mognitio.native.runtime:text-helper-units
+                        operations (length (mognitio.ir:module-literal-pool module))))
              (literals (mognitio.object:make-code-unit :owner :literals :instructions
                          (loop for form in (mognitio.native.runtime:literal-forms (mognitio.ir:module-literal-pool module))
                                collect (make-instruction :opcode (first form) :operands (rest form))))))

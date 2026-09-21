@@ -56,3 +56,44 @@
                    '((:store-frame -32 :rax) (:call (:runtime :collect)) (:imm-rax 1)))))
       (multiple-value-bind (out err code) (v06-raw-result forms '(:validate t))
         (same 3 code) (same "" out) (same "" err)))))
+
+(deftest v06-native-interior-root-static-bit
+  (multiple-value-bind (out err code)
+      (v06-raw-result
+        (append (v06-raw-allocate 4)
+                '((:add-imm :rax 8) (:store-frame -32 :rax)
+                  (:call (:runtime :collect)) (:imm-rax 1)))
+        '(:validate t))
+    (same 3 code) (same "" out) (same "" err)))
+
+(deftest v06-native-root-address-classification
+  ;; Known empty and nonempty literal starts are accepted without writing RX
+  ;; storage. Zero slots and duplicate dynamic roots survive repeated marking.
+  (multiple-value-bind (out err code)
+      (v06-raw-result
+        (append
+          (loop for id below 3 append
+            `((:lea-text (:text ,id)) (:store-frame -32 :rax) (:call (:runtime :collect))))
+          (v06-raw-allocate 4)
+          '((:store-frame -32 :rax) (:store-frame -24 :rax)
+            (:call (:runtime :collect)) (:load-frame :rax -32)
+            (:load-word :rax :rax 8) (:cmp-imm :rax 1) (:set-bool :eq)))
+        '(:validate t))
+    (same 0 code) (same (format nil "true~%") out) (same "" err))
+  (dolist (kind '(:literal-interior :unmapped :fake-static :free-interior :heap-static))
+    (multiple-value-bind (out err code)
+        (v06-raw-result
+          (append
+            (case kind
+              (:literal-interior '((:lea-text (:text 1)) (:add-imm :rax 8)))
+              (:unmapped '((:imm-rax 1)))
+              (:fake-static '((:lea-base :rax :rbp -64) (:imm-rcx 5) (:store-word :rax 8 :rcx)))
+              (:free-interior
+               (append (v06-raw-allocate 4)
+                       '((:store-frame -8 :rax) (:call (:runtime :collect))
+                         (:load-frame :rax -8) (:add-imm :rax 8))))
+              (:heap-static
+               (append (v06-raw-allocate 4) '((:imm-rcx 5) (:store-word :rax 8 :rcx)))))
+            '((:store-frame -32 :rax) (:call (:runtime :collect)) (:imm-rax 1)))
+          '(:validate t))
+      (same 3 code) (same "" out) (same "" err))))
