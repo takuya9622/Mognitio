@@ -4,7 +4,7 @@
   (unless (checked-program-p checked) (internal-error "Expected CheckedProgram"))
   (let ((signatures (checked-program-signatures checked)) (bindings (checked-program-bindings checked))
         (edges (make-hash-table)) (seen-functions (make-hash-table)) (seen-bindings (make-hash-table)) (seen-loops (make-hash-table))
-        (plain-breaks (make-hash-table)) (loop-stack nil))
+        (plain-breaks (make-hash-table)) (valued-breaks (make-hash-table)) (break-types (make-hash-table)) (loop-stack nil))
     (labels ((ensure (ok message) (unless ok (internal-error message)))
              (nt (node) (checked-normal-type checked node))
              (targets (node) (completion-targets (checked-completion checked node)))
@@ -15,6 +15,10 @@
                  (dolist (child nodes exits)
                    (setf exits (union exits (exits-of child) :test #'equal))
                    (unless (nt child) (return exits)))))
+             (loop-exits (node)
+               (let ((condition (loop-expression-condition node)) (body (loop-expression-body node)))
+                 (if condition (union (exits-of condition) (when (nt condition) (exits-of body)) :test #'equal)
+                     (exits-of body))))
              (derive-exits (node owner)
                ;; Separate control-flow reconstruction; producer helpers are not used.
                (typecase node
@@ -28,8 +32,13 @@
                  (loop-expression
                   (let ((id (loop-info-id (checked-loop checked node))))
                     (remove-if (lambda (exit) (and (member (first exit) '(:break :continue)) (= id (second exit))))
-                               (exits-of (loop-expression-body node)))))
-                 (break-statement (list (list :break (loop-info-id (checked-control checked node)) :void nil)))
+                               (loop-exits node))))
+                 (break-statement
+                  (let ((child (break-statement-value node)))
+                    (union (exits-of child)
+                           (when (or (null child) (nt child))
+                             (list (list :break (loop-info-id (checked-control checked node))
+                                         (if child (nt child) :void) (when child (targets child))))) :test #'equal)))
                  (continue-statement (list (list :continue (loop-info-id (checked-control checked node)) nil nil)))
                  (return-statement
                   (let ((child (return-statement-value node)))
@@ -79,20 +88,31 @@
                  (typecase node
                    (loop-expression
                     (let* ((info (checked-loop checked node)) (id (loop-info-id info)) (outer loop-stack)
-                           (body (loop-expression-body node)))
+                           (condition (loop-expression-condition node)) (body (loop-expression-body node)))
                       (ensure (and (eql id (hash-table-count seen-loops)) (= owner (loop-info-owner info))
                                    (eq node (loop-info-node info)) (not (gethash id seen-loops))) "Invalid loop identity")
                       (setf (gethash id seen-loops) info loop-stack (cons info loop-stack))
+                      (when condition (visit condition owner scopes) (require-type (nt condition) :bool))
                       (visit body owner scopes) (require-type (nt body) :void)
                       (setf loop-stack outer)
-                      (when (find-if (lambda (exit) (and (eq (first exit) :break) (= id (second exit)))) (exits-of body))
-                        (setf type :void))
-                      (ensure (and (equal type (loop-info-normal-type info)) (null (loop-info-targets info))
-                                   (eql (gethash id plain-breaks) (loop-info-plain info)) (null (loop-info-valued info)))
+                      (let ((breaks (remove-if-not (lambda (exit) (and (eq (first exit) :break) (= id (second exit)))) (loop-exits node))))
+                        (setf type (if condition (when (or (nt condition) breaks) :void) (third (first breaks)))
+                              candidate (reduce (lambda (a b) (union a b)) (mapcar #'fourth breaks) :initial-value nil)))
+                      (ensure (and (not (and (gethash id plain-breaks) (gethash id valued-breaks)))
+                                   (<= (length (gethash id break-types)) 1)
+                                   (same-set (gethash id break-types) (loop-info-types info))
+                                   (equal type (loop-info-normal-type info)) (same-set candidate (loop-info-targets info))
+                                   (eql (gethash id plain-breaks) (loop-info-plain info))
+                                   (eql (gethash id valued-breaks) (loop-info-valued info)))
                               "Invalid loop summary")))
                    (break-statement
                     (ensure (and loop-stack (eq (checked-control checked node) (first loop-stack))) "Invalid break target")
-                    (setf (gethash (loop-info-id (first loop-stack)) plain-breaks) t))
+                    (let* ((info (first loop-stack)) (id (loop-info-id info)) (child (break-statement-value node)))
+                      (when child (visit child owner scopes)
+                        (ensure (null (loop-expression-condition (loop-info-node info))) "Valued conditional break"))
+                      (setf (gethash id (if child valued-breaks plain-breaks)) t)
+                      (let ((result (if child (nt child) :void))) (when result (pushnew result (gethash id break-types) :test #'equal)))))
+
                    (continue-statement
                     (ensure (and loop-stack (eq (checked-control checked node) (first loop-stack))) "Invalid continue target"))
                    (void-literal (setf type :void))

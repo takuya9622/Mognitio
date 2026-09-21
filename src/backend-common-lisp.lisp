@@ -31,12 +31,22 @@
       (loop-expression
        (let* ((id (loop-info-id (checked-loop checked node))) (exit (make-symbol "BREAK")) (again (make-symbol "CONTINUE"))
               (inner (acons id (cons exit again) loops)))
-         (list 'cl:block exit
-               (list 'cl:tagbody again
-                     (expression-form (loop-expression-body node) checked names functions exits inner)
-                     (list 'cl:go again)))))
+         (let* ((condition (loop-expression-condition node))
+                (condition-form (when condition (expression-form condition checked names functions exits inner))))
+           (list 'cl:block exit
+                 (append (list 'cl:tagbody again)
+                         (when condition
+                           (list (if (checked-normal-type checked condition)
+                                     (list 'cl:unless condition-form (list 'cl:return-from exit '(quote :mognitio-void)))
+                                     condition-form)))
+                         (when (or (null condition) (checked-normal-type checked condition))
+                           (list (expression-form (loop-expression-body node) checked names functions exits inner)))
+                         (list (list 'cl:go again)))))))
       (break-statement
-       (list 'cl:return-from (cadr (assoc (loop-info-id (checked-control checked node)) loops)) '(quote :mognitio-void)))
+       (let ((value (break-statement-value node)))
+         (if (or (null value) (checked-normal-type checked value))
+             (list 'cl:return-from (cadr (assoc (loop-info-id (checked-control checked node)) loops)) (form value))
+             (form value))))
       (continue-statement
        (list 'cl:go (cddr (assoc (loop-info-id (checked-control checked node)) loops))))
       (void-literal '(quote :mognitio-void))
