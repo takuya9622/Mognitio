@@ -126,3 +126,12 @@
   (:export #:analyze-roots #:verify-roots #:root-plan #:root-plan-function-id
            #:root-plan-capacity #:root-plan-sites #:root-site #:root-site-block-id
            #:root-site-instruction-index #:root-site-values))
+
+(defpackage #:mognitio.native.runtime
+  (:use #:cl #:mognitio.diagnostics)
+  (:export #:+context-size+ #:+root-head+ #:+arena-head+ #:+page-size+
+           #:entry-forms #:literal-forms #:text-helper-units))
+(defpackage #:mognitio.frame
+  (:use #:cl #:mognitio.diagnostics)
+  (:export #:plan-frame #:verify-layout #:verify-sections #:layout-size #:layout-root-offset
+           #:layout-capacity #:layout-temporary #:layout-arity))

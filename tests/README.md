@@ -280,3 +280,15 @@ the producer with a failing stub while running the independent verifier.
 All text helper calls are tested as register clobbers; only allocating helpers
 and user calls are root safepoints. These tests validate root plans, not native
 root publication or GC behavior.
+
+## v0.6.0 native frame increment
+
+`v06-native-frames.lisp` checks ABI v3 context initialization, AT_PAGESZ against
+an independent OS query, mixed string/void/int/bool arguments in both handwritten
+ABI directions, R15 and RAX preservation, root-head restoration, and repeated
+helper calls. Test-only helper probes validate published roots and clobber
+caller-saved registers without implementing text operations or GC.
+Frame corruption cases cover slot clearing, homes, publication order, overlap,
+stack-probe size, missing sites/unlink, return clobbers, and extraneous calls.
+Static object tests inspect byte/scalar lengths, flags, alignment, NUL payloads,
+padding, fixup target kinds, and deterministic encoding.

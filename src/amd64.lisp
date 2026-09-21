@@ -7,7 +7,7 @@
   (loop for index below width collect (ldb (byte 8 (* 8 index)) value)))
 
 (defun register-code (name)
-  (or (position name '(:rax :rcx :rdx :rbx :rsp :rbp :rsi :rdi :r8 :r9 :r10 :r11))
+  (or (position name '(:rax :rcx :rdx :rbx :rsp :rbp :rsi :rdi :r8 :r9 :r10 :r11 :r12 :r13 :r14 :r15))
       (internal-error "Invalid machine register")))
 
 (defun memory-template (opcode register base displacement)
@@ -17,6 +17,15 @@
     (append (list (logior #x48 (if (>= reg 8) 4 0)) opcode
                   (logior #x80 (ash (mod reg 8) 3) (ecase base (:rbp 5) (:rsp 4))))
             (when (eq base :rsp) (list #x24))
+            (little-endian displacement 4 t))))
+
+(defun base-memory-template (opcode register base displacement &optional (width64 t))
+  (let ((reg (register-code register)) (b (register-code base)))
+    (unless (typep displacement '(signed-byte 32)) (internal-error "Invalid memory displacement"))
+    (append (list (logior (if width64 #x48 #x40) (if (>= reg 8) 4 0) (if (>= b 8) 1 0)))
+            (if (listp opcode) opcode (list opcode))
+            (list (logior #x80 (ash (mod reg 8) 3) (mod b 8)))
+            (when (= (mod b 8) 4) (list #x24))
             (little-endian displacement 4 t))))
 
 (defun instruction-template (instruction)
@@ -42,6 +51,21 @@
                (mognitio.object:symbol-kind (first args))
                (values (append prefix '(0 0 0 0)) (first args))))
       (case op
+        (:load-word (arity 3) (base-memory-template #x8b (first args) (second args) (third args)))
+        (:store-word (arity 3) (base-memory-template #x89 (third args) (first args) (second args)))
+        (:load-byte (arity 3) (base-memory-template '(#x0f #xb6) (first args) (second args) (third args) nil))
+        (:store-byte (arity 3) (base-memory-template #x88 (third args) (first args) (second args) nil))
+        (:lea-base (arity 3) (base-memory-template #x8d (first args) (second args) (third args)))
+        ((:add-imm :cmp-imm)
+         (arity 2)
+         (let ((reg (register-code (first args))))
+           (append (list (logior #x48 (if (>= reg 8) 1 0)) #x81
+                         (logior (if (eq op :add-imm) #xc0 #xf8) (mod reg 8)))
+                   (little-endian (second args) 4 t))))
+        (:lea-text (relative '(#x48 #x8d #x05)))
+        (:jb (relative '(#x0f #x82)))
+        (:jae (relative '(#x0f #x83)))
+        (:align (arity 1) (unless (eql (first args) 8) (internal-error "Invalid image alignment")) nil)
         (:mov-reg
          (arity 2)
          (let ((dst (register-code (first args))) (src (register-code (second args))))
@@ -128,6 +152,8 @@
                     (mognitio.object:make-image-symbol :name name
                       :kind (mognitio.object:symbol-kind name) :offset position)))
             (progn
+              (when (eq (mognitio.machine:instruction-opcode inst) :align)
+                (setf bytes (make-list (mod (- position) 8) :initial-element 0)))
               (when target
                 (push (mognitio.object:make-fixup :offset (+ position (- (length bytes) 4))
                         :end (+ position (length bytes)) :target target
@@ -142,10 +168,12 @@
         (let* ((target (mognitio.object:fixup-target fixup)) (symbol (gethash target labels))
                (use (mognitio.object:fixup-use fixup)))
           (unless symbol (internal-error "Unresolved machine label"))
-          (when (or (and (eq use :call) (not (eq (mognitio.object:image-symbol-kind symbol) :function)))
-                    (and (member use '(:call :jmp :jo :jz :jnz :jle))
-                         (eq (mognitio.object:image-symbol-kind symbol) :data)))
+          (when (or (and (eq use :call) (not (member (mognitio.object:image-symbol-kind symbol) '(:function :helper))))
+                    (and (member use '(:call :jmp :jo :jz :jnz :jle :jb :jae))
+                         (member (mognitio.object:image-symbol-kind symbol) '(:data :text))))
             (internal-error "Invalid fixup target kind"))
+          (when (and (eq use :lea-text) (not (eq (mognitio.object:image-symbol-kind symbol) :text)))
+            (internal-error "Text address fixup requires an object symbol"))
           (replace image (little-endian (- (mognitio.object:image-symbol-offset symbol)
                                           (mognitio.object:fixup-end fixup)) 4 t)
                    :start1 (mognitio.object:fixup-offset fixup))))
