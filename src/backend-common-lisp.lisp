@@ -7,7 +7,7 @@
   (warnings-p nil :read-only t) (compiler-output "" :read-only t))
 
 (defun expression-form (node checked names functions exits)
-  (labels ((form (child) (expression-form child checked names functions exits))
+  (labels ((form (child) (if child (expression-form child checked names functions exits) '(quote :mognitio-void)))
            (symbol-for (child)
              (or (gethash (local-symbol-id (checked-symbol checked child)) names)
                  (internal-error "Missing host binding")))
@@ -21,21 +21,16 @@
                (list 'cl:let* (nreverse bindings) (funcall build (nreverse args)))))
            (sequence-form (statements tail index)
              (if (= index (length statements)) (form tail)
-                 (let* ((statement (aref statements index))
-                        (rhs (etypecase statement
-                               (local-binding (local-binding-initializer statement))
-                               (assignment (assignment-rhs statement)))))
-                   (unless (checked-normal-type checked rhs)
-                     (return-from sequence-form (form rhs)))
-                   (etypecase statement
-                     (local-binding
-                      (list 'cl:let
-                            (list (list (symbol-for statement) (form (local-binding-initializer statement))))
-                            (sequence-form statements tail (1+ index))))
-                     (assignment
-                      (list 'cl:progn (list 'cl:setq (symbol-for statement) (form (assignment-rhs statement)))
-                            (sequence-form statements tail (1+ index)))))))))
+                 (let ((statement (aref statements index)))
+                   (unless (checked-normal-type checked statement) (return-from sequence-form (form statement)))
+                   (if (typep statement 'local-binding)
+                       (list 'cl:let (list (list (symbol-for statement) (form (local-binding-initializer statement))))
+                             (sequence-form statements tail (1+ index)))
+                       (list 'cl:progn (form statement) (sequence-form statements tail (1+ index))))))))
     (typecase node
+      (void-literal '(quote :mognitio-void))
+      (expression-statement (form (expression-statement-expression node)))
+      (assignment (list 'cl:progn (list 'cl:setq (symbol-for node) (form (assignment-rhs node))) '(quote :mognitio-void)))
       (boolean-literal (ecase (boolean-literal-value node) (:true t) (:false nil)))
       (integer-literal (checked-literal checked node))
       (function-expression (signature-id (checked-function checked node)))
@@ -44,7 +39,7 @@
       (grouping (form (grouping-expression node)))
       (return-statement
        (let ((value (return-statement-value node)))
-         (if (checked-normal-type checked value)
+         (if (or (null value) (checked-normal-type checked value))
              (list 'cl:return-from (gethash (checked-return checked node) exits) (form value))
              (form value))))
       (call-expression

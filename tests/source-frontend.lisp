@@ -110,14 +110,14 @@
     (same 9 (span-end (token-span (aref tokens 0))))))
 
 (deftest v09-v12-invalid-grammar
-  (dolist (text '("" " " "if(true){}else{false}" "if(true){true false}else{false}"
+  (dolist (text '("" " "  "if(true){true false}else{false}"
                   "if true){true}else{false}" "if(true{true}else{false}"
                   "if(true)true}else{false}" "if(true){true else{false}"
-                  "if(true){true}" "if(true){true}else false}"
+                   "if(true){true}else false}"
                   "if(true){true}else{false" "true)" "true false"
                   "if(true){true}else{false}if(false){false}else{true}"
                   "if(true){true}else if(false){true}else{false}"
-                  "if(true){true}else{}"))
+                  ))
     (expect-invalid text "parse")))
 
 (deftest frontend-spans
@@ -127,3 +127,7 @@
     (same 26 (span-end (node-span node)))
     (same 4 (span-start (node-span (if-expression-condition node))))
     (same 8 (span-end (node-span (if-expression-condition node))))))
+
+(deftest v05-legacy-if-type-rejections
+  (dolist (text '("if(true){}else{false}" "if(true){true}" "if(true){true}else{}"))
+    (v03-reject text "semantic")))

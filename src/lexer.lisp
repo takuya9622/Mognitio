@@ -7,7 +7,7 @@
 (defparameter *keywords*
   '(("true" . :true) ("false" . :false) ("if" . :if) ("else" . :else)
     ("let" . :let) ("var" . :var)
-    ("function" . :function) ("return" . :return) ("int" . :int) ("bool" . :bool)))
+    ("void" . :void) ("function" . :function) ("return" . :return) ("int" . :int) ("bool" . :bool)))
 (defparameter *operators*
   '(("==" . :eq) ("!=" . :ne) ("<=" . :le) (">=" . :ge)
     ("=" . :assign) ("+" . :add) ("-" . :sub) ("*" . :mul)

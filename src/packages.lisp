@@ -13,7 +13,9 @@
            #:span-diagnostic #:fail-at))
 (defpackage #:mognitio.syntax
   (:use #:cl #:mognitio.source)
-  (:export #:token #:make-token #:token-kind #:token-span #:boolean-literal
+  (:export #:void-literal #:make-void-literal #:void-literal-span
+           #:expression-statement #:make-expression-statement #:expression-statement-expression
+           #:token #:make-token #:token-kind #:token-span #:boolean-literal
            #:make-boolean-literal #:boolean-literal-value #:boolean-literal-span
            #:if-expression #:make-if-expression #:if-expression-condition
            #:if-expression-then-branch #:if-expression-else-branch #:if-expression-span

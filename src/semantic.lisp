@@ -45,7 +45,7 @@
   t)
 
 (defun check-program (program)
-  (unless (typep program 'program) (internal-error "Expected Program"))
+  (unless (and (typep program 'program) (program-root program)) (internal-error "Expected Program"))
   (let* ((summaries (make-hash-table :test #'eq)) (resolved (make-hash-table :test #'eq))
          (literals (make-hash-table :test #'eq)) (consumed (make-hash-table :test #'eq))
          (calls (make-hash-table :test #'eq)) (returns (make-hash-table :test #'eq))
@@ -93,16 +93,22 @@
                  (grouping (static-target (grouping-expression node)))
                  (variable-reference (local-symbol-static-target (gethash node resolved)))))
              (sequence-check (node statements terminal scopes)
-               (let* ((reachable t)
-                      (children (loop for s across statements collect
-                                  (progn (unless reachable (fail-at (node-span s) :semantic "Unreachable sequence element"))
-                                         (let ((result (expression s scopes))) (setf reachable (normal result)) result))))
-                      (tail (progn (unless reachable (fail-at (node-span terminal) :semantic "Unreachable sequence tail"))
-                                   (expression terminal scopes))))
-                 (summary node (when (every #'normal children) (normal tail)) (append children (list tail))
-                          (completion-targets tail))))
+               (let ((children nil) (reachable t))
+                 (loop for child across statements do
+                   (unless reachable (fail-at (node-span child) :semantic "Unreachable sequence element"))
+                   (let ((result (expression child scopes))) (push result children) (setf reachable (normal result))))
+                 (when terminal
+                   (unless reachable (fail-at (node-span terminal) :semantic "Unreachable sequence tail"))
+                   (push (expression terminal scopes) children))
+                 (summary node (when reachable (if terminal (normal (first children)) :void))
+                          (reverse children) (when terminal (completion-targets (first children))))))
              (expression (node scopes)
                (typecase node
+                 (void-literal (summary node :void nil))
+                 (expression-statement
+                  (let ((child (expression (expression-statement-expression node) scopes)))
+                    (require-type node (normal child) :void)
+                    (summary node (normal child) (list child))))
                  (boolean-literal
                   (unless (member (boolean-literal-value node) '(:true :false)) (internal-error "Invalid boolean literal"))
                   (summary node :bool nil))
@@ -140,17 +146,17 @@
                     (setf (local-symbol-type (car entry)) (normal child) (cdr entry) :visible
                           (local-symbol-targets (car entry)) (completion-targets child)
                           (local-symbol-static-target (car entry)) (static-target (local-binding-initializer node)))
-                    (summary node (normal child) (list child) (completion-targets child))))
+                    (summary node :void (list child))))
                  (assignment
                   (let* ((symbol (reference node (assignment-name node) scopes))
                          (child (expression (assignment-rhs node) scopes)))
                     (unless (eq (local-symbol-mutability symbol) :var)
                       (fail-at (node-span node) :semantic "Cannot assign to immutable binding"))
                     (require-type node (normal child) (local-symbol-type symbol))
-                    (summary node (normal child) (list child))))
+                    (summary node (when (normal child) :void) (list child))))
                  (return-statement
                   (when (zerop owner) (fail-at (node-span node) :semantic "Return requires a function"))
-                  (let ((child (expression (return-statement-value node) scopes)))
+                  (let ((child (if (return-statement-value node) (expression (return-statement-value node) scopes) (make-completion :normal-type :void))))
                     (require-type node (normal child) (signature-result-type (aref signatures owner)))
                     (setf (gethash node returns) owner)
                     (summary node nil (list child) nil (not (null (normal child))))))
@@ -190,7 +196,7 @@
                  (if-expression
                   (let* ((condition (expression (if-expression-condition node) scopes))
                          (a (expression (if-expression-then-branch node) scopes))
-                         (b (expression (if-expression-else-branch node) scopes)))
+                         (b (if (if-expression-else-branch node) (expression (if-expression-else-branch node) scopes) (make-completion :normal-type :void))))
                     (require-type (if-expression-condition node) (normal condition) :bool)
                     (when (and (normal a) (normal b)) (require-type node (normal b) (normal a)))
                     (let ((result (summary node (when (normal condition) (or (normal a) (normal b))) (list condition)

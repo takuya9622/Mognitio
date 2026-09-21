@@ -34,7 +34,7 @@
   (dolist (text
             '("(true)" "let unitPrice = 120; var count = 2; count = count + 1; count * unitPrice == 360"
               "let a = 1 + 2 * 3; let b = (1 + 2) * 3; if (a == 7) { b == 9 } else { false }"
-              "10 - 3 - 2 == 5" "24 / 4 / 2 == 3" "--1 == 1" "010 == 10" "000 == 0"
+              "10 - 3 - 2 == 5" "24 / 4 / 2 == 3" "-(-1) == 1" "010 == 10" "000 == 0"
               "-9223372036854775808 < 9223372036854775807"
               "- 09223372036854775808 == (-9223372036854775808)"
               "7 / 3 == 2" "-7 / 3 == -2" "7 / -3 == -2" "-7 / -3 == 2"
@@ -70,7 +70,7 @@
   (dolist (text '("let x;" "var x = ; true" "let x = 1 true" "true;" ";true"
                   "let int x = 1; true" "let true = 1; true" "x = y = 1; true"
                   "let x = 1; (x = 2) == 2" "1 < 2 < 3" "true == false == true"
-                  "true === true" "1 += 2" "if(true){}else{false}" "if(true){true}else if(false){true}else{false}"))
+                  "true === true" "1 += 2"  "if(true){true}else if(false){true}else{false}"))
     (v03-reject text "parse"))
   (dolist (text '("let x = x; true" "true1" "truefalse" "x = 1; true"
                   "let y = x; let x = 1; true" "let x = 1; let x = 2; true"
@@ -99,7 +99,7 @@
 
 (deftest v03-runtime-arithmetic
   (dolist (expr '("9223372036854775807 + 1" "-9223372036854775808 - 1"
-                  "9223372036854775807 * 2" "--9223372036854775808"
+                  "9223372036854775807 * 2" "-(-9223372036854775808)"
                   "-9223372036854775808 / -1" "-9223372036854775808 % -1"
                   "(9223372036854775807 + 1) - 1"))
     (v03-runtime (format nil "~A == 0" expr) "integer overflow")

@@ -33,12 +33,18 @@
                  (grouping (static-id (grouping-expression node)))
                  (variable-reference (local-symbol-static-target (checked-symbol checked node)))))
              (sequence-visit (statements tail owner scopes)
-               (map nil (lambda (s) (visit s owner scopes)) statements)
-               (visit tail owner scopes)
-               (values (when (every (lambda (s) (nt s)) (coerce statements 'list)) (nt tail)) (targets tail)))
+               (let ((reachable t))
+                 (loop for child across statements do
+                   (ensure reachable "Unreachable checked statement") (visit child owner scopes) (setf reachable (nt child)))
+                 (when tail (ensure reachable "Unreachable checked tail") (visit tail owner scopes))
+                 (values (when reachable (if tail (nt tail) :void)) (when tail (targets tail)))))
              (visit (node owner scopes &optional consumed)
                (let ((type nil) (candidate nil))
                  (typecase node
+                   (void-literal (setf type :void))
+                   (expression-statement
+                    (let ((child (expression-statement-expression node)))
+                      (visit child owner scopes) (require-type (nt child) :void) (setf type (nt child))))
                    (boolean-literal (setf type :bool))
                    (integer-literal
                     (if consumed
@@ -78,15 +84,16 @@
                                    (not (and (function-type-p (nt child)) (eq (local-binding-mutability node) :var)))
                                    (same-set (local-symbol-targets symbol) (targets child))
                                    (eql (local-symbol-static-target symbol) (static-id child))) "Invalid checked initializer")
-                      (setf (cdr (lookup (local-binding-name node) scopes)) t type (nt child) candidate (targets child))))
+                      (setf (cdr (lookup (local-binding-name node) scopes)) t type :void)))
                    (assignment
                     (let ((symbol (reference node (assignment-name node) owner scopes)) (child (assignment-rhs node)))
                       (ensure (eq (local-symbol-mutability symbol) :var) "Immutable checked assignment")
-                      (visit child owner scopes) (require-type (nt child) (local-symbol-type symbol)) (setf type (nt child))))
+                      (visit child owner scopes) (require-type (nt child) (local-symbol-type symbol)) (setf type (when (nt child) :void))))
                    (return-statement
                     (ensure (and (plusp owner) (= owner (checked-return checked node))) "Invalid return owner")
-                    (visit (return-statement-value node) owner scopes)
-                    (require-type (nt (return-statement-value node)) (signature-result-type (aref signatures owner))))
+                    (when (return-statement-value node) (visit (return-statement-value node) owner scopes))
+                    (require-type (if (return-statement-value node) (nt (return-statement-value node)) :void)
+                                  (signature-result-type (aref signatures owner))))
                    (call-expression
                     (visit (call-expression-callee node) owner scopes)
                     (map nil (lambda (arg) (visit arg owner scopes)) (call-expression-arguments node))
@@ -111,14 +118,14 @@
                       (ensure (member op '(:add :sub :mul :div :rem :eq :ne :lt :le :gt :ge)) "Invalid binary op")
                       (if (member op '(:eq :ne))
                           (progn (ensure (and (member (nt a) '(nil :int :bool)) (member (nt b) '(nil :int :bool))) "Invalid equality")
-                                 (when (nt a) (require-type (nt b) (nt a))))
+                                 (when (nt a) (require-type (if b (nt b) :void) (nt a))))
                           (progn (require-type (nt a) :int) (require-type (nt b) :int)))
                       (when (and (nt a) (nt b)) (setf type (if (member op '(:add :sub :mul :div :rem)) :int :bool)))))
                    (if-expression
                     (let ((condition (if-expression-condition node)) (a (if-expression-then-branch node)) (b (if-expression-else-branch node)))
-                      (visit condition owner scopes) (visit a owner scopes) (visit b owner scopes)
-                      (require-type (nt condition) :bool) (when (nt a) (require-type (nt b) (nt a)))
-                      (when (nt condition) (setf type (or (nt a) (nt b)) candidate (union (targets a) (targets b))))))
+                      (visit condition owner scopes) (visit a owner scopes) (when b (visit b owner scopes))
+                      (require-type (nt condition) :bool) (when (nt a) (require-type (if b (nt b) :void) (nt a)))
+                      (when (nt condition) (setf type (or (nt a) (if b (nt b) :void)) candidate (union (targets a) (when b (targets b)))))))
                    (t (internal-error "Invalid checked AST")))
                  (ensure (and (equal type (nt node)) (same-set (if type candidate nil) (targets node))) "Invalid checked completion")
                  (ensure (member (completion-may-return (checked-completion checked node)) '(nil t)) "Invalid return summary")

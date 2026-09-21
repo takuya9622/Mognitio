@@ -37,7 +37,7 @@
                   (v04-math (first tree) a b))))))))
 
 (defun v04-render (tree)
-  (cond ((integerp tree) (format nil "~D" tree))
+  (cond ((integerp tree) (if (minusp tree) (format nil "(~D)" tree) (format nil "~D" tree)))
         ((keywordp tree) (string-downcase (symbol-name tree)))
         (t (case (first tree)
              (:call (format nil "f~D(~A, ~A)" (second tree) (v04-render (third tree)) (v04-render (fourth tree))))

@@ -1,6 +1,8 @@
 (in-package #:mognitio.syntax)
 
 (defstruct token (kind nil :read-only t) (span nil :read-only t))
+(defstruct void-literal (span nil :read-only t))
+(defstruct expression-statement (expression nil :read-only t) (span nil :read-only t))
 (defstruct boolean-literal (value nil :read-only t) (span nil :read-only t))
 (defstruct if-expression (condition nil :read-only t) (then-branch nil :read-only t) (else-branch nil :read-only t) (span nil :read-only t))
 (defstruct integer-literal (token nil :read-only t) (span nil :read-only t))
@@ -20,6 +22,8 @@
   (statements #() :read-only t))
 (defun node-span (node)
   (typecase node
+    (void-literal (void-literal-span node))
+    (expression-statement (expression-statement-span node))
     (function-expression (function-expression-span node))
     (parameter (parameter-span node))
     (call-expression (call-expression-span node))

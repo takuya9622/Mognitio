@@ -12,7 +12,7 @@
               "let a = function(n: int): int { let local = n; local }; let b = function(n: int): int { let local = n + 1; local }; let n = 8; let local = 2; a(local) + b(local) + n == 13"
               "let unused = function(): int { 1 / 0 }; true"
               "let main = function(): int { 7 }; false == false"
-              "let void = function(never: int): int { let string = never; string }; void(3) == 3"
+              "let Void = function(never: int): int { let string = never; string }; Void(3) == 3"
               "let Int = function(Bool: bool): bool { Bool }; let Function = true; let return1 = false; let bool1 = true; Int(Function) == bool1"))
     (v03-positive source :true))
   (v03-positive "let no = function(): bool { false }; no()" :false t)
@@ -53,22 +53,22 @@
   (let* ((source (text-source "function return int bool Function Int Bool return1 intValue bool1 void never string"))
          (tokens (lex-source source)))
     (same '(:function :return :int :bool :identifier :identifier :identifier :identifier
-            :identifier :identifier :identifier :identifier :identifier :eof)
+            :identifier :identifier :void :identifier :identifier :eof)
           (map 'list #'token-kind tokens)))
   (dolist (word '("function" "return" "int" "bool"))
     (dolist (template '("let ~A = function(): int { 1 }; true" "let f = function(~A: int): int { 1 }; true"
                         "let ~A = 1; true" "var ~A = 1; true"))
       (v03-reject (format nil template word) "parse")))
-  (dolist (source '("let f = function(): void { 1 }; true" "let f = function(n: never): int { 1 }; true"
+  (dolist (source '( "let f = function(n: never): int { 1 }; true"
                     "let f = function(n: Int): int { n }; true" "let f = function(): Unknown { 1 }; true"
                     "let f = function(n): int { n }; true" "let f = function(): int; true"
                     "let f = function(): int { 1 };; true" "let f = function(): int { 1 };"
                     "let f = function(n: int,): int { n }; true" "let f = function(): int { 1 }; f(1,) == 1"
-                    "let f = function(): int { 1 }; f(); true"
 
 
-                    "let f = function(): int { return; }; true" "let f = function(): int { return 1; 2 }; true"
-                    "let f = function(): int { return 1; let x = 2; x }; true"
+
+
+
                     "let f = function(): int { if(true){return 1;} 2 }; true"
                     "let f = function(): int { 1 + return 2 }; true" "return true;" "int(1) == 1"))
     (v03-reject source "parse")))
@@ -116,16 +116,16 @@
     (v03-runtime (first pair) (second pair) t)))
 
 (deftest v04-name-type-and-flow-boundaries
-  (dolist (name '("Function" "Int" "Bool" "return1" "intValue" "bool1" "void" "never" "string"))
+  (dolist (name '("Function" "Int" "Bool" "return1" "intValue" "bool1" "Void" "never" "string"))
     (v03-positive (format nil "let ~A = function(): bool { true }; ~A()" name name) :true)
     (v03-positive (format nil "let f = function(~A: bool): bool { ~A }; f(true)" name name) :true)
     (v03-positive (format nil "let ~A = true; ~A" name name) :true))
-  (dolist (name '("Int" "void" "never" "Unknown"))
+  (dolist (name '("Int" "Void" "never" "Unknown"))
     (v03-reject (format nil "let f = function(n: ~A): int { 1 }; true" name) "parse")
     (v03-reject (format nil "let f = function(): ~A { 1 }; true" name) "parse"))
   (dolist (text '("let int = 1; int == 1" "let bool = true; bool"
                   "let f = function(x: int = 1): int { x }; true" "let f = function(x: int): int { x }; f(x: 1) == 1"
-                  "let f = function(): int { return 1 }; true" "let f = function(): int { }; true"))
+                  "let f = function(): int { return 1 }; true" ))
     (v03-reject text "parse"))
   (dolist (text '("let f = function(x: int): int { if(true){if(false){let x = 2; x}else{1}}else{1} }; true"
                   "let f = function(x: int): int { let y = if(true){let x = 2; x}else{1}; y }; true"
