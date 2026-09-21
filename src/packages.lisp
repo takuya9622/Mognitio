@@ -49,7 +49,7 @@
   (:export #:lex-source #:parse-program))
 (defpackage #:mognitio.semantic
   (:use #:cl #:mognitio.diagnostics #:mognitio.source #:mognitio.syntax)
-  (:export #:checked-operation #:operation-info #:operation-info-kind #:operation-info-operands
+  (:export #:checked-string-literals #:checked-operation #:operation-info #:operation-info-kind #:operation-info-operands
            #:operation-info-parameter-types #:operation-info-result-type
            #:check-program #:checked-program #:checked-program-program #:checked-normal-type #:checked-symbol #:checked-literal #:checked-literal-p #:checked-program-bindings #:local-symbol-id #:local-symbol-type #:local-symbol-mutability
            #:local-symbol-owner #:verify-checked-program #:checked-completion #:completion-normal-type #:completion-may-return

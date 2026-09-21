@@ -3,17 +3,18 @@
 (defun v06-i (id type op &rest args)
   (apply #'mognitio.ir:make-instruction :result id :type type :op op args))
 (defun v06-test-pool ()
-  (vector (make-text-payload :octets (hex-bytes "61") :scalar-count 1)))
+  (vector (make-text-payload :octets (hex-bytes "") :scalar-count 0)
+          (make-text-payload :octets (hex-bytes "61") :scalar-count 1)))
 (defun v06-root-fixture (&optional direct)
   (mognitio.ir:make-module :literal-pool (v06-test-pool) :functions
     (list
      (mognitio.ir:make-ir-function :id 0 :result-type :bool :entry 0 :blocks
        (list (mognitio.ir:make-basic-block :id 0 :instructions
-         (list (v06-i 0 :string :const.text :value 0) ; dead, deliberately retained in Core
-               (v06-i 1 :string :const.text :value 0) ; lives through both safepoints
+         (list (v06-i 0 :string :const.text :value 1) ; dead, deliberately retained in Core
+               (v06-i 1 :string :const.text :value 1) ; lives through both safepoints
                (v06-i 2 :int :constant :value 0)
                (v06-i 3 '(:function (:string) :string) :function :value 1)
-               (v06-i 4 :string :const.text :value 0) ; last use is the call
+               (v06-i 4 :string :const.text :value 1) ; last use is the call
                (if direct (v06-i 5 :string :call :value 1 :operands '(4))
                    (v06-i 5 :string :call.value :value '((:function (:string) :string) (1)) :operands '(3 4)))
                (v06-i 6 :int :text.length :operands '(5))
@@ -21,7 +22,7 @@
                (v06-i 8 :bool :text.equal :operands '(7 1))) :terminator '(:return 8))))
      (mognitio.ir:make-ir-function :id 1 :parameter-types '(:string) :result-type :string :entry 0 :blocks
        (list (mognitio.ir:make-basic-block :id 0 :parameters '((0 . :string)) :instructions
-         (list (v06-i 1 :string :const.text :value 0)
+         (list (v06-i 1 :string :const.text :value 1)
                (v06-i 2 :string :text.concat :operands '(0 1))) :terminator '(:return 2)))))))
 (defun v06-root-snapshot (plans)
   (loop for plan in plans collect
@@ -43,9 +44,9 @@
 
 (defun v06-root-loop-fixture (&optional endless)
   (let* ((entry (mognitio.ir:make-basic-block :id 0 :instructions
-                  (list (v06-i 0 :string :const.text :value 0)
-                        (v06-i 1 :string :const.text :value 0)
-                        (v06-i 2 :string :const.text :value 0)
+                  (list (v06-i 0 :string :const.text :value 1)
+                        (v06-i 1 :string :const.text :value 1)
+                        (v06-i 2 :string :const.text :value 1)
                         (v06-i 3 :int :constant :value 0)
                         (v06-i 4 :bool :constant :value 1)
                         (v06-i 11 :string :text.concat :operands '(1 1)))
@@ -108,8 +109,8 @@
            (type (case op (:text.length :int) ((:text.equal :text.not-equal) :bool) (otherwise :string)))
            (operands (case op (:text.length '(0)) (:text.slice '(0 2 2)) (otherwise '(0 0)))))
       (setf (mognitio.ir:basic-block-instructions block)
-            (list (v06-i 0 :string :const.text :value 0)
-                  (v06-i 1 :string :const.text :value 0)
+            (list (v06-i 0 :string :const.text :value 1)
+                  (v06-i 1 :string :const.text :value 1)
                   (v06-i 2 :int :constant :value 0)
                   (v06-i 3 type op :operands operands)
                   (v06-i 4 :bool :text.equal :operands '(1 1)))
