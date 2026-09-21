@@ -238,3 +238,30 @@ negative. Historical verification records are unchanged.
 `v05-public-examples` executes every checked-in example and every README
 language example through host execution, silent build and direct native
 execution. The complete suite retains a single entry point.
+
+## v0.6.0 frontend and host increment
+
+`v06-frontend.lisp` covers literal bytes and spans, method postfix structure,
+string typing, early-exit composition, static rejections in run/build, and
+independent rejection of corrupted checked-operation metadata.
+`v06-host.lisp` covers run semantics, mutation/evaluation order, a seeded scalar
+list oracle, runtime failures, copy behavior, and collection across calls and
+temporaries. The generated oracle uses seed 601 and 60 samples.
+
+The host reclamation child uses `--dynamic-space-size 256`, 9,001 dynamic
+allocations totaling 1,179,779,072 payload bytes, weak references, and full GC.
+It asserts all tracked dead objects are collected and a separately held value
+remains intact. The fault child distinguishes program storage failure (exit 4)
+from compiler storage failure (exit 3), and checks first-failure ordering.
+Instrumentation is test-only and is absent from the production ASDF system.
+
+These tests do not establish native text support, root correctness, collector
+reclamation, or complete v0.6.0 conformance. Existing native regression groups
+continue to exercise the v0.5.0 behavior.
+
+Three historical groups in `v04-functions.lisp` used `string` as an ordinary
+name. The file remains unchanged. `v06-compatibility.lisp` explicitly replaces
+those groups with copies retaining all other cases: the old local/binding name
+becomes `text_name`, and the keyword token expectation becomes `:string`.
+The v0.6 frontend negatives separately verify the old name is now rejected.
+The replacement map is explicit and requires each historical group to exist.

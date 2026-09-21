@@ -65,8 +65,8 @@
                    (loop while (eq (kind) :comma) do (take) (push (funcall reader) items)))
                  (coerce (nreverse items) 'vector)))
              (type-name ()
-               (unless (member (kind) '(:bool :int :void))
-                 (fail-at (token-span (peek)) :parse "Expected bool, int or void"))
+               (unless (member (kind) '(:bool :int :void :string))
+                 (fail-at (token-span (peek)) :parse "Expected bool, int, void or string"))
                (take))
              (parameter-node ()
                (let ((name (expect :identifier)))
@@ -98,6 +98,7 @@
                       (let ((body (body-block)))
                         (make-loop-expression :body body :condition condition
                           :span (cover (span-start (token-span token)) (end-of body))))))
+                   (:string-literal (take) (make-string-literal :payload (token-payload token) :span (token-span token)))
                    (:void (take) (make-void-literal :span (token-span token)))
                    (:left-brace (body-block))
                    (:integer (take) (make-integer-literal :token token :span (token-span token)))
@@ -119,11 +120,14 @@
                    (otherwise (fail-at (token-span token) :parse "Expected expression")))))
              (postfix ()
                (let ((callee (primary)))
-                 (loop while (eq (kind) :left-paren) do
-                   (take)
-                   (let* ((args (comma-list #'expression)) (close (expect :right-paren)))
-                     (setf callee (make-call-expression :callee callee :arguments args
-                                   :span (cover (start-of callee) (span-end (token-span close)))))))
+                 (loop while (member (kind) '(:left-paren :arrow)) do
+                   (let ((method (when (eq (kind) :arrow) (take) (expect :identifier))))
+                     (expect :left-paren)
+                     (let* ((args (comma-list #'expression)) (close (expect :right-paren))
+                            (span (cover (start-of callee) (span-end (token-span close)))))
+                       (setf callee (if method
+                                       (make-method-call :receiver callee :name method :arguments args :span span)
+                                       (make-call-expression :callee callee :arguments args :span span))))))
                  callee))
              (unary ()
                (if (eq (kind) :sub)
