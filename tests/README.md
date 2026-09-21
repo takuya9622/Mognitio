@@ -238,3 +238,81 @@ negative. Historical verification records are unchanged.
 `v05-public-examples` executes every checked-in example and every README
 language example through host execution, silent build and direct native
 execution. The complete suite retains a single entry point.
+
+## v0.6.0 frontend and host increment
+
+`v06-frontend.lisp` covers literal bytes and spans, method postfix structure,
+string typing, early-exit composition, static rejections in run/build, and
+independent rejection of corrupted checked-operation metadata.
+`v06-host.lisp` covers run semantics, mutation/evaluation order, a seeded scalar
+list oracle, runtime failures, copy behavior, and collection across calls and
+temporaries. The generated oracle uses seed 601 and 60 samples.
+
+The host reclamation child uses `--dynamic-space-size 256`, 9,001 dynamic
+allocations totaling 1,179,779,072 payload bytes, weak references, and full GC.
+It asserts all tracked dead objects are collected and a separately held value
+remains intact. The fault child distinguishes program storage failure (exit 4)
+from compiler storage failure (exit 3), and checks first-failure ordering.
+Instrumentation is test-only and is absent from the production ASDF system.
+
+These host tests do not establish native text support, machine root publication,
+collector reclamation, or complete v0.6.0 conformance. Existing native regression groups
+continue to exercise the v0.5.0 behavior.
+
+Three historical groups in `v04-functions.lisp` used `string` as an ordinary
+name. The file remains unchanged. `v06-compatibility.lisp` explicitly replaces
+those groups with copies retaining all other cases: the old local/binding name
+becomes `text_name`, and the keyword token expectation becomes `:string`.
+The v0.6 frontend negatives separately verify the old name is now rejected.
+The replacement map is explicit and requires each historical group to exist.
+
+## v0.6.0 Core and root plans
+
+`v06-core.lisp` checks string SSA, deterministic literal pools, effect/type/arity
+corruption, ordered lowering, and early exits. Its test interpreter uses ordinary
+character sequences rather than the text runtime. Explicit expected results and
+21 loop lengths exercise branch, call, continue, break, and return paths.
+
+`v06-roots.lisp` uses handwritten SSA and exact expected sets for calls, last-use
+operands, earlier arguments, receiver survival, parameter substitution, loops,
+and no-exit SCCs. Negative tests corrupt the produced plans, and a test replaces
+the producer with a failing stub while running the independent verifier.
+All text helper calls are tested as register clobbers; only allocating helpers
+and user calls are root safepoints. These tests validate root plans, not native
+root publication or GC behavior.
+
+## v0.6.0 native frame increment
+
+`v06-native-frames.lisp` checks ABI v3 context initialization, AT_PAGESZ against
+an independent OS query, mixed string/void/int/bool arguments in both handwritten
+ABI directions, R15 and RAX preservation, root-head restoration, and repeated
+helper calls. Test-only helper probes validate published roots and clobber
+caller-saved registers without implementing text operations or GC.
+Frame corruption cases cover slot clearing, homes, publication order, overlap,
+stack-probe size, missing sites/unlink, return clobbers, and extraneous calls.
+Static object tests inspect byte/scalar lengths, flags, alignment, NUL payloads,
+padding, fixup target kinds, and deterministic encoding.
+
+## v0.6.0 native text, collection, and integration
+
+- `v06-native-text.lisp`: fixed text/flow expectations, independent scalar-list
+  oracle, failure ordering, caller/operand/receiver/argument roots, spilled live
+  values, loop/return handoff, and runtime instruction encoding.
+- `v06-native-gc.lisp` and `v06-heap-check.py`: 64 KiB bounded-heap runs in normal
+  and stress modes; allocation/free/reallocation records and independent heap
+  parsing; no-sweep/all-mark negative controls; split, coalescing, arena growth,
+  and requests larger than an arena. Observed reuse is explicitly a lower bound.
+- `v06-native-faults.lisp`: independent byte/scalar overflow, successful int64
+  boundary arithmetic, physical-size wrap, invalid roots, and failure priority.
+- `v06-integration.lisp`: both-backend lifetime and method composition, source
+  rejection/output preservation, cold/warm relocated standalone text/GC builds,
+  atomic failure preservation, and native diagnostic syscall faults.
+
+Internal options and heap records are test adapters, not public language or CLI
+features. Normal artifacts retain boolean stdout and empty stderr on success.
+
+Debug root classification tests reject a four-byte object's interior pointer
+whose apparent flags contain the static bit, as well as freed interiors,
+forged static headers and unmapped addresses. Known literal starts (including
+empty), zero slots and duplicate dynamic roots remain valid. Validation checks
+address membership before reading candidate metadata.

@@ -88,7 +88,7 @@
   (signals internal-failure (mognitio.amd64:little-endian (expt 2 64) 8))
   ;; The OS adapter aligns the stack, clears RBP, and calls the entry function.
   (let ((code (mognitio.amd64:encode (mognitio.machine:lower-module (native-ir "true")))))
-    (same (hex-bytes "4883e4f04831ede805000000") (subseq code 0 12))))
+    (same (hex-bytes "4889e24883e4f04831ed") (subseq code 0 10))))
 
 
 
@@ -106,7 +106,7 @@
     (is (< (image-integer image 24 8)
            (+ (image-integer image 80 8) (image-integer image 104 8))))
     (same 0 (mod (image-integer image 80 8) (image-integer image 112 8)))
-    (same (hex-bytes "4883e4f04831ede805000000") (subseq image 128 140))))
+    (same (hex-bytes "4889e24883e4f04831ed") (subseq image 128 138))))
 
 (deftest v04-function-core-boundary
   (let* ((module (native-ir "true"))
@@ -137,6 +137,6 @@
         (mognitio.amd64:encode (machine '(:label (:function 1)) '(:ret) '(:call (:function 1)))))
   (dolist (forms '(((:call (:data :true)) (:label (:data :true)) (:bytes 0))
                    ((:call :block) (:label :block) (:ret))
-                   ((:load-frame :r12 0)) ((:load-frame :rax -2147483656))
+                   ((:load-frame :r16 0)) ((:load-frame :rax -2147483656))
                    ((:store-out -8 :rax)) ((:mov-reg :rax :bogus))))
     (signals internal-failure (mognitio.amd64:encode (apply #'machine forms)))))

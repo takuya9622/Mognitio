@@ -57,9 +57,9 @@
   (labels ((report-failure (diagnostic code)
              ;; A broken diagnostic stream must not cause recursive reporting.
              (handler-case (progn (render-diagnostic diagnostic stderr) code)
-               (error () 3))))
+               ((or error storage-condition) () 3))))
     (handler-case (run-pipeline argv stdout)
-      (mognitio.runtime:integer-runtime-failure (condition)
+      (mognitio.runtime:program-runtime-failure (condition)
         (mognitio.runtime:write-runtime-failure condition stderr))
       (source-failure (condition)
         (report-failure (failure-diagnostic condition) 1))
@@ -67,6 +67,8 @@
         (report-failure (failure-diagnostic condition) 2))
       (internal-failure (condition)
         (report-failure (failure-diagnostic condition) 3))
+      (storage-condition ()
+        (report-failure (make-diagnostic :phase :internal :message "Compiler storage failure") 3))
       (error ()
         (report-failure (make-diagnostic :phase :internal
                                          :message "Unexpected compiler failure") 3)))))

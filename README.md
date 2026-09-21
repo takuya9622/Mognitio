@@ -1,8 +1,13 @@
 # Mognitio
 
-Mognitio is a small language with typed function values and structured iteration.
-This version implements v0.5.0.
+Mognitio is a small language with typed function values, structured iteration,
+and immutable UTF-8 strings. Version 0.6.0 adds string concatenation, content
+equality, Unicode scalar length and slicing, and automatic memory reclamation
+in both execution backends.
+
 It can run an expression through SBCL or build a standalone Linux amd64 executable.
+See the [v0.6.0 validation record](verification/v0.6.0.md) for coverage,
+compatibility, and verification boundaries.
 
 ## Requirements
 
@@ -69,7 +74,7 @@ count = count + 1;
 count * unitPrice == 360
 ```
 
-`let` is immutable. A `var` holds `int`, `bool`, or `void` and assignments
+`let` is immutable. A `var` holds `int`, `bool`, `void`, or `string` and assignments
 preserve its type. Visible names, including a binding being initialized,
 cannot be redeclared in nested scopes. Sibling scopes may reuse names.
 
@@ -78,6 +83,20 @@ Integers are signed 64-bit values. Arithmetic (`+ - * / %`), comparisons
 zero; nonzero remainders have the dividend's sign. Overflow and division
 or remainder by zero fail only when evaluated. Consecutive minus tokens
 are rejected even across whitespace: write `-(-1)` or `10 - (-2)`.
+
+### Strings
+
+Strings are immutable sequences of Unicode scalar values, written in double
+quotes with `\\`, `\"`, `\n`, `\r`, `\t`, and `\0` escapes. `+` concatenates
+strings; `==` and `!=` compare their contents without Unicode normalization.
+`text->length()` counts scalars and `text->slice(start, end)` copies a half-open
+scalar range. The receiver and arguments are evaluated once, left to right.
+Invalid bounds fail at runtime. String methods cannot be used as function values.
+
+```mgn
+let text = "A日😀";
+text->length() == 3
+```
 
 ### Function values
 
@@ -91,7 +110,7 @@ twice(magnitude(-6)) == 12
 ```
 
 Function expressions have explicit `name: type` parameters and a result
-type (`int`, `bool`, or `void`). Bind them with `let`, alias them, choose
+type (`int`, `bool`, `void`, or `string`). Bind them with `let`, alias them, choose
 between matching signatures with `if`, or return a function value from
 a block or a value-producing loop. A function cannot itself accept or
 return a function value. Mutable function values and recursion are excluded.
@@ -146,8 +165,8 @@ are initialized each round; updates to outer variables survive.
 Break and continue target the nearest loop in the same function.
 
 The reserved words are `true false if else let var function return int bool
-loop while break continue void`. Names are ASCII and case-sensitive.
-Comments, strings, collections and a `never` source type are not supported.
+loop while break continue void string`. Names are ASCII and case-sensitive.
+Comments, collections and a `never` source type are not supported.
 
 v0.4.1 programs need explicit migration of named function declarations to
 `let name = function(...) { ... };`, forward references to source order,
@@ -168,9 +187,9 @@ Compiler exit statuses:
 | 1 | Source encoding, lexical, syntax, or semantic failure |
 | 2 | Invalid invocation, target, source path, or output I/O |
 | 3 | Internal compilation, execution, or bootstrap failure |
-| 4 | Integer arithmetic failure during execution |
+| 4 | Detected arithmetic, string bounds, string size, or allocation failure during execution |
 
-Integer failures print a fixed runtime diagnostic to stderr, leave stdout
+Runtime failures print a fixed runtime diagnostic to stderr, leave stdout
 empty, and do not resume evaluation. Building such a program succeeds;
 running it reports the failure.
 

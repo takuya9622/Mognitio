@@ -13,7 +13,10 @@
            #:span-diagnostic #:fail-at))
 (defpackage #:mognitio.syntax
   (:use #:cl #:mognitio.source)
-  (:export #:loop-expression #:make-loop-expression #:loop-expression-body #:loop-expression-condition
+  (:export #:text-payload #:make-text-payload #:text-payload-octets #:text-payload-scalar-count
+           #:token-payload #:string-literal #:make-string-literal #:string-literal-payload
+           #:method-call #:make-method-call #:method-call-receiver #:method-call-name #:method-call-arguments
+           #:loop-expression #:make-loop-expression #:loop-expression-body #:loop-expression-condition
            #:break-statement #:make-break-statement #:break-statement-value
            #:continue-statement #:make-continue-statement
            #:void-literal #:make-void-literal #:void-literal-span
@@ -46,7 +49,9 @@
   (:export #:lex-source #:parse-program))
 (defpackage #:mognitio.semantic
   (:use #:cl #:mognitio.diagnostics #:mognitio.source #:mognitio.syntax)
-  (:export #:check-program #:checked-program #:checked-program-program #:checked-normal-type #:checked-symbol #:checked-literal #:checked-literal-p #:checked-program-bindings #:local-symbol-id #:local-symbol-type #:local-symbol-mutability
+  (:export #:checked-string-literals #:checked-operation #:operation-info #:operation-info-kind #:operation-info-operands
+           #:operation-info-parameter-types #:operation-info-result-type
+           #:check-program #:checked-program #:checked-program-program #:checked-normal-type #:checked-symbol #:checked-literal #:checked-literal-p #:checked-program-bindings #:local-symbol-id #:local-symbol-type #:local-symbol-mutability
            #:local-symbol-owner #:verify-checked-program #:checked-completion #:completion-normal-type #:completion-may-return
            #:checked-call #:checked-return #:checked-program-signatures #:signature-id
            #:signature-declaration #:signature-parameter-types #:signature-result-type #:check-call-graph
@@ -70,10 +75,10 @@
   (:use #:cl #:mognitio.diagnostics #:mognitio.source #:mognitio.syntax
         #:mognitio.semantic)
   (:export #:instruction #:make-instruction #:instruction-result #:instruction-type
-           #:instruction-op #:instruction-value #:instruction-operands #:instruction-span
+           #:instruction-effects #:instruction-op #:instruction-value #:instruction-operands #:instruction-span
            #:basic-block #:make-basic-block #:basic-block-id #:basic-block-parameters
            #:basic-block-instructions #:basic-block-terminator #:basic-block-span
-           #:module #:make-module #:module-functions #:module-entry #:module-span
+           #:module-literal-pool #:module #:make-module #:module-functions #:module-entry #:module-span
            #:ir-function #:make-ir-function #:ir-function-id #:ir-function-parameter-types
            #:ir-function-result-type #:ir-function-blocks #:ir-function-entry #:ir-function-span
            #:lower-program #:verify-module #:successors))
@@ -108,5 +113,25 @@
   (:use #:cl #:mognitio.diagnostics)
   (:export #:target #:linux-amd64 #:target-os #:target-arch #:target-abi #:target-artifact))
 
-(defpackage #:mognitio.runtime (:use #:cl) (:export #:integer-runtime-failure #:failure-kind #:failure-octets #:failure-status #:runtime-error #:write-runtime-failure #:+retry-budget+))
+(defpackage #:mognitio.runtime (:use #:cl) (:export #:program-runtime-failure #:integer-runtime-failure #:failure-kind #:failure-octets #:failure-status #:runtime-error #:write-runtime-failure #:+retry-budget+))
 (defpackage #:mognitio.integer (:use #:cl) (:export #:+minimum+ #:+maximum+ #:in-range-p #:decimal-magnitude #:checked-arithmetic))
+
+(defpackage #:mognitio.text
+  (:use #:cl)
+  (:export #:text-value #:text-value-octets #:text-value-scalar-count #:literal-value
+           #:text-length #:text-equal #:text-not-equal #:text-concat #:text-slice #:checked-size))
+
+(defpackage #:mognitio.roots
+  (:use #:cl #:mognitio.diagnostics #:mognitio.ir)
+  (:export #:analyze-roots #:verify-roots #:root-plan #:root-plan-function-id
+           #:root-plan-capacity #:root-plan-sites #:root-site #:root-site-block-id
+           #:root-site-instruction-index #:root-site-values))
+
+(defpackage #:mognitio.native.runtime
+  (:use #:cl #:mognitio.diagnostics)
+  (:export #:+context-size+ #:+root-head+ #:+arena-head+ #:+page-size+
+           #:entry-forms #:literal-forms #:text-helper-units))
+(defpackage #:mognitio.frame
+  (:use #:cl #:mognitio.diagnostics)
+  (:export #:plan-frame #:verify-layout #:verify-sections #:layout-size #:layout-root-offset
+           #:layout-capacity #:layout-temporary #:layout-arity))
