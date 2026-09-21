@@ -6,8 +6,8 @@
   (function nil :read-only t) (span nil :read-only t)
   (warnings-p nil :read-only t) (compiler-output "" :read-only t))
 
-(defun expression-form (node checked names functions exits)
-  (labels ((form (child) (if child (expression-form child checked names functions exits) '(quote :mognitio-void)))
+(defun expression-form (node checked names functions exits &optional loops)
+  (labels ((form (child) (if child (expression-form child checked names functions exits loops) '(quote :mognitio-void)))
            (symbol-for (child)
              (or (gethash (local-symbol-id (checked-symbol checked child)) names)
                  (internal-error "Missing host binding")))
@@ -28,6 +28,17 @@
                              (sequence-form statements tail (1+ index)))
                        (list 'cl:progn (form statement) (sequence-form statements tail (1+ index))))))))
     (typecase node
+      (loop-expression
+       (let* ((id (loop-info-id (checked-loop checked node))) (exit (make-symbol "BREAK")) (again (make-symbol "CONTINUE"))
+              (inner (acons id (cons exit again) loops)))
+         (list 'cl:block exit
+               (list 'cl:tagbody again
+                     (expression-form (loop-expression-body node) checked names functions exits inner)
+                     (list 'cl:go again)))))
+      (break-statement
+       (list 'cl:return-from (cadr (assoc (loop-info-id (checked-control checked node)) loops)) '(quote :mognitio-void)))
+      (continue-statement
+       (list 'cl:go (cddr (assoc (loop-info-id (checked-control checked node)) loops))))
       (void-literal '(quote :mognitio-void))
       (expression-statement (form (expression-statement-expression node)))
       (assignment (list 'cl:progn (list 'cl:setq (symbol-for node) (form (assignment-rhs node))) '(quote :mognitio-void)))

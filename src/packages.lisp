@@ -13,7 +13,10 @@
            #:span-diagnostic #:fail-at))
 (defpackage #:mognitio.syntax
   (:use #:cl #:mognitio.source)
-  (:export #:void-literal #:make-void-literal #:void-literal-span
+  (:export #:loop-expression #:make-loop-expression #:loop-expression-body #:loop-expression-condition
+           #:break-statement #:make-break-statement #:break-statement-value
+           #:continue-statement #:make-continue-statement
+           #:void-literal #:make-void-literal #:void-literal-span
            #:expression-statement #:make-expression-statement #:expression-statement-expression
            #:token #:make-token #:token-kind #:token-span #:boolean-literal
            #:make-boolean-literal #:boolean-literal-value #:boolean-literal-span
@@ -47,6 +50,8 @@
            #:local-symbol-owner #:verify-checked-program #:checked-completion #:completion-normal-type #:completion-may-return
            #:checked-call #:checked-return #:checked-program-signatures #:signature-id
            #:signature-declaration #:signature-parameter-types #:signature-result-type #:check-call-graph
+           #:checked-loop #:checked-control #:loop-info-id #:loop-info-owner #:loop-info-node
+           #:loop-info-normal-type #:loop-info-targets #:completion-exits
            #:function-type-p #:signature-type #:completion-targets #:local-symbol-targets #:local-symbol-static-target
            #:call-info-type #:call-info-targets #:call-info-owner #:checked-function))
 (defpackage #:mognitio.backend.cl
