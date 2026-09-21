@@ -65,8 +65,7 @@ identity. Matching semantic versions alone does not establish matching
 identities. Record the revision, content manifest (including uncommitted
 changes), SBCL/ASDF versions, and any code-generation configuration.
 Paths, timestamps, process IDs, and cache contents are not embedded in the
-executable. See [v0.6.0 development progress](v0.6.0-progress.md) for the partial frontend
-and host increment. The [v0.5.0 implementation record](v0.5.0.md) describes the released baseline.
+executable. See [v0.6.0 development progress](v0.6.0-progress.md) for the frontend, host, Core, native runtime, and GC increments. The [v0.5.0 implementation record](v0.5.0.md) describes the released baseline.
 The [v0.4.1 validation record](v0.4.1.md) and
 original [v0.4.0 validation record](v0.4.0.md); the [v0.3.0 record](v0.3.0.md) remains historical.
 
