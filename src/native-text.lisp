@@ -81,7 +81,7 @@
       '((:load-frame :rax -32) (:jmp :done) (:label :empty) (:lea-text (:text 0)) (:label :done))
       (helper-return)) :helper))
 
-(defun text-helper-units (operations)
+(defun text-helper-units (operations literal-count)
   (append
     (loop for op in operations collect
       (ecase op
@@ -90,4 +90,4 @@
         (:text.concat (text-concat-unit)) (:text.slice (text-slice-unit))))
     (when (intersection operations '(:text.concat :text.slice))
       (list (checked-sum-unit) (physical-size-unit) (find-free-unit)
-            (validate-root-unit) (collect-unit) (allocate-unit)))))
+            (validate-root-unit literal-count) (collect-unit) (allocate-unit)))))
