@@ -75,10 +75,10 @@
   (:use #:cl #:mognitio.diagnostics #:mognitio.source #:mognitio.syntax
         #:mognitio.semantic)
   (:export #:instruction #:make-instruction #:instruction-result #:instruction-type
-           #:instruction-op #:instruction-value #:instruction-operands #:instruction-span
+           #:instruction-effects #:instruction-op #:instruction-value #:instruction-operands #:instruction-span
            #:basic-block #:make-basic-block #:basic-block-id #:basic-block-parameters
            #:basic-block-instructions #:basic-block-terminator #:basic-block-span
-           #:module #:make-module #:module-functions #:module-entry #:module-span
+           #:module-literal-pool #:module #:make-module #:module-functions #:module-entry #:module-span
            #:ir-function #:make-ir-function #:ir-function-id #:ir-function-parameter-types
            #:ir-function-result-type #:ir-function-blocks #:ir-function-entry #:ir-function-span
            #:lower-program #:verify-module #:successors))
@@ -120,3 +120,9 @@
   (:use #:cl)
   (:export #:text-value #:text-value-octets #:text-value-scalar-count #:literal-value
            #:text-length #:text-equal #:text-not-equal #:text-concat #:text-slice #:checked-size))
+
+(defpackage #:mognitio.roots
+  (:use #:cl #:mognitio.diagnostics #:mognitio.ir)
+  (:export #:analyze-roots #:verify-roots #:root-plan #:root-plan-function-id
+           #:root-plan-capacity #:root-plan-sites #:root-site #:root-site-block-id
+           #:root-site-instruction-index #:root-site-values))

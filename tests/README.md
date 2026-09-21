@@ -255,8 +255,8 @@ remains intact. The fault child distinguishes program storage failure (exit 4)
 from compiler storage failure (exit 3), and checks first-failure ordering.
 Instrumentation is test-only and is absent from the production ASDF system.
 
-These tests do not establish native text support, root correctness, collector
-reclamation, or complete v0.6.0 conformance. Existing native regression groups
+These host tests do not establish native text support, machine root publication,
+collector reclamation, or complete v0.6.0 conformance. Existing native regression groups
 continue to exercise the v0.5.0 behavior.
 
 Three historical groups in `v04-functions.lisp` used `string` as an ordinary
@@ -265,3 +265,18 @@ those groups with copies retaining all other cases: the old local/binding name
 becomes `text_name`, and the keyword token expectation becomes `:string`.
 The v0.6 frontend negatives separately verify the old name is now rejected.
 The replacement map is explicit and requires each historical group to exist.
+
+## v0.6.0 Core and root plans
+
+`v06-core.lisp` checks string SSA, deterministic literal pools, effect/type/arity
+corruption, ordered lowering, and early exits. Its test interpreter uses ordinary
+character sequences rather than the text runtime. Explicit expected results and
+21 loop lengths exercise branch, call, continue, break, and return paths.
+
+`v06-roots.lisp` uses handwritten SSA and exact expected sets for calls, last-use
+operands, earlier arguments, receiver survival, parameter substitution, loops,
+and no-exit SCCs. Negative tests corrupt the produced plans, and a test replaces
+the producer with a failing stub while running the independent verifier.
+All text helper calls are tested as register clobbers; only allocating helpers
+and user calls are root safepoints. These tests validate root plans, not native
+root publication or GC behavior.
