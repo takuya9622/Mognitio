@@ -1,7 +1,7 @@
 # Mognitio
 
 Mognitio is a small language with typed function values and structured iteration.
-This development branch implements v0.5.0; it is not a release announcement.
+This version implements v0.5.0.
 It can run an expression through SBCL or build a standalone Linux amd64 executable.
 
 ## Requirements
@@ -57,9 +57,10 @@ spaces or shell metacharacters as one argument.
 
 ## Language
 
-A program ends in a boolean expression. Declarations and statements use
-semicolons. Blocks can have a final expression, or produce `void` when
-they finish without one.
+A program ends in an expression. If it completes normally, its result must
+be boolean; a tail with no normal completion is also valid.
+Declarations and statements use semicolons. Blocks can have a final expression,
+or produce `void` when they finish without one.
 
 ```mgn
 let unitPrice = 120;
