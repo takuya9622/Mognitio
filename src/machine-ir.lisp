@@ -109,9 +109,9 @@
                                  (:push-zero) (:dec-rcx) (:jnz ,loop-label))))
         (let ((header (mognitio.frame:layout-root-offset frame)))
           (section :link nil
-            `((:load-word :rax :r15 0) (:store-frame ,header :rax)
+            `((:load-word :rax :r15 ,mognitio.native.runtime:+root-head+) (:store-frame ,header :rax)
               (:imm-rax ,(mognitio.frame:layout-capacity frame)) (:store-frame ,(+ header 8) :rax)
-              (:lea-base :rax :rbp ,header) (:store-word :r15 0 :rax))))
+              (:lea-base :rax :rbp ,header) (:store-word :r15 ,mognitio.native.runtime:+root-head+ :rax))))
         (loop for parameter in (mognitio.ir:basic-block-parameters
                                 (gethash (mognitio.ir:ir-function-entry function) block-map))
               for offset from 16 by 8 do
@@ -167,7 +167,7 @@
              (emit :jmp (label-id (second term))))
             (:return (load-value (second term)) (emit :jmp (list :internal (mognitio.ir:ir-function-id function) 0))))))
         (emit :label (list :internal (mognitio.ir:ir-function-id function) 0))
-        (section :unlink nil `((:load-frame :rcx ,(mognitio.frame:layout-root-offset frame)) (:store-word :r15 0 :rcx)))
+        (section :unlink nil `((:load-frame :rcx ,(mognitio.frame:layout-root-offset frame)) (:store-word :r15 ,mognitio.native.runtime:+root-head+ :rcx)))
         (emit :mov-reg :rsp :rbp) (emit :pop-rbp) (emit :ret)
         (let ((body (reverse code)))
           (mognitio.frame:verify-sections function allocation root-plan frame
