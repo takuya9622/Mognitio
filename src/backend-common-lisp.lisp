@@ -38,7 +38,8 @@
     (typecase node
       (boolean-literal (ecase (boolean-literal-value node) (:true t) (:false nil)))
       (integer-literal (checked-literal checked node))
-      (variable-reference (symbol-for node))
+      (function-expression (signature-id (checked-function checked node)))
+      (variable-reference (or (local-symbol-static-target (checked-symbol checked node)) (symbol-for node)))
       (sequence-node (sequence-form (sequence-node-statements node) (sequence-node-terminal node) 0))
       (grouping (form (grouping-expression node)))
       (return-statement
@@ -47,8 +48,11 @@
              (list 'cl:return-from (gethash (checked-return checked node) exits) (form value))
              (form value))))
       (call-expression
-       (ordered (coerce (call-expression-arguments node) 'list)
-                (lambda (args) (cons (gethash (signature-id (checked-call checked node)) functions) args))))
+       (ordered (cons (call-expression-callee node) (coerce (call-expression-arguments node) 'list))
+                (lambda (args)
+                  (cons 'cl:case (cons (first args)
+                    (loop for id in (call-info-targets (checked-call checked node))
+                          collect (list id (cons (gethash id functions) (rest args)))))))))
       (if-expression
        (if (null (checked-normal-type checked (if-expression-condition node)))
            (form (if-expression-condition node))
@@ -86,9 +90,9 @@
                   for declaration = (signature-declaration signature) when declaration collect
               (list (gethash (signature-id signature) functions)
                     (map 'list (lambda (p) (gethash (local-symbol-id (checked-symbol checked p)) names))
-                         (function-declaration-parameters declaration))
+                         (function-expression-parameters declaration))
                     (list 'cl:block (gethash (signature-id signature) exits)
-                          (expression-form (function-declaration-body declaration) checked names functions exits)))))
+                          (expression-form (function-expression-body declaration) checked names functions exits)))))
           (entry (expression-form (make-sequence-node :statements (program-statements program)
                                     :terminal (program-root program)) checked names functions exits)))
       (if definitions

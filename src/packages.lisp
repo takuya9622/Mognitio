@@ -18,10 +18,10 @@
            #:if-expression #:make-if-expression #:if-expression-condition
            #:if-expression-then-branch #:if-expression-else-branch #:if-expression-span
            #:node-span #:program #:make-program #:program-source #:program-root
-           #:program-statements #:program-functions #:token-text
-           #:function-declaration #:make-function-declaration #:function-declaration-name
-           #:function-declaration-parameters #:function-declaration-result-type
-           #:function-declaration-body #:function-declaration-span
+           #:program-statements #:token-text
+           #:function-expression #:make-function-expression
+           #:function-expression-parameters #:function-expression-result-type
+           #:function-expression-body #:function-expression-span
            #:parameter #:make-parameter #:parameter-type #:parameter-name #:parameter-span
            #:call-expression #:make-call-expression #:call-expression-callee #:call-expression-arguments
            #:return-statement #:make-return-statement #:return-statement-keyword #:return-statement-value #:integer-literal #:make-integer-literal
@@ -44,7 +44,9 @@
   (:export #:check-program #:checked-program #:checked-program-program #:checked-normal-type #:checked-symbol #:checked-literal #:checked-literal-p #:checked-program-bindings #:local-symbol-id #:local-symbol-type #:local-symbol-mutability
            #:local-symbol-owner #:verify-checked-program #:checked-completion #:completion-normal-type #:completion-may-return
            #:checked-call #:checked-return #:checked-program-signatures #:signature-id
-           #:signature-declaration #:signature-parameter-types #:signature-result-type #:check-call-graph))
+           #:signature-declaration #:signature-parameter-types #:signature-result-type #:check-call-graph
+           #:function-type-p #:signature-type #:completion-targets #:local-symbol-targets #:local-symbol-static-target
+           #:call-info-type #:call-info-targets #:call-info-owner #:checked-function))
 (defpackage #:mognitio.backend.cl
   (:use #:cl #:mognitio.diagnostics #:mognitio.source #:mognitio.syntax
         #:mognitio.semantic)

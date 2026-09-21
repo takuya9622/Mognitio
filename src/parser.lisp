@@ -61,13 +61,13 @@
                  (let ((type (type-name)))
                    (make-parameter :type type :name name
                      :span (cover (span-start (token-span name)) (span-end (token-span type)))))))
-             (declaration-node ()
-               (let* ((keyword (expect :function)) (name (expect :identifier)))
+             (function-node ()
+               (let ((keyword (expect :function)))
                  (expect :left-paren)
                  (let ((parameters (comma-list #'parameter-node)))
                    (expect :right-paren) (expect :colon)
                    (let* ((type (type-name)) (body (body-block)))
-                     (make-function-declaration :name name :parameters parameters :result-type type :body body
+                     (make-function-expression :parameters parameters :result-type type :body body
                        :span (cover (span-start (token-span keyword)) (end-of body)))))))
              (body-block () (expect :left-brace) (sequence-body :right-brace))
              (primary ()
@@ -76,16 +76,8 @@
                    ((:true :false) (take) (make-boolean-literal :value (token-kind token)
                                                              :span (token-span token)))
                    (:integer (take) (make-integer-literal :token token :span (token-span token)))
-                   (:identifier
-                    (take)
-                    (if (eq (kind) :left-paren)
-                        (progn
-                          (take)
-                          (let ((arguments (comma-list #'expression)))
-                            (let ((close (expect :right-paren)))
-                              (make-call-expression :callee token :arguments arguments
-                                :span (cover (span-start (token-span token)) (span-end (token-span close)))))))
-                        (make-variable-reference :name token :span (token-span token))))
+                   (:identifier (take) (make-variable-reference :name token :span (token-span token)))
+                   (:function (function-node))
                    (:left-paren
                     (take)
                     (let* ((child (expression)) (close (expect :right-paren)))
@@ -101,12 +93,20 @@
                           (make-if-expression :condition condition :then-branch then :else-branch else
                             :span (cover (span-start (token-span token)) (end-of else)))))))
                    (otherwise (fail-at (token-span token) :parse "Expected expression")))))
+             (postfix ()
+               (let ((callee (primary)))
+                 (loop while (eq (kind) :left-paren) do
+                   (take)
+                   (let* ((args (comma-list #'expression)) (close (expect :right-paren)))
+                     (setf callee (make-call-expression :callee callee :arguments args
+                                   :span (cover (start-of callee) (span-end (token-span close)))))))
+                 callee))
              (unary ()
                (if (eq (kind) :sub)
                    (let* ((op (take)) (child (unary)))
                      (make-unary-expression :operator op :operand child
                        :span (cover (span-start (token-span op)) (end-of child))))
-                   (primary)))
+                   (postfix)))
              (binary-level (child-fn operators &optional single)
                (let ((left (funcall child-fn)))
                  (loop while (member (kind) operators) do
@@ -119,8 +119,7 @@
              (sum () (binary-level #'product '(:add :sub)))
              (comparison () (binary-level #'sum '(:lt :le :gt :ge) t))
              (expression () (binary-level #'comparison '(:eq :ne) t)))
-      (let* ((functions (loop while (eq (kind) :function) collect (declaration-node)))
-             (body (sequence-body :eof)))
+      (let ((body (sequence-body :eof)))
         (unless (= cursor (length tokens)) (internal-error "Tokens after EOF"))
         (make-program :source source :root (sequence-node-terminal body)
-                      :statements (sequence-node-statements body) :functions (coerce functions 'vector))))))
+                      :statements (sequence-node-statements body))))))

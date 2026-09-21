@@ -11,7 +11,7 @@
       (when existing (put-text output "previous artifact"))
       (dolist (args (list (list "run" (namestring path)) (build-args path output)))
         (multiple-value-bind (out err code) (driver-result args)
-          (same 1 code) (same "" out)
+          (is (= 1 code) (format nil "Expected rejection: ~A; got ~D: ~A" source code err)) (same "" out)
           (is (search (format nil ": ~A:" phase) err))))
       (if existing (same "previous artifact" (uiop:read-file-string output))
           (is (not (probe-file output)))))))
