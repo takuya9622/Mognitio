@@ -139,8 +139,8 @@
       (sb-posix:chmod (namestring path) #o700)
       (multiple-value-bind (out err status) (process-result (list (namestring path)))
         (same 0 status) (same (format nil "true~%") out) (same "" err)))
-    ;; Production cannot accidentally ship the probes as a working text runtime.
-    (signals internal-failure (mognitio.machine:lower-module module))))
+    ;; Production uses the real runtime, independently exercised in GC tests.
+    (is (mognitio.machine:lower-module module))))
 
 (deftest v06-native-context-pagesize
   (multiple-value-bind (out err status)
@@ -156,3 +156,26 @@
       (multiple-value-bind (out err code)
           (v05-cross-abi "let probe=function():bool{true}; probe()" 1 callee)
         (same 0 code) (same (format nil "true~%") out) (same "" err)))))
+
+(deftest v06-native-frame-unsectioned-context-writes
+  (dolist (op '(:load-frame :store-byte))
+    (destructuring-bind (function allocation roots layout sections body)
+        (first (v06-frame-capture "true"))
+      (let ((index (position '(:imm-rax 1) body :test #'equal)))
+        (is index)
+        (is (notany (lambda (section)
+                      (<= (fourth section) index
+                          (1- (+ (fourth section) (length (third section)))))) sections))
+        (setf (nth index body)
+              (if (eq op :load-frame)
+                  (list :load-frame :r15 (mognitio.frame:layout-temporary layout))
+                  '(:store-byte :r15 0 :rax)))
+        (signals internal-failure
+          (mognitio.frame:verify-sections function allocation roots layout sections body))))))
+
+(deftest v06-native-frame-runtime-register-writers
+  (dolist (form '((:imm-reg :r15 0) (:add-reg :r15 :rax) (:sub-reg :r15 :rax)
+                  (:and-imm :r15 0) (:or-imm :r15 1) (:shr-imm :r15 1)))
+    (destructuring-bind (function allocation roots layout sections body) (first (v06-frame-capture "true"))
+      (setf (nth (position '(:imm-rax 1) body :test #'equal) body) form)
+      (signals internal-failure (mognitio.frame:verify-sections function allocation roots layout sections body)))))

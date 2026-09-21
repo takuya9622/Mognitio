@@ -3,7 +3,43 @@
 (defconstant +root-head+ 0)
 (defconstant +arena-head+ 8)
 (defconstant +page-size+ 16)
-(defconstant +context-size+ 32)
+;; Internal build controls; never populated from CLI arguments or environment.
+(defvar *test-options* nil)
+(defconstant +alloc-count+ 32)
+(defconstant +alloc-bytes+ 40)
+(defconstant +collections+ 48)
+(defconstant +reclaimed-count+ 56)
+(defconstant +reclaimed-bytes+ 64)
+(defconstant +mapped-bytes+ 72)
+(defconstant +observed-reuses+ 80)
+(defconstant +watch-pointer+ 88)
+(defconstant +watch-state+ 96)
+(defconstant +watch-size+ 104)
+(defconstant +trace+ 112)
+(defconstant +peak-live+ 184)
+(defconstant +peak-roots+ 192)
+(defconstant +context-size+ 208)
+
+(defun option (key &optional default) (getf *test-options* key default))
+(defun bump (offset &optional (amount 1))
+  `((:load-word :rax :r15 ,offset)
+    ,(if (integerp amount) (list :add-imm :rax amount) (list :add-reg :rax amount))
+    (:store-word :r15 ,offset :rax)))
+(defun helper-frame (words)
+  (append '((:push-rbp) (:mov-reg :rbp :rsp))
+          (loop repeat (* 2 (ceiling words 2)) collect '(:push-zero))))
+(defun helper-return () '((:mov-reg :rsp :rbp) (:pop-rbp) (:ret)))
+(defun runtime-unit (name forms &optional (kind :runtime))
+  ;; Resolve local labels deterministically within each helper's namespace.
+  (let* ((locals (loop for form in forms when (eq (first form) :label) collect (second form)))
+         (names (mapcar (lambda (label)
+                          (cons label (intern (format nil "~A/~A/~A" kind name label) :keyword))) locals))
+         (entry (list kind name)))
+    (mognitio.object:make-code-unit :owner entry :entry entry
+      :instructions
+      (loop for form in (cons (list :label entry) forms)
+            collect (mognitio.machine:make-instruction :opcode (first form)
+                      :operands (mapcar (lambda (arg) (or (cdr (assoc arg names)) arg)) (rest form)))))))
 
 (defun entry-forms ()
   ;; Read the initial stack before reserving fresh, aligned context storage.
@@ -30,9 +66,3 @@
                              (mognitio.amd64:little-endian (length bytes) 8)
                              (mognitio.amd64:little-endian (mognitio.syntax:text-payload-scalar-count payload) 8)
                              (coerce bytes 'list) (make-list (- size 32 (length bytes)) :initial-element 0))))))))
-
-(defun text-helper-units (operations)
-  ;; The runtime implementation is a separate increment. Tests substitute
-  ;; explicit ABI probes here; production must not silently link such stubs.
-  (when operations (internal-error "Native text helpers are not implemented yet"))
-  nil)

@@ -292,3 +292,21 @@ Frame corruption cases cover slot clearing, homes, publication order, overlap,
 stack-probe size, missing sites/unlink, return clobbers, and extraneous calls.
 Static object tests inspect byte/scalar lengths, flags, alignment, NUL payloads,
 padding, fixup target kinds, and deterministic encoding.
+
+## v0.6.0 native text, collection, and integration
+
+- `v06-native-text.lisp`: fixed text/flow expectations, independent scalar-list
+  oracle, failure ordering, caller/operand/receiver/argument roots, spilled live
+  values, loop/return handoff, and runtime instruction encoding.
+- `v06-native-gc.lisp` and `v06-heap-check.py`: 64 KiB bounded-heap runs in normal
+  and stress modes; allocation/free/reallocation records and independent heap
+  parsing; no-sweep/all-mark negative controls; split, coalescing, arena growth,
+  and requests larger than an arena. Observed reuse is explicitly a lower bound.
+- `v06-native-faults.lisp`: independent byte/scalar overflow, successful int64
+  boundary arithmetic, physical-size wrap, invalid roots, and failure priority.
+- `v06-integration.lisp`: both-backend lifetime and method composition, source
+  rejection/output preservation, cold/warm relocated standalone text/GC builds,
+  atomic failure preservation, and native diagnostic syscall faults.
+
+Internal options and heap records are test adapters, not public language or CLI
+features. Normal artifacts retain boolean stdout and empty stderr on success.
