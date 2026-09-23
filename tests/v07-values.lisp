@@ -27,6 +27,8 @@
       "type U=struct{a:int;}; let f=function(U:U):int{U->a}; let U=U{a:7}; f(U)==7"
       "type X=enum{A(int);B(int);}; branch on(X::B(2)){X::A(X)=>X==1,X::B(X)=>X==2}"
       "type E=enum{A;B(int);}; branch on(E::B (2,)){E::A=>false,E::B(x)=>x==2}"
+      "type E=enum{A;B(int);}; let value=E::A;true"
+      "type E=enum{A;B(int);}; let value=E::B(1);true"
       "type E=enum{A;B(int);}; branch on(E::A){E::A=>true,E::B(_)=>false}"))
     (v07-accept source))
   (dolist (source
@@ -35,10 +37,10 @@
       "type A=struct{x:int;}; type B=struct{x:int;}; var a=A{x:1};a=B{x:2};true"
       "type U=struct{x:int;}; U{y:1}->x==1" "type U=struct{x:int;}; U{x:1,x:2}->x==1"
       "type U=struct{x:int;}; U{}->x==1" "type U=struct{x:int;}; U{x:false}->x==1"
-      "type E=enum{A;B(int);}; E::B()==E::A" "type E=enum{A;B(int);}; E::B"
-      "type E=enum{A;B(int);}; E::B(1,2)" "type E=enum{A;B(int);}; E::B(false)"
-      "type E=enum{A;B(int);}; E::A()" "type E=enum{A;B(int);}; (E::B)(1)"
-      "type E=enum{A;B(int);}; E::B(1)(2)" "type E=enum{A;B(int);}; (E::A)()"
+      "type E=enum{A;B(int);}; let value=E::B();true" "type E=enum{A;B(int);}; let value=E::B;true"
+      "type E=enum{A;B(int);}; let value=E::B(1,2);true" "type E=enum{A;B(int);}; let value=E::B(false);true"
+      "type E=enum{A;B(int);}; let value=E::A();true" "type E=enum{A;B(int);}; let value=(E::B)(1);true"
+      "type E=enum{A;B(int);}; let value=E::B(1)(2);true" "type E=enum{A;B(int);}; let value=(E::A)();true"
       "type U=struct{x:int;}; var u=U{x:1};u->x=2;true"
       "type U=struct{};U{}==U{}" "type U=struct{};U{}+U{}==0"
       "type E=enum{A;};E::A!=E::A" "type E=enum{A;};E::A<E::A"

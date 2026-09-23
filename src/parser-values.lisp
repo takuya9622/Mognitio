@@ -46,7 +46,12 @@
       (:interface
        (let ((keyword (get-token :interface)) (name (get-token :identifier)) (methods nil))
          (get-token :left-brace)
-         (loop until (eq (kind) :right-brace) do (push (funcall function-reader t) methods))
+         (loop until (eq (kind) :right-brace) do
+           (let ((binding (get-token :let)) (method (get-token :identifier)))
+             (get-token :assign)
+             ;; This is a requirement, not an evaluated local initializer.
+             (let ((signature (funcall function-reader t)))
+               (push (make-named-member :name method :value signature :span (span binding signature)) methods))))
          (make-contract-declaration :name name :methods (coerce (nreverse methods) 'vector)
            :span (span keyword (get-token :right-brace)))))
       (:implement

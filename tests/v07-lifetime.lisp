@@ -1,7 +1,7 @@
 (in-package #:mognitio.tests)
 
 (defparameter *v07-gc-source*
-  "type Leaf=struct{s:string;}; type Pair=struct{left:Leaf;right:Leaf;v:void;}; type E=enum{Empty;Item(Pair);}; interface Text{function text():string;} implement E against Text{let text=function():string{branch on(this){E::Empty=>\"\",E::Item(p)=>p->left->s+p->right->s}};} let make=function():Text{let leaf=Leaf{s:\"keep\"+\"!\"};E::Item(Pair{right:leaf,left:leaf,v:void})}; let discarded=Leaf{s:\"trash\"+\"!\"};let held=make();let child={let p=Pair{left:Leaf{s:\"child\"+\"!\"},right:Leaf{s:\"discard\"+\"!\"},v:void};p->left};var i=0;loop while(i<2000){let x=Leaf{s:\"dead\"+\"?\"};let e=E::Item(Pair{left:x,right:x,v:void});i=i+1;};branch when{held->text()==\"keep!keep!\"=>child->s==\"child!\",else=>false}")
+  "type Leaf=struct{s:string;}; type Pair=struct{left:Leaf;right:Leaf;v:void;}; type E=enum{Empty;Item(Pair);}; interface Text{let text = function():string;} implement E against Text{let text=function():string{branch on(this){E::Empty=>\"\",E::Item(p)=>p->left->s+p->right->s}};} let make=function():Text{let leaf=Leaf{s:\"keep\"+\"!\"};E::Item(Pair{right:leaf,left:leaf,v:void})}; let discarded=Leaf{s:\"trash\"+\"!\"};let held=make();let child={let p=Pair{left:Leaf{s:\"child\"+\"!\"},right:Leaf{s:\"discard\"+\"!\"},v:void};p->left};var i=0;loop while(i<2000){let x=Leaf{s:\"dead\"+\"?\"};let e=E::Item(Pair{left:x,right:x,v:void});i=i+1;};branch when{held->text()==\"keep!keep!\"=>child->s==\"child!\",else=>false}")
 
 (deftest v07-transitive-lifetime-and-reclamation
   ;; C07-36..39. Allocate over sixty heap capacities while retaining a box,

@@ -92,7 +92,7 @@
                    (make-parameter :type type :name name
                      :span (cover (span-start (token-span name)) (span-end (token-span type)))))))
              (function-node (&optional signature-only)
-               (let* ((keyword (expect :function)) (name (when signature-only (expect :identifier))))
+               (let ((keyword (expect :function)))
                  (expect :left-paren)
                  (let ((parameters (comma-list #'parameter-node)))
                    (expect :right-paren) (expect :colon)
@@ -100,7 +100,7 @@
                           (span (cover (span-start (token-span keyword))
                                        (if signature-only (span-end (token-span (expect :semicolon))) (end-of body))))
                           (node (make-function-expression :parameters parameters :result-type type :body body :span span)))
-                     (if signature-only (make-named-member :name name :value node :span span) node)))))
+                     node))))
              (body-block ()
                (let* ((open (expect :left-brace)) (body (sequence-body :right-brace)))
                  (make-sequence-node :statements (sequence-node-statements body) :terminal (sequence-node-terminal body)
