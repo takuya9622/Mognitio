@@ -58,6 +58,7 @@
 
 (deftest v07-branch-contracts
   ;; C07-11..24: completion, scope, static checks, and branch candidate unions.
+  (v03-reject "type E=enum{A;B;};branch on(E::A){E::A|E::B=>true}" "lex")
   (dolist (source
     '("var n=0; let x=branch when{{n=n+1;false}=>1,{n=n+1;true}=>{n=n+10;2},{n=n+100;true}=>1/0,else=>0};x+n==14"
       "type E=enum{A(int,int);B(int,int);}; var n=0; let x=branch on({n=n+1;E::B(2,3)}){E::A(_,_)=>0,E::B(a,b)=>a+b};x+n==6"

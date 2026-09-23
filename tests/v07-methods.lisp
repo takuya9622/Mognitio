@@ -7,6 +7,8 @@
 
 (deftest v07-methods-and-dispatch
   ;; C07-25..35, 47..50, 52..53.
+  (v07-accept "type U=struct{n:int;};interface I{function number():int;}implement U against I{let number=function():int{this->n};}implement U{let asI=function():I{this};let pass=function(u:U):int{u->n};let forward=function():int{this->pass(this)};}branch when{U{n:7}->asI()->number()==7=>U{n:7}->forward()==7,else=>false}")
+  (v03-reject "interface Step{function step():bool;}type Alias=Step;type Stop=struct{};implement Stop against Alias{let step=function():bool{true};}let apply=function(v:Alias):bool{v->step()};type Again=struct{};implement Again against Step{let step=function():bool{apply(Stop{})};}apply(Stop{})" "semantic")
   (dolist (suffix '("render(U{s:\"a\"})+render(V::Item(\"b\"))==\"ab\""
                     "let make=function():N{U{s:\"a\"}}; var n=make();let old=n;n=V::Item(\"b\");old->name()+n->name()==\"ab\""
                     "U{s:\"a\"}->name()+V::Item(\"b\")->name()==\"ab\""))
