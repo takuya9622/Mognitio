@@ -65,8 +65,9 @@ identity. Matching semantic versions alone does not establish matching
 identities. Record the revision, content manifest (including uncommitted
 changes), SBCL/ASDF versions, and any code-generation configuration.
 Paths, timestamps, process IDs, and cache contents are not embedded in the
-executable. See the [v0.6.0 validation record](v0.6.0.md) for the current release
-and [development progress](v0.6.0-progress.md) for its incremental evidence.
+executable. See the [v0.7.0 release validation](v0.7.0-release.md) for the current release.
+The [v0.6.0 validation](v0.6.0.md) and [development progress](v0.6.0-progress.md)
+remain historical records.
 The [v0.5.0](v0.5.0.md), [v0.4.1](v0.4.1.md), [v0.4.0](v0.4.0.md), and
 [v0.3.0](v0.3.0.md) validation records remain historical.
 
