@@ -5,7 +5,7 @@
   (loop for b in (mognitio.ir:ir-function-blocks function) maximize
     (loop for i in (mognitio.ir:basic-block-instructions b)
           when (member (mognitio.ir:instruction-op i)
-                       '(:call :call.value :text.length :text.equal :text.not-equal :text.concat :text.slice))
+                       '(:call :call.value :text.length :text.equal :text.not-equal :text.concat :text.slice :struct.make :enum.make :interface.pack :call.interface))
           maximize (- (length (mognitio.ir:instruction-operands i))
                       (if (eq (mognitio.ir:instruction-op i) :call.value) 1 0)) into size
           finally (return (or size 0)))))
@@ -106,7 +106,7 @@
                   (prefix (when (eq (first publication) :publish) (third publication)))
                   (pending (copy-list forms)))
              (unless (and linked (not unlinked)
-                          (member op '(:call :call.value :text.length :text.equal :text.not-equal :text.concat :text.slice)))
+                          (member op '(:call :call.value :text.length :text.equal :text.not-equal :text.concat :text.slice :struct.make :enum.make :interface.pack :call.interface)))
                (internal-error "Invalid native call section"))
              (when (member :may-allocate (mognitio.ir:instruction-effects inst))
                (unless (and prefix (equal prefix (subseq pending 0 (length prefix))))
@@ -118,9 +118,19 @@
                (unless (and (equal (pop pending) (if (integerp home) (list :load-frame :rax home) (list :mov-reg :rax home)))
                             (equal (pop pending) (list :store-out offset :rax)))
                  (internal-error "Wrong native argument placement")))
+             (when (eq op :call.interface)
+               (let* ((home (gethash (first (mognitio.ir:instruction-operands inst)) homes))
+                      (expected (list (if (integerp home) (list :load-frame :rax home) (list :mov-reg :rax home))
+                                      '(:load-word :rcx :rax 32) '(:store-out 0 :rcx)
+                                      '(:load-word :rax :rax 24)
+                                      (list :load-word :rax :rax (+ 24 (* 8 (second (mognitio.ir:instruction-value inst))))))))
+                 (unless (equal expected (subseq pending 0 (length expected)))
+                   (internal-error "Invalid interface receiver or table slot"))))
              (let ((actual-targets (loop for form in pending when (eq (first form) :call) collect (second form)))
                    (expected-targets (case op
                                        (:call (list (list :function (mognitio.ir:instruction-value inst))))
+                                       (:call.interface (mapcar (lambda (id) (list :function id)) (third (mognitio.ir:instruction-value inst))))
+                                       ((:struct.make :enum.make :interface.pack) (list (mognitio.native.runtime::value-helper-name inst)))
                                        (:call.value (mapcar (lambda (id) (list :function id)) (second (mognitio.ir:instruction-value inst))))
                                        (otherwise (list (list :helper op))))))
                (unless (equal actual-targets expected-targets) (internal-error "Unexpected native call target")))
@@ -129,7 +139,7 @@
     (let ((expected (loop for block in (mognitio.ir:ir-function-blocks function) append
                       (loop for i in (mognitio.ir:basic-block-instructions block) for n from 0
                             when (member (mognitio.ir:instruction-op i)
-                                         '(:call :call.value :text.length :text.equal :text.not-equal :text.concat :text.slice))
+                                         '(:call :call.value :text.length :text.equal :text.not-equal :text.concat :text.slice :struct.make :enum.make :interface.pack :call.interface))
                             collect (list (mognitio.ir:basic-block-id block) n)))))
       (unless (and (subsetp expected operations :test #'equal) (subsetp operations expected :test #'equal))
         (internal-error "Missing native call sections")))

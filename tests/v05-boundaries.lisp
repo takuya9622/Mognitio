@@ -21,7 +21,7 @@
       (setf (gethash node (mognitio.semantic::checked-program-literals checked)) 0)
       (signals internal-failure (compile-program checked))
       (signals internal-failure (mognitio.ir:lower-program checked))))
-  (let* ((checked (check-program (parse-text "let f=function(): int {1}; let g=function(): int {2}; (if(true){f}else{g})()==1")))
+  (let* ((checked (check-program (parse-text "let f=function(): int {1}; let g=function(): int {2}; (branch when{(true)=>{f},else=>{g}})()==1")))
          (call (binary-expression-left (program-root (checked-program-program checked))))
          (callee (call-expression-callee call)))
     (setf (completion-targets (checked-completion checked callee)) '(1)
@@ -187,9 +187,9 @@
 
 (deftest v05-handwritten-caller-generated-callee
   (let ((source (v05-cross-abi-source
-                 "if(a != 7){let bad=1/0;}; if(b){}else{let bad=1/0;};
-                  if(c != 11){let bad=1/0;}; if(d){let bad=1/0;};
-                  if(e != 13){let bad=1/0;};" "true"))
+                 "branch when{(a != 7)=>{let bad=1/0;}}; branch when{(b)=>{},else=>{let bad=1/0;}};
+                  branch when{(c != 11)=>{let bad=1/0;}}; branch when{(d)=>{let bad=1/0;}};
+                  branch when{(e != 13)=>{let bad=1/0;}};" "true"))
         (caller
           (append
             '((:label (:function 0)) (:push-rbp) (:mov-reg :rbp :rsp))

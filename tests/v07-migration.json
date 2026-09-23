@@ -1,0 +1,1428 @@
+{
+  "baseline": "e233afe35071bee825f1da8ba530b1fc4893ae15",
+  "source_hash_encoding": "UTF-8; Lisp string values are reader-decoded templates, not their escaped file representation.",
+  "current_coverage": "Current suite keeps every prior group except the explicitly mapped pre-existing v06 replacements. Historical release records remain unchanged.",
+  "files": [
+    {
+      "path": "examples/branch-update.mgn",
+      "baseline_sha256": "2997518bdf39722b7ec0e3de2f1f48932a4f991b275071843585b248cbf78ff8",
+      "cases": [
+        {
+          "group": "v05-public-examples",
+          "source_sha256": "2997518bdf39722b7ec0e3de2f1f48932a4f991b275071843585b248cbf78ff8",
+          "change": "Preserve result and scopes with branch when."
+        }
+      ]
+    },
+    {
+      "path": "examples/early-return.mgn",
+      "baseline_sha256": "ebab8327c4977b6ee601be2de92d85658e7e8b5f9a972f88a51cc5a3fb5f2e44",
+      "cases": [
+        {
+          "group": "v05-public-examples",
+          "source_sha256": "ebab8327c4977b6ee601be2de92d85658e7e8b5f9a972f88a51cc5a3fb5f2e44",
+          "change": "Preserve result and scopes with branch when."
+        }
+      ]
+    },
+    {
+      "path": "examples/function-values.mgn",
+      "baseline_sha256": "de1d0730b301bca258be73368e7af77a6a01be1e88de70fd5b14d6ecb33eae3d",
+      "cases": [
+        {
+          "group": "v05-public-examples",
+          "source_sha256": "de1d0730b301bca258be73368e7af77a6a01be1e88de70fd5b14d6ecb33eae3d",
+          "change": "Preserve result and scopes with branch when."
+        }
+      ]
+    },
+    {
+      "path": "examples/functions.mgn",
+      "baseline_sha256": "1ce5173c951781bddfde15fdd6c68d421f070be481f01659070de4e804d391bb",
+      "cases": [
+        {
+          "group": "v05-public-examples",
+          "source_sha256": "1ce5173c951781bddfde15fdd6c68d421f070be481f01659070de4e804d391bb",
+          "change": "Preserve result and scopes with branch when."
+        }
+      ]
+    },
+    {
+      "path": "examples/loops.mgn",
+      "baseline_sha256": "71ac86801d73e93548df63a752b6cb97712ab8e9f4166533d8e0a3aa8fe2136f",
+      "cases": [
+        {
+          "group": "v05-public-examples",
+          "source_sha256": "71ac86801d73e93548df63a752b6cb97712ab8e9f4166533d8e0a3aa8fe2136f",
+          "change": "Preserve result and scopes with branch when."
+        }
+      ]
+    },
+    {
+      "path": "examples/nested.mgn",
+      "baseline_sha256": "52a6cd6a910ebc911719ea9af99ff8a247e659771f0b39c3021ebe87f81c7197",
+      "cases": [
+        {
+          "group": "v05-public-examples",
+          "source_sha256": "52a6cd6a910ebc911719ea9af99ff8a247e659771f0b39c3021ebe87f81c7197",
+          "change": "Preserve result and scopes with branch when."
+        }
+      ]
+    },
+    {
+      "path": "tests/generated.lisp",
+      "baseline_sha256": "e21cf33fd67b0be165a5effd7e5e2440edb2e965739a6fa869124f3b2ca48c74",
+      "cases": [
+        {
+          "group": "shared-fixture",
+          "line": 11,
+          "source_sha256": "4d281a82c62bb9f8cd4bc89f5864465dc35b4dd13f21b0269955f49882a26b48",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "v21-repetition-and-grammar-mutations",
+          "line": 39,
+          "source_sha256": "93546c1f03fc5b26bd345d5639aba427f493bf5d254f24503e09ba59e0b95a93",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        }
+      ]
+    },
+    {
+      "path": "tests/native-generated.lisp",
+      "baseline_sha256": "d4e6040eb2af381136808424b49c8c3847b64b0aa88a63b12fde0134c4411df5",
+      "cases": [
+        {
+          "group": "n24-d08-deterministic-cold-warm-relocation",
+          "line": 84,
+          "source_sha256": "0681f5bb86d3544cae8843ad9a9a1cb22dc89ba6c72b134d3c8ca9d1c970eec2",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "v04-deterministic-standalone",
+          "line": 87,
+          "source_sha256": "e470b175f7ed7730fe6a0b43fbea502faa3474afdf71d923920af92522e2a643",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        }
+      ]
+    },
+    {
+      "path": "tests/native-ir.lisp",
+      "baseline_sha256": "8768a6f7e394cb9a2c738a9c6e10b21652b00a8043779118a869a709dca6e70e",
+      "cases": [
+        {
+          "group": "d01-ssa-verifier",
+          "line": 20,
+          "source_sha256": "0d57288eff7810e061e3654b7fac10c7c8b1e8e2e6b37e771414e4a3f0dc74ea",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "d01-ssa-verifier",
+          "line": 21,
+          "source_sha256": "d456a74da78b5da3fa43b0b3e2ad408d67384e83c4d9f2fc8cc5f718306068d4",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "d01-ssa-verifier",
+          "line": 51,
+          "source_sha256": "0d57288eff7810e061e3654b7fac10c7c8b1e8e2e6b37e771414e4a3f0dc74ea",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        }
+      ]
+    },
+    {
+      "path": "tests/native-process.lisp",
+      "baseline_sha256": "b354a372e5f4af83378b23e5b4f42f1a57612f06a6fceef756a2b84b6626a358",
+      "cases": [
+        {
+          "group": "n04-n08-native-source-regression",
+          "line": 83,
+          "source_sha256": "8609eedf0a71a9b7f3f504f054bf4b0f0dee8a96be5ee8032f5c91f768f73281",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "n04-n08-native-source-regression",
+          "line": 84,
+          "source_sha256": "223af33dd6fdceb1fa68d53fd10038c5422f1487c26ff98ffa1984250ec67966",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "n04-n08-native-source-regression",
+          "line": 84,
+          "source_sha256": "a5f4c2bb5488cab3cabf3fd7018d36db2be5fe24a651d7d2e01c55058e64cfa4",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "n04-n08-native-source-regression",
+          "line": 88,
+          "source_sha256": "0380098368a17a0f5a8ce073b7acad1d077defbb4415cae5e5e3debd793e15dd",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "d04-no-external-generation",
+          "line": 264,
+          "source_sha256": "0d57288eff7810e061e3654b7fac10c7c8b1e8e2e6b37e771414e4a3f0dc74ea",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        }
+      ]
+    },
+    {
+      "path": "tests/semantic-backend.lisp",
+      "baseline_sha256": "917c983d4390e437cf345f076d01724e11b03c92b53b31bc92d66aaf2f124dbb",
+      "cases": [
+        {
+          "group": "v13-semantic-whole-tree",
+          "line": 4,
+          "source_sha256": "0d57288eff7810e061e3654b7fac10c7c8b1e8e2e6b37e771414e4a3f0dc74ea",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "v14-checked-boundary-and-forms",
+          "line": 29,
+          "source_sha256": "931de893edb0cee5d482d58c67708f592b74f18f079e2729e6ffe3d859a350f2",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        }
+      ]
+    },
+    {
+      "path": "tests/source-frontend.lisp",
+      "baseline_sha256": "236eb4d1bdd14b99b5f6bf0c60208dce40e6c36e99fcc7f92146fbe1a1d9ff8a",
+      "cases": [
+        {
+          "group": "v01-v02-booleans-and-branches",
+          "line": 10,
+          "source_sha256": "0f3e38dbf4c3f54eff90bc6978ba9c79c0aa772ede9094e4595269a82d510f4a",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "v01-v02-booleans-and-branches",
+          "line": 12,
+          "source_sha256": "6f3d41ff0f2c7a2459b16bd8e37d9b812b952b61b6ef6fbff90a011c0f32c82e",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "v03-whitespace-and-eof",
+          "line": 18,
+          "source_sha256": "96da93c20238643f1d016838d636afaece6bdbf6fb57114802f20cf7bca669cd",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "v07-location-boundaries",
+          "line": 74,
+          "source_sha256": "b6b3f8705bcefed05aed49a8a58170c70b4f463b2ebbc1fdca740989a8dc2045",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "v09-v12-invalid-grammar",
+          "line": 113,
+          "source_sha256": "f038e870cbfb401d23aaf34c487afae9329db4327bcbdf6246fe206092899336",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "v09-v12-invalid-grammar",
+          "line": 118,
+          "source_sha256": "617665e5dd47d8d0c0f883099db528d7d93a18e0170622e9df7475d7f1f4ed44",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "v09-v12-invalid-grammar",
+          "line": 119,
+          "source_sha256": "8609eedf0a71a9b7f3f504f054bf4b0f0dee8a96be5ee8032f5c91f768f73281",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "frontend-spans",
+          "line": 124,
+          "source_sha256": "91a1fb424eb806f4c3ab43431dffa4a9bea0f989002e5d04b172b725a8d3477e",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "v05-legacy-if-type-rejections",
+          "line": 132,
+          "source_sha256": "77f84fd957e938a762847ad3ec98c7c0b403cbd06467115503ebee07b105c0d1",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "v05-legacy-if-type-rejections",
+          "line": 132,
+          "source_sha256": "6d594e29c000b243bfe07c48571a4dc1105581fb3bf816feef094c5265381fd9",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "v05-legacy-if-type-rejections",
+          "line": 132,
+          "source_sha256": "86b634e802083c09e519c577941f600ba5d82acbf10ae97a2c5f31db7c4af7d6",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        }
+      ]
+    },
+    {
+      "path": "tests/v03-generated.lisp",
+      "baseline_sha256": "4c6f27a3208e6f52f859f14b135809a0004d3b0fbea3c1dbee93a793244ba250",
+      "cases": [
+        {
+          "group": "shared-fixture",
+          "line": 32,
+          "source_sha256": "4d281a82c62bb9f8cd4bc89f5864465dc35b4dd13f21b0269955f49882a26b48",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "shared-fixture",
+          "line": 35,
+          "source_sha256": "8e8e7c8f0b57dc9a7846f4f38eb9f3440ec122a4cd4ec4765f04616849322362",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "v03-generated-oracle",
+          "line": 61,
+          "source_sha256": "b172597a29d0022acfd4b4aff4b65b1e6e9d9fc8170fc5af427a556deeb2409e",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        }
+      ]
+    },
+    {
+      "path": "tests/v03-kernel.lisp",
+      "baseline_sha256": "3ab4edbe9cba312a8ce41c242f1bdfb11b375de7be72564a38104a66ed6beff7",
+      "cases": [
+        {
+          "group": "v03-positive-kernel",
+          "line": 36,
+          "source_sha256": "6a18de7cb43db8c162e447cefbcee6ca2780202ab1df4b924e425459334a7e94",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "v03-positive-kernel",
+          "line": 43,
+          "source_sha256": "3f205728049795278f6fb61d6c25c155d59e803f4832add2b82d92708fc8302e",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "v03-positive-kernel",
+          "line": 44,
+          "source_sha256": "32b369e70375bfb9bae835819d4dad70693b7d9ec38c678b50a193ce84d50688",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "v03-positive-kernel",
+          "line": 45,
+          "source_sha256": "02f1578b03d2a060ffd02bf0fe0ab65b75281b8b9844d0f0dc7e4ef80483497e",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "v03-positive-kernel",
+          "line": 46,
+          "source_sha256": "7b664a6ba3948f1387e6036f9107addfc2679d14a692ab05a64b672cebdceac2",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "v03-positive-kernel",
+          "line": 47,
+          "source_sha256": "51a2bf4e79412860bf8b349b3698a8d28f64ef700cf40fa51825ef836964cbc9",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "v03-positive-kernel",
+          "line": 48,
+          "source_sha256": "7c04b2d15f6ef24d4b4bfdf86feb854dc01c5693c87371826cafabe3747a4645",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "v03-positive-kernel",
+          "line": 49,
+          "source_sha256": "40e6e09c84db16af80a57ecd3600f2158d29e6d315f39b2f284b8fbb52e9a351",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "v03-positive-kernel",
+          "line": 50,
+          "source_sha256": "335113ffb0ac67ea9873d42eccfb76f95e3bbfd8572163b1481b145eb9ded5fe",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "v03-positive-kernel",
+          "line": 51,
+          "source_sha256": "107bddd55483904ca868f02cea135e49bbcab60908e731ed34ed09cbc803e2d7",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "v03-positive-kernel",
+          "line": 52,
+          "source_sha256": "038f531e0332609c7d601376035630ceeac2f893f34cbdd60e1f31d4c3cf2f5a",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "v03-positive-kernel",
+          "line": 56,
+          "source_sha256": "98c960321ebff331bf2dd98f6bd5aa45ee612344d543b4aecf6269136fc3b1db",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "v03-positive-kernel",
+          "line": 57,
+          "source_sha256": "6c2720c46d349b1d3940d927343adf0645708d1592d42fbfefb7a6a9de233554",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "v03-positive-kernel",
+          "line": 58,
+          "source_sha256": "8afc48cbbf1dc973ccea0056860ad120353c893960cd97718ef01874ff717782",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "v03-positive-kernel",
+          "line": 59,
+          "source_sha256": "7fffffcc8718d1155f0c6fb6021fa4836eb13e387e2295073275f3e79d8a3780",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "v03-rejection-kernel",
+          "line": 73,
+          "source_sha256": "8609eedf0a71a9b7f3f504f054bf4b0f0dee8a96be5ee8032f5c91f768f73281",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "v03-rejection-kernel",
+          "line": 78,
+          "source_sha256": "d1edced2c6ff98887ee34d22cee4f41871eee00f89df54476f8d84cdeb0c3aaf",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "v03-rejection-kernel",
+          "line": 79,
+          "source_sha256": "cc30ac14996803ba37286be796f8c86cfb877382d6661cc304397cfa44fba9a6",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "v03-rejection-kernel",
+          "line": 82,
+          "source_sha256": "cd4088ee46b826ef7f66c6e88c9577dbc3be0f6a18c21b4e37c9af312620dcb5",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "v03-rejection-kernel",
+          "line": 83,
+          "source_sha256": "738d3e5a76965a4ce41e743ccb7d1813507d5c719c8634e3345e6e2e2667054f",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "v03-rejection-kernel",
+          "line": 84,
+          "source_sha256": "add95e0a37d8849e8878dd93d4303a1f66fd0f2a54c31151a00263194f181a55",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "v03-rejection-kernel",
+          "line": 85,
+          "source_sha256": "c72154ddb25dda48bf81832d6e72f1810394643abeda7678805fd1bb1862ccbf",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "v03-rejection-kernel",
+          "line": 86,
+          "source_sha256": "392fd4bf7d7bad92a1b14515f5dde8629049442bce08a532dd73231de6b6485e",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "v03-rejection-kernel",
+          "line": 87,
+          "source_sha256": "42661cf9de71cdccb290e8cb6513b67a415000024bbd2b72fb971f4260e4895f",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "v03-rejection-kernel",
+          "line": 88,
+          "source_sha256": "cd62167b5df0064beb089932e4306e7dd99412d4f05e8fcfc14ec3a54fe0899b",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "v03-rejection-kernel",
+          "line": 93,
+          "source_sha256": "707636ebfba5bd88001c3443ee8a84765cd02dab05a3f9d8b0d35069e79a6412",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "v03-rejection-kernel",
+          "line": 95,
+          "source_sha256": "1579c8ab14220a44131b03e22789905ea68b47297285cf1ee48d7ea81d29720d",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "v03-runtime-arithmetic",
+          "line": 106,
+          "source_sha256": "c507da41654c5f5fc2c2dd6da2a1c4c24afb8b6d53f798c24b503a5a86b38f51",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "v03-runtime-arithmetic",
+          "line": 115,
+          "source_sha256": "df2fce3dfb032780581acdd9ada4d27fea92a71010cbcafa314b112f694711ac",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "v03-integer-machine-goldens",
+          "line": 140,
+          "source_sha256": "5c3d27a28e5e18f9caf2384a5b19fd9eeb01f2d30a5251094aa5bc67fb6093cc",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "v03-contract-boundaries",
+          "line": 200,
+          "source_sha256": "e784f49bd35309ad2a31be294832997ac51bf068683bff702134a995f3c6cab2",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "v03-contract-boundaries",
+          "line": 207,
+          "source_sha256": "49d3b72c093c1e528a889cad80cb99907c6a7de69588269a1587ffc865a278c8",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "v03-contract-boundaries",
+          "line": 219,
+          "source_sha256": "a98e2c3395cff31e86f5c393d85013862748f624379a00b4ffb5574f63399a6d",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        }
+      ]
+    },
+    {
+      "path": "tests/v03-merge.lisp",
+      "baseline_sha256": "4dc4100ab32f0e553384391c5e0cdebff72c35840d9801249721ee4797512d09",
+      "cases": [
+        {
+          "group": "v03-equal-incoming-values",
+          "line": 8,
+          "source_sha256": "c4befc9df9c8b469ad942a4562b245251ddc1c61ee12fdf61912f32f57c80609",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "v03-equal-incoming-values",
+          "line": 9,
+          "source_sha256": "7a6c40814c0ab4c10701f7874fa6d84f5be5955f8a68a75ec500a286c78bb479",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "v03-equal-incoming-values",
+          "line": 10,
+          "source_sha256": "43cf8bef098e5b6af7d9d6902d1d19ecf07abe1f63e420c95988399579746a66",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "v03-equal-incoming-values",
+          "line": 12,
+          "source_sha256": "9dca2f84ae99b43bff40ed6340e9b711a3013045200f7b3cd57178182f9fa721",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "v03-equal-incoming-values",
+          "line": 15,
+          "source_sha256": "3236f0df699b9aa4586a22bbd21f4336f8deb828bbe0edf11415995b470210a3",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "v03-equal-incoming-values",
+          "line": 17,
+          "source_sha256": "657dd4404c197cbbaa7a98ec8738f1f33a3a2c30fdd34d565a04d70bd8e0b2d2",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "v03-equal-incoming-values",
+          "line": 21,
+          "source_sha256": "096ab5b083fada50df12027470885bd6b1f229d7382d4c01fcde0645be98e9a4",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        }
+      ]
+    },
+    {
+      "path": "tests/v04-allocation.lisp",
+      "baseline_sha256": "e86588e849708829c2e0205f3d6743f99fbc967a43f090f645ff6e28e84bfbcc",
+      "cases": [
+        {
+          "group": "v04-allocation-and-copy-invariants",
+          "line": 36,
+          "source_sha256": "19f60630b46b5f7aef50df444fa327f8def687d7aab44043d17ec2125842071e",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        }
+      ]
+    },
+    {
+      "path": "tests/v04-functions.lisp",
+      "baseline_sha256": "0ec0ce6c5787672340a20261e6d99a3886eed4fb162d6850f6624d7a25d96d34",
+      "cases": [
+        {
+          "group": "v04-typed-functions-and-order",
+          "line": 6,
+          "source_sha256": "a60eee83c256d3321bbcc6b9b2f38c28183d74a462ec087b2ec30677de1004a5",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "v04-typed-functions-and-order",
+          "line": 9,
+          "source_sha256": "3c735dee58e9c868315e847f7f6dc3dcae96b9958fa4b59c11c716659b88286d",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "v04-typed-functions-and-order",
+          "line": 19,
+          "source_sha256": "f3b2509304d9a934de4a246f8074ef89d556e725553cb3bcab04c10e8ec01425",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "v04-return-paths",
+          "line": 29,
+          "source_sha256": "97fb1938a9082f99fa9b8c28082a70e014758e4db44b445ee4f823c9fb74b7b1",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "v04-return-paths",
+          "line": 30,
+          "source_sha256": "4c07274d7024b6da05794c63f0cd3ffcb3b75f581aaa5ccd9aa031944ce15463",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "v04-return-paths",
+          "line": 31,
+          "source_sha256": "9b5f55e59d4884f825234fca55ecf0e0176e8b4b6d9e228db053b55c29803bb0",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "v04-return-paths",
+          "line": 33,
+          "source_sha256": "1be6de71e97b528f9b2c5fdef3918999d8dbb73c9e92249882331289618691b3",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "v04-return-paths",
+          "line": 34,
+          "source_sha256": "0b4613e9653eb82a760b26d04f2bdc5780669c096792dc6055ed827bce106a75",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "v04-return-paths",
+          "line": 35,
+          "source_sha256": "0d7f15e805f1da5a20f5f06738a4f34a96e9dcfa66385102dc73fba0ca95faf5",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "v04-return-paths",
+          "line": 36,
+          "source_sha256": "e6196682a1cfa35a4a4eb636b05f9c7824fa3e6388aab1698870cb48b218ba28",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "v04-return-paths",
+          "line": 37,
+          "source_sha256": "60bb2da885c83bb3c222063b9250a3a5cae31bebac03b363f97a85460920f735",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "v04-return-paths",
+          "line": 38,
+          "source_sha256": "b788d44223ff06b9f2addb07e61a5f498679061ef885802ce8b2293277956e50",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "v04-return-paths",
+          "line": 39,
+          "source_sha256": "b78963380b380d0b4402de2647d301db26484f8d39f5b93f576f14b9ae195055",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "v04-return-paths",
+          "line": 40,
+          "source_sha256": "76ea725ccd499ac70b66a6b9acca62606585d3072528a58a02ae574fb50cc055",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "v04-return-paths",
+          "line": 41,
+          "source_sha256": "ed660afdfa3b63928427d97a7ca23005f7ff2fa8447f84ec9da24b5de012fc57",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "v04-return-paths",
+          "line": 44,
+          "source_sha256": "d5ae9168ae8e165b085322f1d92de8a3ab41c760335cc1092399d512e3bfb970",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "v04-reserved-words-and-grammar",
+          "line": 72,
+          "source_sha256": "82be4e91859a8268823864ea489961a4844d2e001c6fd177b5f383dd51d81422",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "v04-static-errors-and-cycles",
+          "line": 82,
+          "source_sha256": "a424d60c359cdf7679f67a868cd99a0594d226a071f25d286d80445786878047",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "v04-static-errors-and-cycles",
+          "line": 86,
+          "source_sha256": "72f2cb4906bcd6cf4d421b3d6f30b115142e7e48274459d7dff96706e80c75a7",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "v04-static-errors-and-cycles",
+          "line": 94,
+          "source_sha256": "130cecc61fc120189ad5b6ce9db92cd8a04176822f46fafd3aee64274a07acda",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "v04-static-errors-and-cycles",
+          "line": 95,
+          "source_sha256": "c695d5e8eaac440052a22f3f0a407513ccab7960102656655251d4b231cf6a39",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "v04-static-errors-and-cycles",
+          "line": 96,
+          "source_sha256": "f5c0c3120a9ac2bb1995446ee12759971538db59d448fb90f5a979e7730a96d4",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "v04-static-errors-and-cycles",
+          "line": 97,
+          "source_sha256": "58ffaf6e3fb5c430084e34f322880d16c5b53c7c54bcbba0ceb4b91645a3d7b8",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "v04-static-errors-and-cycles",
+          "line": 98,
+          "source_sha256": "00636d38191ff4e8d50ecac5cd6806346dc138b6b9086f6e0205fda7c6fd3de2",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "v04-static-errors-and-cycles",
+          "line": 99,
+          "source_sha256": "503401079560536be9050a8b506146a971b16061aa583e28cf63d46c8289d8ab",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "v04-static-errors-and-cycles",
+          "line": 100,
+          "source_sha256": "d3eb6d1badd34e37adcaeb018c5749dbc3cc8274dc79d63e280c4191195b19e6",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "v04-static-errors-and-cycles",
+          "line": 101,
+          "source_sha256": "1a384f5540901512c7b607a44e72492afa35bdfe45b8717765611da2b11d43b6",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "v04-static-errors-and-cycles",
+          "line": 104,
+          "source_sha256": "0f4714c843dcd5a1fe531aa635a3575c0f269897e6d4588b808ad4ac2be2fbcb",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "v04-static-errors-and-cycles",
+          "line": 105,
+          "source_sha256": "77d1c93a10acfff1591727c2460c61a7c8b507054c70b243aed68533becc3058",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "v04-call-runtime-order",
+          "line": 115,
+          "source_sha256": "4775201a741843fa2841c298863de15bf642fb9233544f812822af8523c37f1f",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "v04-name-type-and-flow-boundaries",
+          "line": 130,
+          "source_sha256": "265917c14999a796416dcba7ef60bee69719833fbb25b8d8448168b9efa3a367",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "v04-name-type-and-flow-boundaries",
+          "line": 131,
+          "source_sha256": "3536994242bc8b1e6262831dbf0a0d8a6f186daa351ee483606b6d97b7e8d287",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "v04-name-type-and-flow-boundaries",
+          "line": 134,
+          "source_sha256": "f30cb14a0b8bc4497f6e0a91ea22f10b1350e4f1e457b5cd720d19bb5496389d",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "v04-name-type-and-flow-boundaries",
+          "line": 135,
+          "source_sha256": "82421cbf5a1e8ab3b9a65a83cdbf74cda7d07f609efc620e16f8e1e978d76136",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "v04-name-type-and-flow-boundaries",
+          "line": 136,
+          "source_sha256": "9bf22d427dc7e5a09ef4a2a9db2a37722594096c588a6897a681c82d9e73e2e5",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "v04-name-type-and-flow-boundaries",
+          "line": 138,
+          "source_sha256": "43a98ed630a69c9f1a319c69d53f177705d53856bee9e181f66eb2b3a4bc2087",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "v04-name-type-and-flow-boundaries",
+          "line": 139,
+          "source_sha256": "c72f2f8ecd9abfbe6f5dd813cfdcc647932461dc1d791b1bd946cf3050d60af6",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "v04-name-type-and-flow-boundaries",
+          "line": 142,
+          "source_sha256": "b8b03722b9938916ad7692bea97f4ec1c845e95f77eb625b9313daaaf212e721",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "v04-name-type-and-flow-boundaries",
+          "line": 143,
+          "source_sha256": "619741902b58a66af1a59a0d0e72f0f6bc50e3ff53f5db613e2c1254bf03cc14",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "v04-parameter-annotations",
+          "line": 149,
+          "source_sha256": "6b02f4b5bc0bc9924edb7da753d07ee868c1cdb5946eb01b7acbe9eef28ba017",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "v04-parameter-annotations",
+          "line": 152,
+          "source_sha256": "66df559fd3b1f705704d40005d659188312cb3f5bfba8e27384babf8be6e7882",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "v04-parameter-annotations",
+          "line": 154,
+          "source_sha256": "948f34a147fa9225083bf1d92fd571ad37dc8db2f3305b8d7fab7004e9790998",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        }
+      ]
+    },
+    {
+      "path": "tests/v04-generated.lisp",
+      "baseline_sha256": "e6039ced6ed7b789656ec87f88231dcbea7a44e3f3a6992db2bf3309b69d84f7",
+      "cases": [
+        {
+          "group": "shared-fixture",
+          "line": 44,
+          "source_sha256": "4d281a82c62bb9f8cd4bc89f5864465dc35b4dd13f21b0269955f49882a26b48",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "shared-fixture",
+          "line": 46,
+          "source_sha256": "6c84cb30bd4d3ca3927b454abef0659bbcf480be9a7bf49b7ce4b1f0a42a6348",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "shared-fixture",
+          "line": 48,
+          "source_sha256": "8e8e7c8f0b57dc9a7846f4f38eb9f3440ec122a4cd4ec4765f04616849322362",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        }
+      ]
+    },
+    {
+      "path": "tests/v05-boundaries.lisp",
+      "baseline_sha256": "4273381b1a892a7fac4e29417fbfd3165e92c7853893633b6bb3e67db6f9fcdc",
+      "cases": [
+        {
+          "group": "v05-checked-metadata-mutations",
+          "line": 24,
+          "source_sha256": "0f3f77aafba0dffc0dd8dd9b591b82a3d8f271e061d84887fe4e283e541b4e71",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "v05-handwritten-caller-generated-callee",
+          "line": 190,
+          "source_sha256": "0d37cb7aa590f5999ce4fd553f6d6e8b71a19e0e29aaee037a4b205cf769f19f",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        }
+      ]
+    },
+    {
+      "path": "tests/v05-conformance.lisp",
+      "baseline_sha256": "ebc243632a3a588277732a16f0d1538e252a11bd4e19c13aaa9877d56d5dc0d2",
+      "cases": [
+        {
+          "group": "v05-keywords-and-source-shapes",
+          "line": 26,
+          "source_sha256": "5e4f231037fc9dd5731253670b0a5491c134bddca812f3a96944770a39adab7e",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "v05-function-and-flow-contracts",
+          "line": 37,
+          "source_sha256": "171575e7de91d1266a88fbf1bada1dad73791db69e3a0392f56ca6283b06e5a6",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "v05-function-and-flow-contracts",
+          "line": 38,
+          "source_sha256": "921862a789db211f19f81637bc628881c097913552bf10533c777e36051dd88d",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "v05-function-and-flow-contracts",
+          "line": 41,
+          "source_sha256": "742ce4e2ccd758435b83fff2b8f9d971d9f1581963cdc2b755f236e32acb89f4",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "v05-function-and-flow-contracts",
+          "line": 42,
+          "source_sha256": "7b4f564ed2d386fd8d4f519ea83d4e73193226930c13dd46f513e7d555d1f6b8",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "v05-function-and-flow-contracts",
+          "line": 43,
+          "source_sha256": "a4eb7085b83f41800b0aa4c7535496ff45c1737725bc42de912300647890e446",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "v05-function-and-flow-contracts",
+          "line": 44,
+          "source_sha256": "f5b35cffc9e576f86a529d0a6dc6a18e4cb241b10d36a373f235756b226b9d90",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "v05-function-and-flow-contracts",
+          "line": 47,
+          "source_sha256": "b0df3a4685e3554eb0b83c12f29cbd58f8239d0c3844ad2f712deb89a1255047",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "v05-function-and-flow-contracts",
+          "line": 57,
+          "source_sha256": "00396bac2efdcea606f5bd3c07c7b04e1122bcc9840ff3cc256f0267130f5a53",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "v05-function-and-flow-contracts",
+          "line": 61,
+          "source_sha256": "77d8233a72f9201806fd82fa5debf1560199b3a7076e558dd3adf64c8dbb5d8d",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "v05-function-and-flow-contracts",
+          "line": 64,
+          "source_sha256": "e8a9d52b778853dec4310411554cdb6a54ce65e51fc0f1dcf03c1b65442f5177",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "v05-function-and-flow-contracts",
+          "line": 65,
+          "source_sha256": "4c35f257320f9de2bd33d9460c96a6eb4ff084b6f7ff43c29c59400d8414e24b",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "v05-function-and-flow-contracts",
+          "line": 73,
+          "source_sha256": "8a2dd6fb5e4760b004eb951b17628d31a0300f4b86fcff13960d39072bdb2cfa",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "v05-runtime-order-and-artifacts",
+          "line": 81,
+          "source_sha256": "f4f00033e7c4c4818ed5be4d69520f80f7ded960c058aee185f9f30f06ba9be7",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "v05-large-mixed-void-call",
+          "line": 95,
+          "source_sha256": "081795061982c77153e9c65484dd7e2935f0ffbf215de5f885f95aaf8baf4d9e",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        }
+      ]
+    },
+    {
+      "path": "tests/v05-functions.lisp",
+      "baseline_sha256": "00df7b19461771a1a7e97f7d3a37af49ed5c5963394294dd738b25963c209301",
+      "cases": [
+        {
+          "group": "v05-function-values-and-scope",
+          "line": 7,
+          "source_sha256": "fdc638e256f4ce5f74e05b1e1d94abccfced9fb34b5267fb4bac4b414b2b2aa4",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "v05-function-values-and-scope",
+          "line": 10,
+          "source_sha256": "97e7bb237723669a117f700bc9511a08ccefb3fcbdc68fbd1bef6cd9d2034129",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "v05-function-values-and-scope",
+          "line": 12,
+          "source_sha256": "d65b5d74220784f476e2e4ed2e5c988822c353f14a3fee6acfd7fb39c437b348",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "v05-function-values-and-scope",
+          "line": 18,
+          "source_sha256": "8b0b7b4f61e53dc068fca3eb156915c60119a1de1891ae441650841503c0f874",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "v05-function-values-and-scope",
+          "line": 26,
+          "source_sha256": "af37f8008bc3c39e506d46830b02b4532d78f0913210d7347e55d1be61cd87ec",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "v05-core-function-candidates",
+          "line": 31,
+          "source_sha256": "f89305c04eab4d4edb6eed0989c9422bd04a32e391fe47a6178ca3e8d326f06a",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        }
+      ]
+    },
+    {
+      "path": "tests/v05-generated.lisp",
+      "baseline_sha256": "ee70f30556db8e6929c1f311abd8ef87b5f87638484eed603e7186289ee5972d",
+      "cases": [
+        {
+          "group": "shared-fixture",
+          "line": 89,
+          "source_sha256": "4d281a82c62bb9f8cd4bc89f5864465dc35b4dd13f21b0269955f49882a26b48",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        }
+      ]
+    },
+    {
+      "path": "tests/v05-loops.lisp",
+      "baseline_sha256": "82896ff6a77cae7dd5a68e641322c961bdb08710e783aba002fb5cb9b0b9a3d1",
+      "cases": [
+        {
+          "group": "v05-unconditional-loops",
+          "line": 19,
+          "source_sha256": "56bf0da8ebadaf2b8145d1346b656323cca3cf228ac6de20a8b17ff51e19b22a",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "v05-unconditional-loops",
+          "line": 20,
+          "source_sha256": "5bf14f061f4f81713dec75a1815e8d60a9de5e37828d16a587848bc3ad25b9cf",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "v05-unconditional-loops",
+          "line": 21,
+          "source_sha256": "f53b006a5b0226406b031ad3ba6f17f56e916a4996c3420a06737757f6dcc9ea",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "v05-unconditional-loops",
+          "line": 22,
+          "source_sha256": "7b86629864c4d498697124b0d0330bf69bfda3ad71bf82dae88ed20efbc49db6",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "v05-unconditional-loops",
+          "line": 25,
+          "source_sha256": "a4b44023c14265989c905efdf6340ae93cadc2e039fae42df17a85cddbda28ca",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "v05-unconditional-loops",
+          "line": 26,
+          "source_sha256": "27b264aa0e77a28daf09ccb145b981567ca2c6f162beb4f844c8f8d94421df5b",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "v05-unconditional-loops",
+          "line": 27,
+          "source_sha256": "450a5083d1fb5f64b8e1818a9208c85084ed94d7727174804ba4992f65df0fb3",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "v05-unconditional-loops",
+          "line": 34,
+          "source_sha256": "56870891721b31b86ccb86366ee73041f8c154ecbfff89465d8e4531d3f4690d",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "v05-conditional-and-valued-loops",
+          "line": 62,
+          "source_sha256": "1567632c6c6d69880d39a5fb1dc7fde7144b68efb8f397efc39ff8384ff6033b",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "v05-conditional-and-valued-loops",
+          "line": 63,
+          "source_sha256": "04bbeec9fe3f529209a4956e2ba0eae72c1621b2b3cac77ed2d6952d678ae4b6",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "v05-conditional-and-valued-loops",
+          "line": 68,
+          "source_sha256": "864cb5240c30528945c87492f78f82f6186a89bf67b957e68d25e880e3a309e1",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "v05-conditional-and-valued-loops",
+          "line": 69,
+          "source_sha256": "cf187c2099e50c09ba7384517bfb3a30369fcfc50645d467e202d362ff857cb5",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "v05-conditional-and-valued-loops",
+          "line": 73,
+          "source_sha256": "6a20480223f98831efde90a40a1596867a1ec635c0ebe999d8b9ef3336e7e494",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "v05-conditional-and-valued-loops",
+          "line": 81,
+          "source_sha256": "82f64a3bfc54e7b134164ace573f56a99573c92b598f32c3e088739abc9df25e",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "v05-conditional-and-valued-loops",
+          "line": 82,
+          "source_sha256": "b337aa282d4755a7b14fec1caf0764b535f84935a227018f7dd92b26f5697f27",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "v05-conditional-and-valued-loops",
+          "line": 83,
+          "source_sha256": "c50accbb61af468810d92940d73a8c0c0650997bf953820f35bf6468b2236868",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "v05-conditional-and-valued-loops",
+          "line": 87,
+          "source_sha256": "7597789fa961d5537944fb1a36233a1de7481049f26977496dd8db1db3532c4d",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "v05-conditional-and-valued-loops",
+          "line": 91,
+          "source_sha256": "50188762b816986be82f9f0668d47f60249e56a36b1e5d1f284e699c18c81daa",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "v05-dispatch-call-loop-composite",
+          "line": 118,
+          "source_sha256": "6791ba97b61942450c4d5d29d69ae8f58c43a11bfa3f244878570e8081d93504",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        }
+      ]
+    },
+    {
+      "path": "tests/v05-values.lisp",
+      "baseline_sha256": "ff44b402663d557bec9b022726462c31ec8a855cb1372a100180a06a6805b9c7",
+      "cases": [
+        {
+          "group": "v05-void-blocks-and-flow",
+          "line": 7,
+          "source_sha256": "182b3598e821e375c1757f0a044c6a297e41d807637f91d3edfce17abff1dd3f",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "v05-void-blocks-and-flow",
+          "line": 12,
+          "source_sha256": "1fb5fa25d6f055580ff1c92a07cc4c98764e052a675a3895bb1e785fd66a7bda",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "v05-void-blocks-and-flow",
+          "line": 22,
+          "source_sha256": "91738c19fc87f21d246928e725b33d3fddcb3c0ab64786a3311d82236252ba31",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "v05-void-blocks-and-flow",
+          "line": 22,
+          "source_sha256": "cc82e4eef41741a4f0a8e5c9db31b81984c56bdd059e595dbfda21ebecb93609",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "v05-migrated-semantic-rejections",
+          "line": 42,
+          "source_sha256": "77f84fd957e938a762847ad3ec98c7c0b403cbd06467115503ebee07b105c0d1",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        }
+      ]
+    },
+    {
+      "path": "tests/v06-compatibility.lisp",
+      "baseline_sha256": "7f90229997f72fe9ddf8711827782dae8039723d21e69e90ed8198d5baebbb27",
+      "cases": [
+        {
+          "group": "v06-migrated-typed-functions-and-order",
+          "line": 17,
+          "source_sha256": "a60eee83c256d3321bbcc6b9b2f38c28183d74a462ec087b2ec30677de1004a5",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "v06-migrated-typed-functions-and-order",
+          "line": 20,
+          "source_sha256": "3c735dee58e9c868315e847f7f6dc3dcae96b9958fa4b59c11c716659b88286d",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "v06-migrated-typed-functions-and-order",
+          "line": 30,
+          "source_sha256": "f3b2509304d9a934de4a246f8074ef89d556e725553cb3bcab04c10e8ec01425",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "v06-migrated-reserved-words-and-grammar",
+          "line": 51,
+          "source_sha256": "5affa162191d6a98a287233a476940f06115224990ac5216117b5f3fde2eebf2",
+          "change": "Update grammar/phase expectation for nominal type names or member references; coverage remains in the named group."
+        },
+        {
+          "group": "v06-migrated-reserved-words-and-grammar",
+          "line": 57,
+          "source_sha256": "82be4e91859a8268823864ea489961a4844d2e001c6fd177b5f383dd51d81422",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "v06-migrated-name-type-and-flow-boundaries",
+          "line": 73,
+          "source_sha256": "265917c14999a796416dcba7ef60bee69719833fbb25b8d8448168b9efa3a367",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "v06-migrated-name-type-and-flow-boundaries",
+          "line": 74,
+          "source_sha256": "3536994242bc8b1e6262831dbf0a0d8a6f186daa351ee483606b6d97b7e8d287",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "v06-migrated-name-type-and-flow-boundaries",
+          "line": 77,
+          "source_sha256": "f30cb14a0b8bc4497f6e0a91ea22f10b1350e4f1e457b5cd720d19bb5496389d",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "v06-migrated-name-type-and-flow-boundaries",
+          "line": 78,
+          "source_sha256": "82421cbf5a1e8ab3b9a65a83cdbf74cda7d07f609efc620e16f8e1e978d76136",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "v06-migrated-name-type-and-flow-boundaries",
+          "line": 79,
+          "source_sha256": "9bf22d427dc7e5a09ef4a2a9db2a37722594096c588a6897a681c82d9e73e2e5",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "v06-migrated-name-type-and-flow-boundaries",
+          "line": 81,
+          "source_sha256": "43a98ed630a69c9f1a319c69d53f177705d53856bee9e181f66eb2b3a4bc2087",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "v06-migrated-name-type-and-flow-boundaries",
+          "line": 82,
+          "source_sha256": "c72f2f8ecd9abfbe6f5dd813cfdcc647932461dc1d791b1bd946cf3050d60af6",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "v06-migrated-name-type-and-flow-boundaries",
+          "line": 85,
+          "source_sha256": "b8b03722b9938916ad7692bea97f4ec1c845e95f77eb625b9313daaaf212e721",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "v06-migrated-name-type-and-flow-boundaries",
+          "line": 86,
+          "source_sha256": "619741902b58a66af1a59a0d0e72f0f6bc50e3ff53f5db613e2c1254bf03cc14",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        }
+      ]
+    },
+    {
+      "path": "tests/v06-core.lisp",
+      "baseline_sha256": "6865939b1d8afb8790e3711a0a7ba76ad10f17567fddb270b500f214b3787480",
+      "cases": [
+        {
+          "group": "v06-core-text-lowering",
+          "line": 42,
+          "source_sha256": "ac0afe943796eaeeebc5f4f60e0ced264836d50ebbbff7dd24c8a0d9795281f9",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "v06-core-ordered-execution",
+          "line": 134,
+          "source_sha256": "4da001af271de22613e44d171071710ddcfa93ca7794518fbfd2649a616f391f",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "v06-core-ordered-execution",
+          "line": 135,
+          "source_sha256": "e0b3746282e2829034c74bcd7dd4e0086c01d8917feef382e6084842d431ac05",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "v06-core-ordered-execution",
+          "line": 140,
+          "source_sha256": "f4ac2603a1add0e1bb0ae3d6ec486140d08c06bc3ac38fd4e9865eb863576807",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "v06-core-ordered-execution",
+          "line": 141,
+          "source_sha256": "ac0afe943796eaeeebc5f4f60e0ced264836d50ebbbff7dd24c8a0d9795281f9",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        }
+      ]
+    },
+    {
+      "path": "tests/v06-frontend.lisp",
+      "baseline_sha256": "436fe3ecb30fda7287ef174c28fe58ac475b7f4aa71483fb37b6ef2ccb7aa2ce",
+      "cases": [
+        {
+          "group": "v06-postfix-and-static-contracts",
+          "line": 42,
+          "source_sha256": "f76d9097f96fb4e69255287983d4f626ada8b3cf555ae154df0aa4fab50b9a6d",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "v06-postfix-and-static-contracts",
+          "line": 59,
+          "source_sha256": "c5f5f9dbe6445d6849b245e9c43cda8121caba56d268bb58f639527e9ba3c615",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "v06-postfix-and-static-contracts",
+          "line": 59,
+          "source_sha256": "df59544618fd686cc014711987fc30678ad5974644031ce53fe81d61e11f88eb",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "v06-postfix-and-static-contracts",
+          "line": 60,
+          "source_sha256": "6b96cbf620815e3f43d51e00ac5f450c9cf7e65143fe187e618e93125905ad03",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "v06-postfix-and-static-contracts",
+          "line": 66,
+          "source_sha256": "e4e9959d49581fd4ab61a76d67df3e7982d2a0f2b662699674dac2591f31df7d",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        }
+      ]
+    },
+    {
+      "path": "tests/v06-host-gc-entry.lisp",
+      "baseline_sha256": "504df9b2b1db9c0255bbcdada79e4abc3c14ea59eb43271598611ed1ab83dc36",
+      "cases": [
+        {
+          "group": "shared-fixture",
+          "line": 8,
+          "source_sha256": "8668a3783ea4423b508e7f21e881555fbb9f376eeeea088c2c57046c7027a560",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        }
+      ]
+    },
+    {
+      "path": "tests/v06-host.lisp",
+      "baseline_sha256": "220f9c5528d0329df1f1274a622a75ddda8a7a5de81681eef14613b830142b22",
+      "cases": [
+        {
+          "group": "v06-host-text-and-flow",
+          "line": 14,
+          "source_sha256": "45620f4b92082405f24616c3adca7b91947a18f46f759813aa793353ef65093f",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "v06-host-text-and-flow",
+          "line": 21,
+          "source_sha256": "8614945f1295d7fe30033a4c43f1f3bae807d26f202fe825a195f1dc4244ab2e",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "v06-host-text-and-flow",
+          "line": 24,
+          "source_sha256": "3ccaab48fb5577a10f6d6f61db969fbb1614dc0580ba6c819e4ce052dc1cdaf9",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "v06-host-text-and-flow",
+          "line": 29,
+          "source_sha256": "5164c123f6774f126fb6f7ccd7208015459e660682369e34d8f5c81e13f7bbc0",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "v06-host-independent-scalar-oracle",
+          "line": 74,
+          "source_sha256": "3a782c5c0100e4dd1183b83c06d60fe6683d9ebfc09f101c6668239c1421a871",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "v06-host-copy-and-gc-survival",
+          "line": 90,
+          "source_sha256": "65dcf65871ca404875a9acd6591fedfb2a9e8680b1f0c2257181e789cc5f2d29",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        }
+      ]
+    },
+    {
+      "path": "tests/v06-integration.lisp",
+      "baseline_sha256": "6e58661e615f9f46821658022aef6529de41fb38ef2f2cfe7faebd6d51d4adaf",
+      "cases": [
+        {
+          "group": "v06-integration-lifetime-and-composition",
+          "line": 43,
+          "source_sha256": "ddd26e5fd9ea6b8760d5ae41e24433bd1dce6d2fd6f356f16040726b07fd9088",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        },
+        {
+          "group": "v06-integration-lifetime-and-composition",
+          "line": 45,
+          "source_sha256": "680c3ce470b9a5a57051c60a62fba76ea9cff9ce68067ab34310559ffead075d",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        }
+      ]
+    },
+    {
+      "path": "tests/v06-native-frames.lisp",
+      "baseline_sha256": "e337bb80a4645d270f037e94f212e0d5acdb3183fc35839dfb0d840a0c8e80f9",
+      "cases": []
+    },
+    {
+      "path": "tests/v06-native-gc.lisp",
+      "baseline_sha256": "e12d25ba5e60bc44e823a5e18a0f6283caa0ba41084fd79e0702ff57f8c6faf0",
+      "cases": [
+        {
+          "group": "shared-fixture",
+          "line": 48,
+          "source_sha256": "c0f1500e06fa8341510402150f92f941427a6f5bf67de81f8f2589b1a6296fee",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        }
+      ]
+    },
+    {
+      "path": "tests/v06-native-text.lisp",
+      "baseline_sha256": "828368952f18a822c2aa84ae6b1d47be078b54e2f68e7c080252ff5aaacf77e1",
+      "cases": [
+        {
+          "group": "v06-native-text-live-roots",
+          "line": 47,
+          "source_sha256": "dcc5fc97a6347f399430ad8a57a03f49403744ce991200547764cb7043bf1fd7",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        }
+      ]
+    },
+    {
+      "path": "tests/v06-roots.lisp",
+      "baseline_sha256": "1470c34bc68b80b46557e66f007a5d7b8255a7042d3743cbe8362f38eae09206",
+      "cases": [
+        {
+          "group": "v06-root-earlier-operands-and-receiver",
+          "line": 136,
+          "source_sha256": "1ae4077c45400bd157945e8333a2c1bf3d9bed9e274d9230c1965721234d63e3",
+          "change": "Preserve expression semantics with branch when and original arm blocks."
+        }
+      ]
+    }
+  ]
+}

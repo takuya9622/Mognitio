@@ -1,13 +1,13 @@
 (in-package #:mognitio.tests)
 
 (deftest v13-semantic-whole-tree
-  (let* ((program (parse-text "if(true){false}else{true}"))
+  (let* ((program (parse-text "branch when{(true)=>{false},else=>{true}}"))
          (root (program-root program))
          (checked (check-program program))
-         (nodes (list root (if-expression-condition root)
-                      (if-expression-then-branch root) (if-expression-else-branch root)
-                      (sequence-node-terminal (if-expression-then-branch root))
-                      (sequence-node-terminal (if-expression-else-branch root)))))
+         (nodes (list root (branch-arm-selector (aref (branch-expression-arms root) 0))
+                      (branch-arm-value (aref (branch-expression-arms root) 0)) (branch-arm-value (aref (branch-expression-arms root) 1))
+                      (sequence-node-terminal (branch-arm-value (aref (branch-expression-arms root) 0)))
+                      (sequence-node-terminal (branch-arm-value (aref (branch-expression-arms root) 1))))))
     (same program (checked-program-program checked))
     (dolist (node nodes) (same :bool (checked-normal-type checked node)))
     (signals internal-failure (check-program (make-program :source (program-source program))))
@@ -18,15 +18,15 @@
       (signals internal-failure
         (check-program
          (make-program :source (program-source program)
-                       :root (make-if-expression :condition (if-expression-condition root)
-                                                 :then-branch (if-expression-then-branch root)
+                       :root (make-if-expression :condition (branch-arm-selector (aref (branch-expression-arms root) 0))
+                                                 :then-branch (branch-arm-value (aref (branch-expression-arms root) 0))
                                                  :else-branch bad :span (node-span root))))))))
 
 (deftest v14-checked-boundary-and-forms
   (signals internal-failure (compile-program (parse-text "true")))
   (dolist (case '(("true" (lambda () t))
                   ("false" (lambda () nil))
-                  ("if(if(false){true}else{false}){false}else{true}"
+                  ("branch when{(branch when{(false)=>{true},else=>{false}})=>{false},else=>{true}}"
                    (lambda () (if (if nil t nil) nil t)))))
     (let ((original (fdefinition 'mognitio.backend.cl::host-compile))
           (seen nil))

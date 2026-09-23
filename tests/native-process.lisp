@@ -80,12 +80,12 @@
       (let ((source (put-bytes (fresh-path) (first case))))
         (expect-cli (build-args source output) 1 :phase (second case))))
     (dolist (text '("" "true false"
-                    "if(true){true}else if(false){true}else{false}"
-                    "if(true){true}else{true false}" "if(false){@}else{true}"))
+                    "if(true){true}else branch when{(false)=>{true},else=>{false}}"
+                    "branch when{(true)=>{true},else=>{true false}}" "branch when{(false)=>{@},else=>{true}}"))
       (let ((source (put-text (fresh-path) text)))
         (expect-cli (build-args source output) 1
                     :phase (if (find #\@ text) "lex" "parse"))))
-    (let ((source (put-text (fresh-path) (format nil "if(true){true}else{~%@}"))))
+    (let ((source (put-text (fresh-path) (format nil "branch when{(true)=>{true},else=>{~%@}}"))))
       (is (search ":2:1: lex:" (expect-cli (build-args source output) 1))))))
 
 (deftest n11-n14-n29-paths-publication
@@ -261,14 +261,14 @@
       (same nil (temporary-images)))))
 
 (deftest d04-no-external-generation
-  (let ((source (put-text (fresh-path) "if(true){false}else{true}"))
+  (let ((source (put-text (fresh-path) "branch when{(true)=>{false},else=>{true}}"))
         (output (fresh-path ".elf"))
         (tools (merge-pathnames "compiler-tools/" *temp*)))
     (ensure-directories-exist tools)
     (sb-posix:symlink (sb-posix:readlink "/proc/self/exe")
                       (namestring (merge-pathnames "sbcl" tools)))
     (put-text (merge-pathnames "dirname" tools)
-              (format nil "#!/bin/sh~%case $1 in --) shift;; esac~%printf '%s\\n' \"\${1%/*}\"~%"))
+              (format nil "#!/bin/sh~%case $1 in --) shift;; esac~%printf '%s\\n' \"${1%/*}\"~%"))
     (sb-posix:chmod (namestring (merge-pathnames "dirname" tools)) #o700)
     (multiple-value-bind (out err code)
         (process-result (append (list "env" (format nil "PATH=~A" (namestring tools))

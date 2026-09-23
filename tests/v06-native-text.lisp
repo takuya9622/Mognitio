@@ -44,7 +44,7 @@
       "let f=function(s:string):string{s+\"!\"}; let g=function(a:string,b:string,c:string):string{a+b+c}; g(f(\"a\"),f(\"b\"),f(\"c\"))==\"a!b!c!\""
       "let f=function(s:string):string{s+\"!\"}; var s=f(\"abc\"); let old=s->slice({s=f(\"z\");1},3); old==\"bc\""
       "let f=function(s:string):string{s+\"!\"}; var i=0; var s=\"\"; loop while(i<200){s=(loop {let x=f(s); break x;}); i=i+1;}; s->length()==200"
-      "let f=function(s:string):string{s+\"!\"}; let g=function(s:string):string{s+\"?\"}; let h=if(true){f}else{g}; let a=h(\"a\"); h(a)==\"a!!\""))
+      "let f=function(s:string):string{s+\"!\"}; let g=function(s:string):string{s+\"?\"}; let h=branch when{(true)=>{f},else=>{g}}; let a=h(\"a\"); h(a)==\"a!!\""))
     (v06-expect-native source :true '(:stress t :validate t :arena-unit 65536 :cap 65536))))
 
 (deftest v06-native-runtime-encoding

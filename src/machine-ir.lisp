@@ -135,6 +135,31 @@
                (loop for argument in (mognitio.ir:instruction-operands inst) for offset from 0 by 8 do
                  (load-value argument) (emit :store-out offset :rax))
                (emit :call (list :function (mognitio.ir:instruction-value inst))))
+              ((:struct.make :enum.make :interface.pack)
+               (loop for argument in (mognitio.ir:instruction-operands inst) for offset from 0 by 8 do
+                 (load-value argument) (emit :store-out offset :rax))
+               (emit :call (mognitio.native.runtime::value-helper-name inst)))
+              ((:struct.field :enum.payload :enum.tag)
+               (load-value (first (mognitio.ir:instruction-operands inst)))
+               (emit :load-word :rax :rax
+                 (case (mognitio.ir:instruction-op inst)
+                   (:enum.tag 24)
+                   (:struct.field (+ 32 (* 8 (mognitio.ir:instruction-value inst))))
+                   (otherwise (+ 32 (* 8 (third (mognitio.ir:instruction-value inst))))))))
+              (:call.interface
+               (loop for argument in (mognitio.ir:instruction-operands inst) for offset from 0 by 8 do
+                 (load-value argument) (emit :store-out offset :rax))
+               (load-value (first (mognitio.ir:instruction-operands inst)))
+               (emit :load-word :rcx :rax 32) (emit :store-out 0 :rcx)
+               (emit :load-word :rax :rax 24)
+               (emit :load-word :rax :rax (+ 24 (* 8 (second (mognitio.ir:instruction-value inst)))))
+               (let ((done (fresh-label)))
+                 (dolist (id (third (mognitio.ir:instruction-value inst)))
+                   (let ((next (fresh-label)))
+                     (emit :imm-rcx id) (emit :cmp) (emit :jnz next)
+                     (emit :call (list :function id)) (emit :jmp done) (emit :label next)))
+                 (emit :mov-edi 3) (emit :mov-eax 60) (emit :syscall) (emit :ud2)
+                 (emit :label done)))
               (:call.value
                (loop for argument in (rest (mognitio.ir:instruction-operands inst)) for offset from 0 by 8 do
                  (load-value argument) (emit :store-out offset :rax))
@@ -152,10 +177,11 @@
                (arithmetic inst)))
             (write-location (home (mognitio.ir:instruction-result inst)) :rax)
             (when (member (mognitio.ir:instruction-op inst)
-                          '(:call :call.value :text.length :text.equal :text.not-equal :text.concat :text.slice))
+                          '(:call :call.value :text.length :text.equal :text.not-equal :text.concat :text.slice :struct.make :enum.make :interface.pack :call.interface))
               (push (list :operation (list (mognitio.ir:basic-block-id block) index) (ldiff code start)) sections))))
         (let ((term (mognitio.ir:basic-block-terminator block)))
           (ecase (first term)
+            (:trap (emit :mov-edi 3) (emit :mov-eax 60) (emit :syscall) (emit :ud2))
             (:branch (load-value (second term)) (emit :test)
                      (emit :jz (label-id (fourth term))) (emit :jmp (label-id (third term))))
             (:jump
@@ -188,9 +214,10 @@
                                     collect (mognitio.ir:instruction-op i))))))
              (operations (remove-if-not (lambda (op) (member op required-operations))
                            '(:text.length :text.equal :text.not-equal :text.concat :text.slice)))
+             (value-helpers (mognitio.native.runtime::value-helper-units module))
              (helpers (mognitio.native.runtime:text-helper-units
-                        operations (length (mognitio.ir:module-literal-pool module))))
+                        operations (length (mognitio.ir:module-literal-pool module)) (mognitio.ir:module-values module) value-helpers))
              (literals (mognitio.object:make-code-unit :owner :literals :instructions
                          (loop for form in (mognitio.native.runtime:literal-forms (mognitio.ir:module-literal-pool module))
                                collect (make-instruction :opcode (first form) :operands (rest form))))))
-        (mognitio.object:layout-units (append (nreverse units) helpers (list literals)))))))
+        (mognitio.object:layout-units (append (nreverse units) helpers value-helpers (list (mognitio.native.runtime::metadata-unit (mognitio.ir:module-values module)) literals)))))))

@@ -1,12 +1,12 @@
 # Mognitio
 
 Mognitio is a small language with typed function values, structured iteration,
-and immutable UTF-8 strings. Version 0.6.0 adds string concatenation, content
-equality, Unicode scalar length and slicing, and automatic memory reclamation
-in both execution backends.
+and immutable data. The v0.7.0 development branch adds nominal structs and enums,
+type aliases, unified branch expressions, and interfaces with concrete methods
+and dynamic dispatch. Both execution backends reclaim unreachable data.
 
 It can run an expression through SBCL or build a standalone Linux amd64 executable.
-See the [v0.6.0 validation record](verification/v0.6.0.md) for coverage,
+See the [v0.7.0 validation record](verification/v0.7.0.md) for coverage,
 compatibility, and verification boundaries.
 
 ## Requirements
@@ -74,8 +74,8 @@ count = count + 1;
 count * unitPrice == 360
 ```
 
-`let` is immutable. A `var` holds `int`, `bool`, `void`, or `string` and assignments
-preserve its type. Visible names, including a binding being initialized,
+`let` is immutable. A `var` holds a primitive, aggregate, or interface value;
+assignments preserve its type. Visible names, including a binding being initialized,
 cannot be redeclared in nested scopes. Sibling scopes may reuse names.
 
 Integers are signed 64-bit values. Arithmetic (`+ - * / %`), comparisons
@@ -102,7 +102,7 @@ text->length() == 3
 
 ```mgn
 let magnitude = function(value: int): int {
-    if (value < 0) { return -value; };
+    branch when { value < 0 => { return -value; } };
     value
 };
 let twice = function(value: int): int { value * 2 };
@@ -110,14 +110,14 @@ twice(magnitude(-6)) == 12
 ```
 
 Function expressions have explicit `name: type` parameters and a result
-type (`int`, `bool`, `void`, or `string`). Bind them with `let`, alias them, choose
-between matching signatures with `if`, or return a function value from
+type (primitive, aggregate, or interface). Bind them with `let`, alias them, choose
+between matching signatures with `branch`, or return a function value from
 a block or a value-producing loop. A function cannot itself accept or
 return a function value. Mutable function values and recursion are excluded.
 
 Names become visible in source order. A function may refer to an earlier
 direct function binding or its static aliases. It cannot capture outer
-primitive values or functions selected by a block, `if`, or loop.
+outer data or functions selected by a block, `branch`, or loop.
 Nested functions use the same rule. There are no forward declarations.
 
 The callee is evaluated once, before arguments. Arguments are evaluated
@@ -132,11 +132,13 @@ A void function may have an empty body or use `return;` or `return void;`.
 A value can be discarded as an expression statement only when its type is
 void. Assignment and declaration remain statements.
 
-An `if` requires a boolean condition. Its normally completing branches
-must have identical types. An omitted `else` acts as a void branch.
-A branch that returns or never finishes does not supply a normal type.
+`branch when { condition => expression, else => expression }` tests boolean
+conditions in source order and selects the first true arm. Normally completing
+arms must have identical types. Omitting `else` requires void arms or arms
+without normal completion; all-false conditions then produce void.
+A returning or nonterminating arm does not supply a normal type.
 Statements or a tail after an unconditional exit are semantic errors.
-Both branches, all arguments and unused functions are still checked.
+All arms, arguments, and unused functions are still checked.
 
 ### Loops
 
@@ -144,7 +146,7 @@ Both branches, all arguments and unused functions are still checked.
 var count = 0;
 let result = loop {
     count = count + 1;
-    if (count < 4) { continue; };
+    branch when { count < 4 => { continue; } };
     break count * 10;
 };
 result == 40
@@ -164,14 +166,54 @@ A loop body must produce void when it completes normally. Body locals
 are initialized each round; updates to outer variables survive.
 Break and continue target the nearest loop in the same function.
 
-The reserved words are `true false if else let var function return int bool
-loop while break continue void string`. Names are ASCII and case-sensitive.
+The reserved words are `true false if match else let var function return int bool
+loop while break continue void string type struct enum interface implement against
+this branch when on`. Names are ASCII and case-sensitive.
 Comments, collections and a `never` source type are not supported.
 
-v0.4.1 programs need explicit migration of named function declarations to
+Old `if` / `match` syntax is rejected. Replace an `if` with `branch when`, keeping
+the original condition and arm block scopes. Comma-separated lists permit one
+trailing comma, but never empty elements.
+
+v0.4.1 programs also need explicit migration of named function declarations to
 `let name = function(...) { ... };`, forward references to source order,
 new keyword names, consecutive minus, and unreachable sequence elements.
 See [test coverage](tests/README.md) for the retained regression cases.
+
+### Data and contracts
+
+```mgn
+type Item = struct { name: string; };
+type State = enum { Empty; Ready(Item); };
+interface Named { function nameText(): string; }
+implement Item against Named {
+    let nameText = function(): string { this->name };
+}
+let render = function(value: Named): string { value->nameText() };
+branch on (State::Ready(Item { name: "example" })) {
+    State::Empty => false,
+    State::Ready(item) => render(item) == "example",
+}
+```
+
+Each struct and enum declaration creates a distinct type; `type Alias = Item;`
+preserves identity. Type names and value names occupy separate namespaces.
+Type, interface, and implementation declarations appear only at program scope
+and become visible in source order. Fields and payloads are immutable; rebinding
+a variable does not change earlier values. Aggregate equality is unavailable.
+
+`branch on` evaluates its enum subject once and must cover every variant,
+explicitly or with a final `else`. Payload bindings exist only in their arm.
+Duplicate patterns and a redundant `else` are rejected.
+
+Interfaces contain method signatures only. `implement Type against Contract`
+supplies every method with its exact signature. `implement Type` adds methods
+without a contract. `this` is an immutable concrete value in the method body.
+An explicitly conforming value can cross an interface parameter or return
+boundary, and the interface keeps the concrete value alive. Different contracts
+may define the same method name; calls through an interface select its contract,
+while ambiguous calls through a concrete value are rejected. Method references,
+downcasts, recursive data, and call cycles are unavailable in this version.
 
 ## Results
 

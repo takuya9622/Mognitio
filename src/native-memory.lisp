@@ -41,7 +41,7 @@
     (unless (and (typep unit '(integer 4096 2147483647))
                  (or (null cap) (typep cap '(integer 4096 9223372036854775807))))
       (internal-error "Invalid internal heap configuration"))
-    (runtime-unit :allocate
+    (runtime-unit :allocate-block
       (append (helper-frame 10)
         '((:load-frame :rax 16) (:store-out 0 :rax) (:call (:runtime :physical-size))
           (:store-frame -8 :rax))
@@ -80,8 +80,7 @@
           (:store-word :r9 0 :rcx) (:mov-reg :r8 :r9) (:add-reg :r8 :rcx)
           (:store-word :r8 0 :rdx) (:imm-rax 0) (:store-word :r8 8 :rax)
           (:label :whole) (:imm-rax 1) (:store-word :r9 8 :rax)
-          (:load-frame :rax 16) (:store-word :r9 16 :rax)
-          (:load-frame :rax 24) (:store-word :r9 24 :rax))
+          (:imm-rax 0) (:store-word :r9 16 :rax) (:store-word :r9 24 :rax))
         (bump +alloc-count+)
         '((:load-word :rdx :r9 0)) (bump +alloc-bytes+ :rdx)
         (watch-allocation)

@@ -7,9 +7,12 @@
 (defparameter *keywords*
   '(("true" . :true) ("false" . :false) ("if" . :if) ("else" . :else)
     ("let" . :let) ("var" . :var)
+    ("type" . :type) ("struct" . :struct) ("enum" . :enum) ("interface" . :interface)
+    ("implement" . :implement) ("against" . :against) ("this" . :this)
+    ("branch" . :branch) ("when" . :when) ("on" . :on) ("match" . :match)
     ("while" . :while) ("loop" . :loop) ("break" . :break) ("continue" . :continue) ("string" . :string) ("void" . :void) ("function" . :function) ("return" . :return) ("int" . :int) ("bool" . :bool)))
 (defparameter *operators*
-  '(("->" . :arrow) ("==" . :eq) ("!=" . :ne) ("<=" . :le) (">=" . :ge)
+  '(("::" . :scope) ("=>" . :fat-arrow) ("->" . :arrow) ("==" . :eq) ("!=" . :ne) ("<=" . :le) (">=" . :ge)
     ("=" . :assign) ("+" . :add) ("-" . :sub) ("*" . :mul)
     ("/" . :div) ("%" . :rem) ("<" . :lt) (">" . :gt)
     ("(" . :left-paren) (")" . :right-paren)

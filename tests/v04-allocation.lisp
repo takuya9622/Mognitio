@@ -33,4 +33,4 @@
          (allocation (mognitio.regalloc:allocate-function function)))
     (is (> (* 8 (mognitio.regalloc:allocation-spill-count allocation)) 4096))
     (v03-positive text :true))
-  (v03-positive "var a = 1; var b = 2; let x = if(true){let tmp = a; a = b; b = tmp; 3}else{4}; a * 10 + b == 21" :true))
+  (v03-positive "var a = 1; var b = 2; let x = branch when{(true)=>{let tmp = a; a = b; b = tmp; 3},else=>{4}}; a * 10 + b == 21" :true))

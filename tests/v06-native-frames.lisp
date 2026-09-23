@@ -1,7 +1,7 @@
 (in-package #:mognitio.tests)
 
 (deftest v06-native-encoding-and-literals
-  (same :mognitio-internal-v3 (mognitio.target:target-abi (mognitio.target:linux-amd64)))
+  (same :mognitio-internal-v4 (mognitio.target:target-abi (mognitio.target:linux-amd64)))
   (dolist (pair '(((:load-word :rax :r15 0) "498b8700000000")
                   ((:store-word :r15 0 :rax) "49898700000000")
                   ((:lea-base :rax :rbp -40) "488d85d8ffffff")
@@ -129,8 +129,8 @@
   (let* ((source "let identity=function(s:string):string{s}; var keep=\"a\"; var i=0; loop while(i<100){let temp=keep+\"b\"; let n=temp->length(); keep=keep->slice(0,1); keep=identity(keep); i=i+1;}; true")
          (module (native-ir source)) (units nil) code)
     (replacing (mognitio.native.runtime:text-helper-units
-                 (lambda (operations literal-count)
-                   (declare (ignore literal-count))
+                 (lambda (operations literal-count &optional context values)
+                   (declare (ignore literal-count context values))
                    (setf units (mapcar #'v06-abi-helper-unit operations))
                    (append units (list (mognitio.object:make-code-unit :owner :probe-failure
                      :instructions (machine '(:label :abi-helper-bad) '(:mov-edi 98) '(:mov-eax 60) '(:syscall) '(:ud2)))))))
