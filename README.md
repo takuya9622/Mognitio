@@ -1,12 +1,12 @@
 # Mognitio
 
 Mognitio is a small language with typed function values, structured iteration,
-and immutable data. The v0.7.0 development branch adds nominal structs and enums,
+and immutable data. Version 0.7.0 adds nominal structs and enums,
 type aliases, unified branch expressions, and interfaces with concrete methods
 and dynamic dispatch. Both execution backends reclaim unreachable data.
 
 It can run an expression through SBCL or build a standalone Linux amd64 executable.
-See the [v0.7.0 validation record](verification/v0.7.0.md) for coverage,
+See the [v0.7.0 release validation](verification/v0.7.0-release.md) for coverage,
 compatibility, and verification boundaries.
 The [follow-up review record](verification/v0.7.0-review.md) covers the current
 interface requirement syntax and subsequent implementation corrections.
