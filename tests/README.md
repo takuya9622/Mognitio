@@ -332,6 +332,9 @@ address membership before reading candidate metadata.
 | `v07-native-child-and-metadata-faults`, `v07-interface-table-faults` | Exact child addresses before dereference, unknown descriptors/tables, concrete/table mismatch |
 | `v07-hidden-receiver-abi`, `v07-native-static-layout-and-table-order`, `v07-interface-frame-corruption` | Handwritten hidden-receiver ABI, independent byte/offset/slot expectations, frame corruption |
 | `v07-keywords-migration-and-construction-ast`, `v07-artifact-identity-and-standalone` | Keywords, constructor parsing/spans, old grammar rejection, deterministic artifacts and empty-environment execution |
+| `v07-interface-requirement-syntax` | Let-named requirement AST/spans, no function value/ID, body-required ordinary functions, isolated old/body/var/alias/expression rejection, dispatch |
+| `v07-reused-aggregate-padding` | Dirty block collection and actual reuse by empty/one-slot struct/enum helpers, whole physical padding and split boundary |
+| `v07-implementation-table-layout-order` | Concrete/interface ID layout order independent of reversed implementation declarations; registry identity preserved |
 
 Source acceptance fixtures execute through both host and native backends, with
 an additional native run collecting before every allocation. Rejections check
@@ -349,3 +352,6 @@ remain the authority for the original fixtures.
 See [the v0.7.0 validation record](../verification/v0.7.0.md) for observations
 and the complete acceptance mapping. None of these test bounds impose a new
 source-language limit.
+The [follow-up review record](../verification/v0.7.0-review.md) documents the
+new requirement spelling and review regressions. Current constructor rejection
+fixtures bind their result before a valid bool tail to isolate the violation.

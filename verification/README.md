@@ -73,6 +73,9 @@ The [v0.5.0](v0.5.0.md), [v0.4.1](v0.4.1.md), [v0.4.0](v0.4.0.md), and
 The [v0.7.0 development validation](v0.7.0.md) covers immutable nominal data,
 unified branches, interfaces, graph collection, and ABI v4. Integration into
 the version branch does not create a release.
+The [follow-up review validation](v0.7.0-review.md) covers the current interface
+requirement spelling, isolated rejection fixtures, reused payload initialization,
+and implementation-table layout order.
 
 ## Repository checks
 
