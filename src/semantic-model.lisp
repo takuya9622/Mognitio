@@ -50,4 +50,3 @@
                      (setf (gethash (car edge) colors) :gray)
                      (push (list (car edge) (copy-list (gethash (car edge) edges))) stack))))))))))
   t)
-
