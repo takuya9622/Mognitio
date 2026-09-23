@@ -8,7 +8,7 @@
           (oracle (third tree)))))
 (defun render-tree (tree)
   (if (atom tree) (string-downcase tree)
-      (format nil "if(~A){~A}else{~A}"
+      (format nil "branch when{(~A)=>{~A},else=>{~A}}"
               (render-tree (first tree))
               (render-tree (second tree))
               (render-tree (third tree)))))
@@ -36,7 +36,7 @@
           (when (< index 12) (expect-source source (oracle tree))))))))
 
 (deftest v21-repetition-and-grammar-mutations
-  (let* ((source "if(if(true){false}else{true}){true}else{false}")
+  (let* ((source "branch when{(branch when{(true)=>{false},else=>{true}})=>{true},else=>{false}}")
          (path (put-text (fresh-path) source))
          (baseline (compiled-result source)))
     (dotimes (index 3)

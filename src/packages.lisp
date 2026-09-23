@@ -13,7 +13,8 @@
            #:span-diagnostic #:fail-at))
 (defpackage #:mognitio.syntax
   (:use #:cl #:mognitio.source)
-  (:export #:text-payload #:make-text-payload #:text-payload-octets #:text-payload-scalar-count
+  (:export #:data-declaration #:make-data-declaration #:data-declaration-p #:data-declaration-name #:data-declaration-kind #:data-declaration-target #:data-declaration-members #:data-declaration-span #:contract-declaration #:make-contract-declaration #:contract-declaration-p #:contract-declaration-name #:contract-declaration-methods #:contract-declaration-span #:implementation-declaration #:make-implementation-declaration #:implementation-declaration-p #:implementation-declaration-target #:implementation-declaration-contract #:implementation-declaration-methods #:implementation-declaration-span #:named-member #:make-named-member #:named-member-p #:named-member-name #:named-member-value #:named-member-span #:struct-expression #:make-struct-expression #:struct-expression-p #:struct-expression-name #:struct-expression-fields #:struct-expression-span #:enum-expression #:make-enum-expression #:enum-expression-p #:enum-expression-name #:enum-expression-variant #:enum-expression-arguments #:enum-expression-parenthesized-p #:enum-expression-span #:field-expression #:make-field-expression #:field-expression-p #:field-expression-receiver #:field-expression-name #:field-expression-span #:field-assignment #:make-field-assignment #:field-assignment-p #:field-assignment-target #:field-assignment-value #:field-assignment-span #:this-expression #:make-this-expression #:this-expression-p #:this-expression-token #:this-expression-span #:branch-expression #:make-branch-expression #:branch-expression-p #:branch-expression-mode #:branch-expression-subject #:branch-expression-arms #:branch-expression-span #:branch-arm #:make-branch-arm #:branch-arm-p #:branch-arm-selector #:branch-arm-value #:branch-arm-span #:variant-pattern #:make-variant-pattern #:variant-pattern-p #:variant-pattern-name #:variant-pattern-variant #:variant-pattern-bindings #:variant-pattern-span
+           #:text-payload #:make-text-payload #:text-payload-octets #:text-payload-scalar-count
            #:token-payload #:string-literal #:make-string-literal #:string-literal-payload
            #:method-call #:make-method-call #:method-call-receiver #:method-call-name #:method-call-arguments
            #:loop-expression #:make-loop-expression #:loop-expression-body #:loop-expression-condition
@@ -49,7 +50,8 @@
   (:export #:lex-source #:parse-program))
 (defpackage #:mognitio.semantic
   (:use #:cl #:mognitio.diagnostics #:mognitio.source #:mognitio.syntax)
-  (:export #:checked-string-literals #:checked-operation #:operation-info #:operation-info-kind #:operation-info-operands
+  (:export #:checked-program-values #:checked-member #:checked-pack #:checked-value-type #:signature-receiver #:signature-method #:signature-runtime-types #:nominal-type-p #:reference-type-p #:valid-value-type-p #:canonical-type #:context-type #:type-info #:type-info-id #:type-info-kind #:type-info-name #:type-info-fields #:type-info-variants #:type-info-methods #:variant-info #:variant-info-id #:variant-info-name #:variant-info-types #:requirement #:requirement-name #:requirement-parameters #:requirement-result #:implementation-info #:implementation-info-id #:implementation-info-concrete #:implementation-info-contract #:implementation-info-methods #:member-info #:member-info-kind #:member-info-type #:member-info-index #:member-info-variant #:member-info-implementation #:member-info-signature #:member-info-contract #:value-context-types #:value-context-implementations
+           #:checked-string-literals #:checked-operation #:operation-info #:operation-info-kind #:operation-info-operands
            #:operation-info-parameter-types #:operation-info-result-type
            #:check-program #:checked-program #:checked-program-program #:checked-normal-type #:checked-symbol #:checked-literal #:checked-literal-p #:checked-program-bindings #:local-symbol-id #:local-symbol-type #:local-symbol-mutability
            #:local-symbol-owner #:verify-checked-program #:checked-completion #:completion-normal-type #:completion-may-return
@@ -74,7 +76,7 @@
 (defpackage #:mognitio.ir
   (:use #:cl #:mognitio.diagnostics #:mognitio.source #:mognitio.syntax
         #:mognitio.semantic)
-  (:export #:instruction #:make-instruction #:instruction-result #:instruction-type
+  (:export #:module-values #:ir-function-method #:instruction #:make-instruction #:instruction-result #:instruction-type
            #:instruction-effects #:instruction-op #:instruction-value #:instruction-operands #:instruction-span
            #:basic-block #:make-basic-block #:basic-block-id #:basic-block-parameters
            #:basic-block-instructions #:basic-block-terminator #:basic-block-span
@@ -135,3 +137,7 @@
   (:use #:cl #:mognitio.diagnostics)
   (:export #:plan-frame #:verify-layout #:verify-sections #:layout-size #:layout-root-offset
            #:layout-capacity #:layout-temporary #:layout-arity))
+
+(defpackage #:mognitio.value
+  (:use #:cl)
+  (:export #:construct #:pack #:field #:tag #:receiver #:method-id #:data-value #:interface-value))

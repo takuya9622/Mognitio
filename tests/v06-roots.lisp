@@ -133,6 +133,6 @@
   (let ((module (v06-native-ir "let s=\"abc\"; s->slice(0,{let unused=\"x\"+\"y\";1})==\"a\"")))
     (same '((0 3 ((0 4 (0 2 3)) (0 6 (0)))))
           (v06-root-snapshot (mognitio.roots:analyze-roots module))))
-  (let ((module (v06-native-ir "let s=\"a\"; (if(true){s+\"b\"}else{s+\"c\"})==\"ab\"")))
+  (let ((module (v06-native-ir "let s=\"a\"; (branch when{(true)=>{s+\"b\"},else=>{s+\"c\"}})==\"ab\"")))
     (same '((0 2 ((1 1 (0 2)) (2 1 (0 4)))))
           (v06-root-snapshot (mognitio.roots:analyze-roots module)))))

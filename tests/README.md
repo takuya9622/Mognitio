@@ -316,3 +316,42 @@ whose apparent flags contain the static bit, as well as freed interiors,
 forged static headers and unmapped addresses. Known literal starts (including
 empty), zero slots and duplicate dynamic roots remain valid. Validation checks
 address membership before reading candidate metadata.
+
+## v0.7.0 data, contracts, and unified branches
+
+| Groups | Coverage |
+|---|---|
+| `v07-data-and-source-order` | Nominal identity, aliases, namespaces, exact fields/payloads, initializer order and exits, immutable data, comma lists |
+| `v07-branch-contracts` | Condition/subject order, exhaustiveness, arm scopes, all-arm checking, function joins, return/break/continue |
+| `v07-methods-and-dispatch` | Contract conformance, inherent methods, receiver identity, interface conversion/retention, same-name dispatch, conservative cycles |
+| `v07-transitive-lifetime-and-reclamation` | Deep graph and extracted-child survival, finite heap, independent reclamation/reuse observer, no-sweep/all-mark/no-trace/parent-retention controls, host weak references |
+| `v07-deep-shared-data` | Forty nested nominal types with shared children; bounded heap and measured fixed-point passes |
+| `v07-allocation-and-operand-failures` | Both-backend first-failure order, host storage failure, native arena failure |
+| `v07-checked-metadata-boundaries`, `v07-core-value-boundaries` | Independent reconstruction, aliases/slots/contracts/candidates, wrong variant and subject guards |
+| `v07-root-last-use-and-child-independence` | Make operands rooted through allocation; live child without dead parent; missing/excess roots rejected |
+| `v07-native-child-and-metadata-faults`, `v07-interface-table-faults` | Exact child addresses before dereference, unknown descriptors/tables, concrete/table mismatch |
+| `v07-hidden-receiver-abi`, `v07-native-static-layout-and-table-order`, `v07-interface-frame-corruption` | Handwritten hidden-receiver ABI, independent byte/offset/slot expectations, frame corruption |
+| `v07-keywords-migration-and-construction-ast`, `v07-artifact-identity-and-standalone` | Keywords, constructor parsing/spans, old grammar rejection, deterministic artifacts and empty-environment execution |
+| `v07-interface-requirement-syntax` | Let-named requirement AST/spans, no function value/ID, body-required ordinary functions, isolated old/body/var/alias/expression rejection, dispatch |
+| `v07-reused-aggregate-padding` | Dirty block collection and actual reuse by empty/one-slot struct/enum helpers, whole physical padding and split boundary |
+| `v07-implementation-table-layout-order` | Concrete/interface ID layout order independent of reversed implementation declarations; registry identity preserved |
+
+Source acceptance fixtures execute through both host and native backends, with
+an additional native run collecting before every allocation. Rejections check
+run/build phases and existing-output preservation. Internal corruption tests
+are separate from source-language rejection cases.
+
+The current suite migrates old `if` fixtures to `branch when` with the original
+condition and arm scopes. Tests retain their prior names to preserve coverage
+traceability. Unknown type names now reach semantic checks, comma lists accept
+one trailing comma, and bare method references are semantic errors.
+[The migration manifest](v07-migration.json) records baseline file and source
+template hashes and corresponding groups. Historical release records and tags
+remain the authority for the original fixtures.
+
+See [the v0.7.0 validation record](../verification/v0.7.0.md) for observations
+and the complete acceptance mapping. None of these test bounds impose a new
+source-language limit.
+The [follow-up review record](../verification/v0.7.0-review.md) documents the
+new requirement spelling and review regressions. Current constructor rejection
+fixtures bind their result before a valid bool tail to isolate the violation.

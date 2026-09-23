@@ -50,7 +50,7 @@
     (grouping (grouping-span node))
     (unary-expression (unary-expression-span node))
     (binary-expression (binary-expression-span node))
-    (t nil)))
+    (t (value-node-span node))))
 (defun token-text (token)
   (let ((span (token-span token)))
     (subseq (source-text (span-source span)) (span-start span) (span-end span))))

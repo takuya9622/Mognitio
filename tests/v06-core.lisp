@@ -39,7 +39,7 @@
     (same 2 (length (mognitio.ir:module-literal-pool module)))
     ;; Even an unused empty concat retains its allocation/failure operation.
     (is (v06-core-op module :text.concat)))
-  (let ((module (v06-native-ir "if(false){let bad=\"a\"->slice(9,10); false}else{true}")))
+  (let ((module (v06-native-ir "branch when{(false)=>{let bad=\"a\"->slice(9,10); false},else=>{true}}")))
     (is (mognitio.ir:verify-module module))
     (is (not (find :text.slice (mognitio.ir:basic-block-instructions (first (entry-blocks module)))
                    :key #'mognitio.ir:instruction-op)))
@@ -131,14 +131,14 @@
             '("var s=\"abc\"; s->slice({s=\"z\"; 0},1)==\"a\""
               "var s=\"a\"; s+{s=\"b\"; s}==\"ab\""
               "let f=function(a:string,b:string):string{a+b}; f(\"先\"+\"行\",\"後\"+\"続\")==\"先行後続\""
-              "let a=function(s:string):string{s+\"a\"}; let b=function(s:string):string{s+\"b\"}; var choose=true; (if(choose){a}else{b})({choose=false; \"x\"})==\"xa\""
-              "var s=\"a\"; let r=loop {s=s+\"b\"; if(s->length()<3){continue;}; break s;}; r==\"abb\""
+              "let a=function(s:string):string{s+\"a\"}; let b=function(s:string):string{s+\"b\"}; var choose=true; (branch when{(choose)=>{a},else=>{b}})({choose=false; \"x\"})==\"xa\""
+              "var s=\"a\"; let r=loop {s=s+\"b\"; branch when{(s->length()<3)=>{continue;}}; break s;}; r==\"abb\""
               "var s=\"a\"; loop while(s->length()<5){s=s+\"b\";}; s==\"abbbb\""
               "let f=function():string{\"x\"->slice({return \"ok\";},0)}; f()==\"ok\""
               "let r=loop {\"x\"->slice({break \"ok\";},0);}; r==\"ok\""
               "var n=0; loop while(n<2){n=n+1; \"x\"->slice({continue;},0);}; n==2"
-              "let a=if(true){\"x\"+\"y\"}else{\"z\"}; a==\"xy\""
-              "if(false){let bad=\"a\"->slice(9,10); false}else{true}"
+              "let a=branch when{(true)=>{\"x\"+\"y\"},else=>{\"z\"}}; a==\"xy\""
+              "branch when{(false)=>{let bad=\"a\"->slice(9,10); false},else=>{true}}"
               "\"a\\0日\"->slice(1,3)==\"\\0日\""))
     (let ((module (v06-native-ir source)))
       (is (mognitio.ir:verify-module module))

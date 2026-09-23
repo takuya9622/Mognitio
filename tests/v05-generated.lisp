@@ -86,7 +86,7 @@
            (unless (member (first statement) '(:let :set :return :break :continue)) (write-string ";" out)))
          (when (third tree) (write-string (render (third tree)) out))
          (write-string "}" out)))
-      (:if (format nil "if(~A){~A}else{~A}" (render (second tree)) (render (third tree)) (render (fourth tree))))
+      (:if (format nil "branch when{(~A)=>{~A},else=>{~A}}" (render (second tree)) (render (third tree)) (render (fourth tree))))
       (:binary (format nil "(~A ~A ~A)" (render (third tree))
                        (ecase (second tree) (:add "+") (:sub "-") (:mul "*") (:div "/") (:rem "%") (:eq "==") (:lt "<"))
                        (render (fourth tree))))
