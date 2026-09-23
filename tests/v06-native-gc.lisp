@@ -45,7 +45,7 @@
     (format t "~A" out)))
 
 (defparameter *v06-gc-source*
-  "let make=function(s:string):string{s+\"😀\\0\"}; let dead=\"discard\"+\"me\"; let hold=\"日\"+\"😀\\0\"; var carry=\"\"; var i=0; var good=true; loop while(i<100000){let t=make(\"Aあ\"); let c=t->slice(1,4); if(c!=\"あ😀\\0\"){good=false; break;}; carry=c; i=i+1;}; if(good){if(hold==\"日😀\\0\"){carry==\"あ😀\\0\"}else{false}}else{false}")
+  "let make=function(s:string):string{s+\"😀\\0\"}; let dead=\"discard\"+\"me\"; let hold=\"日\"+\"😀\\0\"; var carry=\"\"; var i=0; var good=true; loop while(i<100000){let t=make(\"Aあ\"); let c=t->slice(1,4); branch when{(c!=\"あ😀\\0\")=>{good=false; break;}}; carry=c; i=i+1;}; branch when{(good)=>{branch when{(hold==\"日😀\\0\")=>{carry==\"あ😀\\0\"},else=>{false}}},else=>{false}}")
 
 (deftest v06-native-gc-bounded-reclamation
   (dolist (stress '(nil t))

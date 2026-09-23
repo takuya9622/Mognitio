@@ -1,8 +1,8 @@
 var count = 1;
-let total = if (count < 2) {
+let total = branch when{(count < 2)=>{
     count = count + 1;
     count * 120
-} else {
+},else=>{
     0
-};
-if (total == 240) { count == 2 } else { false }
+}};
+branch when{(total == 240)=>{ count == 2 },else=>{ false }}

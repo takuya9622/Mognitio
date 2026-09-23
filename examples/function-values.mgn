@@ -3,7 +3,7 @@ let subtract = function(a: int, b: int): int { a - b };
 var count = 0;
 var total = 0;
 loop while (count < 4) {
-    let operation = if (count < 2) { add } else { subtract };
+    let operation = branch when{(count < 2)=>{ add },else=>{ subtract }};
     total = total + operation(10, count);
     count = count + 1;
 };

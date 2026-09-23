@@ -29,10 +29,10 @@
 (defun v03-render (tree)
   (cond ((integerp tree) (if (minusp tree) (format nil "(~D)" tree) (format nil "~D" tree))) ((eq tree :x) "x")
         ((eq (first tree) :if)
-         (format nil "if(~A){~A}else{~A}" (v03-render (second tree))
+         (format nil "branch when{(~A)=>{~A},else=>{~A}}" (v03-render (second tree))
                  (v03-render (third tree)) (v03-render (fourth tree))))
         ((eq (first tree) :update)
-         (format nil "if(true){x = ~A; ~A}else{0}" (v03-render (second tree))
+         (format nil "branch when{(true)=>{x = ~A; ~A},else=>{0}}" (v03-render (second tree))
                  (v03-render (third tree))))
         (t (format nil "(~A ~A ~A)" (v03-render (second tree))
                    (ecase (first tree) (:lt "<") (:add "+") (:sub "-") (:mul "*") (:div "/") (:rem "%"))
@@ -58,7 +58,7 @@
                (source
                  (format nil "var x = ~D; let outcome = ~A; ~A" initial (v03-render tree)
                    (if (listp expected)
-                       (format nil "if(outcome == ~D){x == ~D}else{false}" (first expected) (second expected))
+                       (format nil "branch when{(outcome == ~D)=>{x == ~D},else=>{false}}" (first expected) (second expected))
                        "true"))))
           (handler-case
               (if (listp expected) (progn (incf successes) (v03-positive source :true))

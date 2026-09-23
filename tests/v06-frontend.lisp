@@ -39,7 +39,7 @@
     '("let f=function(x:string):string {x}; let a=f(\"a\"); var b=a; b=\"b\"; a==\"a\""
       "let length=1; let slice=2; let string_length=function(x:string):int {x->length()}; let string_slice=string_length; string_slice(\"a\")==1"
       "let class=1; class==1"
-      "let f=function():string {if(true){return \"a\";}else{\"b\"}}; f()==\"a\""
+      "let f=function():string {branch when{(true)=>{return \"a\";},else=>{\"b\"}}}; f()==\"a\""
       "loop {break \"a\";}==\"a\""
       "let f=function():int {({return 7;})->unknown(1,2)}; f()==7"
       "let f=function():int {\"a\"->slice({return 7;},1)->length()}; f()==7"
@@ -56,17 +56,18 @@
       "string_length(\"a\")==1" "string_slice(\"a\",0,1)==\"a\""
       "let a=\"a\"; let f=function():string {a}; true"
       "let f=function():string {f()}; true" "var a=\"a\"; a=1; true"
-      "if(true){\"a\"}else{1}" "loop {if(true){break \"a\";}; break 1;}==\"a\""
-      "loop {if(true){break;}; break \"a\";}; true"
+      "branch when{(true)=>{\"a\"},else=>{1}}" "loop {branch when{(true)=>{break \"a\";}}; break 1;}==\"a\""
+      "loop {branch when{(true)=>{break;}}; break \"a\";}; true"
       "let f=function():string {return;}; true"
       "let f=function():int {({return 7;})->unknown(missing)}; true"
       "let f=function():int {\"a\"->slice({return 7;},false)}; true"
       "let f=function():int {\"a\"->length({return 7;})}; true"
       "let f=function():int {({return 7;})+true}; true"
-      "if(true){true}else{\"a\"->slice(0,false)==\"a\"}"))
+      "branch when{(true)=>{true},else=>{\"a\"->slice(0,false)==\"a\"}}"))
     (v03-reject source "semantic"))
+  (dolist (source '("\"a\"->length" "(\"a\"->length)()")) (v03-reject source "semantic"))
   (dolist (source '("let string=1; true" "let f=function(string:int):int {1}; true"
-                    "\"a\"->length" "(\"a\"->length)()" "string::length" "string::length(\"a\")"
+                    "string::length" "string::length(\"a\")"
                     "\"a\" \"b\"" "let a:string=\"a\"; true"))
     (v03-reject source "parse"))
   (dolist (source '("'a'" "\"a\"[0]" "\"a\".length()")) (v03-reject source "lex")))
@@ -106,7 +107,7 @@
     (setf (mognitio.semantic::completion-exits summary) nil
           (mognitio.semantic::completion-may-return summary) nil)
     (signals internal-failure (verify-checked-program checked)))
-  (dolist (pair '(("\"abc\"->missing() == 1" 8) ("1->length()==0" 1)
+  (dolist (pair '(("\"abc\"->missing() == 1" 8) ("1->length()==0" 4)
                   ("\"a\"->slice(0,false)==\"a\"" 14)))
     (let ((diag (diagnostic-of (lambda () (check-program (parse-text (first pair)))))))
       (same :semantic (diagnostic-phase diag)) (same (second pair) (diagnostic-column diag)))))

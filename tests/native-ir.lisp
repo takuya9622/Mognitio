@@ -17,8 +17,8 @@
   (loop for index below width sum (ash (aref image (+ offset index)) (* 8 index))))
 
 (deftest d01-ssa-verifier
-  (dolist (text '("true" "if(true){false}else{true}"
-                  "if(if(true){false}else{true}){if(false){true}else{false}}else{true}"))
+  (dolist (text '("true" "branch when{(true)=>{false},else=>{true}}"
+                  "branch when{(branch when{(true)=>{false},else=>{true}})=>{branch when{(false)=>{true},else=>{false}}},else=>{true}}"))
     (is (mognitio.ir:verify-module (native-ir text))))
   (dolist (mutation
            (list
@@ -48,7 +48,7 @@
             (lambda (ir)
               (setf (mognitio.ir:basic-block-terminator
                      (first (entry-blocks ir))) '(:branch 0 0 2)))))
-    (let ((ir (native-ir "if(true){false}else{true}")))
+    (let ((ir (native-ir "branch when{(true)=>{false},else=>{true}}")))
       (funcall mutation ir)
       (signals internal-failure (mognitio.ir:verify-module ir))))
   (signals internal-failure (mognitio.ir:verify-module nil))

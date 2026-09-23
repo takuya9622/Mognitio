@@ -11,22 +11,22 @@
       "var s=\"abc\"; let alias=s; s=\"z\"; alias==\"abc\""
       "var s=\"abc\"; let part=s->slice({s=\"z\";1},3); part==\"bc\""
       "var s=\"a\"; let result=s+{s=\"b\";s}; result==\"ab\""
-      "var n=0; let s={n=n+1;\"abc\"}->slice({n=n*10+2;0},{n=n*10+3;1}); if(n==123){s==\"a\"}else{false}"
+      "var n=0; let s={n=n+1;\"abc\"}->slice({n=n*10+2;0},{n=n*10+3;1}); branch when{(n==123)=>{s==\"a\"},else=>{false}}"
       "let f=function(x:string):string {x+\"!\"}; let g=function():string {f(\"あ\")}; g()==\"あ!\""
       "let f=function():int {({return 7;})->unknown(1/0)}; f()==7"
       "let f=function():int {\"abc\"->slice({return 7;},1/0)->length()}; f()==7"
       "let f=function():int {({return 7;})+\"a\"}; f()==7"
       "let v=loop {\"a\"->slice({break \"ok\";},1/0);}; v==\"ok\""
       "var i=0; loop while(i<3){i=i+1; \"a\"->slice({continue;},1/0);}; i==3"
-      "if(true){true}else{\"a\"->slice(-1,9)==\"\"}"
+      "branch when{(true)=>{true},else=>{\"a\"->slice(-1,9)==\"\"}}"
       "let unused=function():string {\"a\"->slice(-1,9)}; true"
       "let length=1; let slice=2; let string_length=function(x:string):int{x->length()}; let measure=string_length; measure(\"aあ😀\"->slice(1,3))==2"
-      "(if(true){\"abc\"}else{\"z\"})->slice(0,1)->length()==1"
+      "(branch when{(true)=>{\"abc\"},else=>{\"z\"}})->slice(0,1)->length()==1"
       "(loop {break \"abc\";})->length()==3"))
     (expect-source source :true))
   (expect-source "\"a\"==\"A\"" :false)
   (expect-source "\"a\"!=\"a\"" :false)
-  (let ((heading "let heading=function(source:string):string {let size=source->length(); var end=2; loop while(end<size){if(source->slice(end,end+1)==\"\\n\"){break;}; end=end+1;}; \"<h1>\"+source->slice(2,end)+\"</h1>\"}; "))
+  (let ((heading "let heading=function(source:string):string {let size=source->length(); var end=2; loop while(end<size){branch when{(source->slice(end,end+1)==\"\\n\")=>{break;}}; end=end+1;}; \"<h1>\"+source->slice(2,end)+\"</h1>\"}; "))
     (dolist (tail '("heading(\"# 題名😀\\n本文\")==\"<h1>題名😀</h1>\""
                     "heading(\"# 題名😀\")==\"<h1>題名😀</h1>\""
                     "heading(\"# \")==\"<h1></h1>\""))
@@ -71,7 +71,7 @@
       (dotimes (i 60)
         (let* ((a (sample)) (b (sample)) (joined (append a b)) (start (next (1+ (length joined))))
                (end (+ start (next (1+ (- (length joined) start)))))
-               (source (format nil "let s=~A+~A; if(s->length()==~D){s->slice(~D,~D)==~A}else{false}"
+               (source (format nil "let s=~A+~A; branch when{(s->length()==~D)=>{s->slice(~D,~D)==~A},else=>{false}}"
                                (v06-source-literal a) (v06-source-literal b) (length joined) start end
                                (v06-source-literal (subseq joined start end)))))
           (same :true (compiled-result source)))))))
@@ -87,7 +87,7 @@
   (let ((original (fdefinition 'mognitio.text::allocate-bytes)) (allocations 0))
     (replacing (mognitio.text::allocate-bytes
                  (lambda (size) (incf allocations) (sb-ext:gc :full t) (funcall original size)))
-      (same :true (compiled-result "let f=function(s:string):string {s+\"!\"}; let a=f(\"A\"); let b=f(\"B\"); let c=f(\"C\"); var carry=\"\"; var i=0; loop while(i<5){carry=f(carry); i=i+1;}; if(a+b+c==\"A!B!C!\"){carry==\"!!!!!\"}else{false}"))
+      (same :true (compiled-result "let f=function(s:string):string {s+\"!\"}; let a=f(\"A\"); let b=f(\"B\"); let c=f(\"C\"); var carry=\"\"; var i=0; loop while(i<5){carry=f(carry); i=i+1;}; branch when{(a+b+c==\"A!B!C!\")=>{carry==\"!!!!!\"},else=>{false}}"))
       (same :true (compiled-result "let f=function(s:string):string {s+\"!\"}; (f(\"abc\")->slice({let x=f(\"other\");1},{let y=f(\"value\");3}))+f(\"z\")==\"bcz!\"")))
     (is (> allocations 10))))
 

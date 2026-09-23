@@ -81,13 +81,20 @@
       '((:load-frame :rax -32) (:jmp :done) (:label :empty) (:lea-text (:text 0)) (:label :done))
       (helper-return)) :helper))
 
-(defun text-helper-units (operations literal-count)
+(defun text-allocation-unit ()
+  (runtime-unit :allocate
+    (append (helper-frame 2)
+      '((:load-frame :rax 16) (:store-out 0 :rax) (:call (:runtime :allocate-block))
+        (:load-frame :rcx 16) (:store-word :rax 16 :rcx)
+        (:load-frame :rcx 24) (:store-word :rax 24 :rcx)) (helper-return))))
+
+(defun text-helper-units (operations literal-count &optional context allocating-values)
   (append
     (loop for op in operations collect
       (ecase op
         (:text.length (text-length-unit))
         ((:text.equal :text.not-equal) (text-equality-unit op))
         (:text.concat (text-concat-unit)) (:text.slice (text-slice-unit))))
-    (when (intersection operations '(:text.concat :text.slice))
+    (when (or allocating-values (intersection operations '(:text.concat :text.slice)))
       (list (checked-sum-unit) (physical-size-unit) (find-free-unit)
-            (validate-root-unit literal-count) (collect-unit) (allocate-unit)))))
+            (validate-root-unit literal-count) (collect-unit context) (allocate-unit) (text-allocation-unit)))))

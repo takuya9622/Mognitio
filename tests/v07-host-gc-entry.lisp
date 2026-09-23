@@ -1,0 +1,23 @@
+(require :asdf)
+(let* ((tests (uiop:pathname-directory-pathname *load-truename*)) (root (uiop:pathname-parent-directory-pathname tests)))
+  (asdf:load-asd (merge-pathnames "mognitio.asd" root)))
+(let ((*standard-output* (make-broadcast-stream)) (*error-output* (make-broadcast-stream)))
+  (asdf:load-system "mognitio"))
+(let* ((source "type U=struct{s:string;};interface I{function text():string;}implement U against I{let text=function():string{this->s};}let make=function():I{U{s:\"a\"+\"b\"}};let held=make();var i=0;loop while(i<10000){let dead=make();i=i+1;};held->text()==\"ab\"")
+       (decoded (mognitio.source:decode-source "values.mgn" (sb-ext:string-to-octets source :external-format :utf-8)))
+       (compiled (mognitio.backend.cl:compile-program (mognitio.semantic:check-program
+                    (mognitio.frontend:parse-program decoded (mognitio.frontend:lex-source decoded)))))
+       (data (fdefinition 'mognitio.value:construct)) (pack (fdefinition 'mognitio.value:pack))
+       (weak nil) (count 0))
+  (unwind-protect
+       (progn
+         (setf (fdefinition 'mognitio.value:construct)
+               (lambda (&rest args) (let ((v (apply data args))) (incf count) (push (sb-ext:make-weak-pointer v) weak) v))
+               (fdefinition 'mognitio.value:pack)
+               (lambda (&rest args) (let ((v (apply pack args))) (incf count) (push (sb-ext:make-weak-pointer v) weak) v)))
+         (assert (eq :true (mognitio.backend.cl:execute-program compiled))))
+    (setf (fdefinition 'mognitio.value:construct) data (fdefinition 'mognitio.value:pack) pack))
+  (sb-ext:gc :full t)
+  (let ((dead (count-if-not #'sb-ext:weak-pointer-value weak)))
+    (assert (= count 20002 dead))
+    (format t "VALUE_HOST_GC_OK allocations=~D dead=~D~%" count dead)))

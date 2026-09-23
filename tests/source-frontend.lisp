@@ -7,21 +7,21 @@
     (dolist (then '(:true :false))
       (dolist (else '(:true :false))
         (expect-source
-         (format nil "if(~(~A~)){~(~A~)}else{~(~A~)}" condition then else)
+         (format nil "branch when{(~(~A~))=>{~(~A~)},else=>{~(~A~)}}" condition then else)
          (if (eq condition :true) then else)))))
-  (expect-source "if(if(false){true}else{false}){if(true){false}else{true}}else{if(false){false}else{true}}"
+  (expect-source "branch when{(branch when{(false)=>{true},else=>{false}})=>{branch when{(true)=>{false},else=>{true}}},else=>{branch when{(false)=>{false},else=>{true}}}}"
                  :true))
 
 (deftest v03-whitespace-and-eof
   (dolist (space (list " " (string #\Tab) (string #\Newline)
                        (string #\Return) (format nil "~C~C" #\Return #\Newline)))
-    (let* ((text (format nil "~Aif~A(~Atrue~A)~A{~Afalse~A}~Aelse~A{~Atrue~A}~A"
+    (let* ((text (format nil "~Abranch~Awhen~A{~Atrue~A=>~Afalse~A,~Aelse~A=>~Atrue~A}~A"
                          space space space space space space space space
                          space space space space))
            (source (text-source text))
            (tokens (lex-source source)))
-      (same '(:if :left-paren :true :right-paren :left-brace :false :right-brace
-              :else :left-brace :true :right-brace :eof)
+      (same '(:branch :when :left-brace :true :fat-arrow :false :comma
+              :else :fat-arrow :true :right-brace :eof)
             (map 'list #'token-kind tokens))
       (same (length text) (span-start (token-span (aref tokens 11))))
       (same (length text) (span-end (token-span (aref tokens 11))))
@@ -71,7 +71,7 @@
       (let* ((path (put-text (fresh-path) text))
              (err (expect-cli (list "run" (namestring path)) 1 :phase "lex")))
         (is (search (format nil ":~D:~D: lex:" (second case) (third case)) err)))))
-  (let* ((source (text-source (format nil "if(true){false}else{~C~C~C"
+  (let* ((source (text-source (format nil "branch when{true=>false,else=>{~C~C~C"
                                             #\Return #\Newline #\Tab)))
          (diag (diagnostic-of (lambda () (parse-program source (lex-source source))))))
     (same 2 (diagnostic-line diag)) (same 2 (diagnostic-column diag)))
@@ -110,24 +110,24 @@
     (same 9 (span-end (token-span (aref tokens 0))))))
 
 (deftest v09-v12-invalid-grammar
-  (dolist (text '("" " "  "if(true){true false}else{false}"
+  (dolist (text '("" " "  "branch when{(true)=>{true false},else=>{false}}"
                   "if true){true}else{false}" "if(true{true}else{false}"
                   "if(true)true}else{false}" "if(true){true else{false}"
                    "if(true){true}else false}"
                   "if(true){true}else{false" "true)" "true false"
-                  "if(true){true}else{false}if(false){false}else{true}"
-                  "if(true){true}else if(false){true}else{false}"
+                  "branch when{(true)=>{true},else=>{false}}branch when{(false)=>{false},else=>{true}}"
+                  "if(true){true}else branch when{(false)=>{true},else=>{false}}"
                   ))
     (expect-invalid text "parse")))
 
 (deftest frontend-spans
-  (let* ((program (parse-text " if(true){false}else{true} "))
+  (let* ((program (parse-text " branch when{(true)=>{false},else=>{true}} "))
          (node (program-root program)))
     (same 1 (span-start (node-span node)))
-    (same 26 (span-end (node-span node)))
-    (same 4 (span-start (node-span (if-expression-condition node))))
-    (same 8 (span-end (node-span (if-expression-condition node))))))
+    (same 42 (span-end (node-span node)))
+    (same 13 (span-start (node-span (branch-arm-selector (aref (branch-expression-arms node) 0)))))
+    (same 19 (span-end (node-span (branch-arm-selector (aref (branch-expression-arms node) 0)))))))
 
 (deftest v05-legacy-if-type-rejections
-  (dolist (text '("if(true){}else{false}" "if(true){true}" "if(true){true}else{}"))
+  (dolist (text '("branch when{(true)=>{},else=>{false}}" "branch when{(true)=>{true}}" "branch when{(true)=>{true},else=>{}}"))
     (v03-reject text "semantic")))

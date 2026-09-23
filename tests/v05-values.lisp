@@ -4,12 +4,12 @@
   (dolist (source
     '("void; {}; true"
       "let value = {}; var other = void; other = value; other; true"
-      "let f = function(x: void, n: int): void { x; if(n == 0){return;}; void }; f(void, 0); f({}, 1); true"
+      "let f = function(x: void, n: int): void { x; branch when{(n == 0)=>{return;}}; void }; f(void, 0); f({}, 1); true"
       "let f = function(): void {}; f(); true"
       "let f = function(): void { return void; }; f(); true"
       "let f = function(): int { 7 }; let g = { f }; g() == 7"
       "let f = function(): int { 7 }; ({ f })() == 7"
-      "let outer = function(flag: bool): int { if(flag){return 7;}; 8 }; outer(true) + outer(false) == 15"
+      "let outer = function(flag: bool): int { branch when{(flag)=>{return 7;}}; 8 }; outer(true) + outer(false) == 15"
       "let f = function(): int { ({ return 7; })(1 / 0) }; f() == 7"
       "let f = function(x: int): int { x }; let g = function(): int { f({ return 8; }) }; g() == 8"
       "var n = 0; let f = function(x: int): int { x }; ({ n = n + 1; f })({ n = n * 10; n }) == 10"
@@ -19,7 +19,7 @@
   (dolist (source
     '("void" "void == void" "void + 1 == 1" "1; true" "true; false"
       "let f = function(): int {1}; f(); true" "function(): void {}; true"
-      "if(true){1}; true" "if(true){void}else{1}; true"
+      "branch when{(true)=>{1}}; true" "branch when{(true)=>{void},else=>{1}}; true"
       "let f = function(): int { return; }; true" "let f = function(): int {}; true"
       "let f = function(): void { 1 }; true" "let f = function(x: void): void {}; f(true); true"
       "let f = function(): int { return 1; 2 }; true"
@@ -39,7 +39,7 @@
 (deftest v05-migrated-semantic-rejections
   (dolist (source '("let f = function(): void { 1 }; true"
     "let f = function(): int { }; true"
-    "if(true){}else{false}"
+    "branch when{(true)=>{},else=>{false}}"
     "let f = function(): int { 1 }; f(); true"
     "let f = function(): int { return; }; true"
     "let f = function(): int { return 1; 2 }; true"

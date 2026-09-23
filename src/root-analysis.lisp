@@ -13,7 +13,7 @@
     (labels ((same-set (a b) (and (subsetp a b) (subsetp b a)))
              (terminal-use (block)
                (let ((term (basic-block-terminator block)))
-                 (unless (eq (first term) :jump) (list (second term)))))
+                 (unless (member (first term) '(:jump :trap)) (list (second term)))))
              (edge-live (block successor)
                (let* ((target (gethash successor blocks))
                       (term (basic-block-terminator block))
@@ -49,7 +49,7 @@
                   for index downfrom (1- (length (basic-block-instructions b))) do
               (setf live (union (remove-duplicates (instruction-operands i)) (remove (instruction-result i) live)))
               (when (member :may-allocate (instruction-effects i))
-                (let ((values (sort (remove-if-not (lambda (v) (eq (gethash v types) :string))
+                (let ((values (sort (remove-if-not (lambda (v) (mognitio.semantic:reference-type-p (gethash v types)))
                                                  (copy-list live)) #'<)))
                   (setf capacity (max capacity (length values)))
                   ;; List position is the root slot number, starting at zero.

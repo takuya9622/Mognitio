@@ -1,5 +1,5 @@
 let magnitude = function(value: int): int {
-    if (value < 0) { return -value; } else { value }
+    branch when{(value < 0)=>{ return -value; },else=>{ value }}
 };
 let twice = function(value: int): int {
     value * 2

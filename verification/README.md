@@ -70,6 +70,10 @@ and [development progress](v0.6.0-progress.md) for its incremental evidence.
 The [v0.5.0](v0.5.0.md), [v0.4.1](v0.4.1.md), [v0.4.0](v0.4.0.md), and
 [v0.3.0](v0.3.0.md) validation records remain historical.
 
+The [v0.7.0 development validation](v0.7.0.md) covers immutable nominal data,
+unified branches, interfaces, graph collection, and ABI v4. Integration into
+the version branch does not create a release.
+
 ## Repository checks
 
 - Run `git diff --check` for whitespace errors.

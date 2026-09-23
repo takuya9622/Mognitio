@@ -1,0 +1,17 @@
+(in-package #:mognitio.value)
+
+(defstruct (data-value (:constructor %make-data-value (type variant slots)))
+  (type nil :read-only t) (variant 0 :read-only t) (slots #() :read-only t))
+(defstruct (interface-value (:constructor %make-interface-value (contract table value)))
+  (contract nil :read-only t) (table #() :read-only t) (value nil :read-only t))
+
+(defun construct (type variant &rest slots)
+  (handler-case (%make-data-value type variant (coerce slots 'vector))
+    (storage-condition () (mognitio.runtime:runtime-error :allocation-failed))))
+(defun pack (value contract table)
+  (handler-case (%make-interface-value contract table value)
+    (storage-condition () (mognitio.runtime:runtime-error :allocation-failed))))
+(defun field (value index) (aref (data-value-slots value) index))
+(defun tag (value) (data-value-variant value))
+(defun receiver (value) (interface-value-value value))
+(defun method-id (value index) (aref (interface-value-table value) index))
