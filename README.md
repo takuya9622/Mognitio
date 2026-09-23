@@ -185,7 +185,7 @@ See [test coverage](tests/README.md) for the retained regression cases.
 ```mgn
 type Item = struct { name: string; };
 type State = enum { Empty; Ready(Item); };
-interface Named { function nameText(): string; }
+interface Named { let nameText = function(): string; }
 implement Item against Named {
     let nameText = function(): string { this->name };
 }

@@ -1,6 +1,6 @@
 type Item = struct { text: string; };
 type State = enum { Empty; Ready(Item); };
-interface Named { function name(): string; }
+interface Named { let name = function(): string; }
 implement Item against Named {
     let name = function(): string { this->text };
 }

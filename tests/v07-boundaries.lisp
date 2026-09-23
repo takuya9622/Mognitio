@@ -20,7 +20,7 @@
       (lambda (c) (maphash (lambda (n info) (declare (ignore n)) (setf (call-info-targets info) nil))
                           (mognitio.semantic::checked-program-calls c)))))
     (let ((c (check-program (parse-text
-               "type U=struct{};type Alias=U;interface A{function f():int;}implement U against A{let f=function():int{7};}let use=function(a:A):int{a->f()};use(U{})==7"))))
+               "type U=struct{};type Alias=U;interface A{let f = function():int;}implement U against A{let f=function():int{7};}let use=function(a:A):int{a->f()};use(U{})==7"))))
       (verify-checked-program c) (funcall mutate c)
       (signals internal-failure (verify-checked-program c))))
   (let* ((c (check-program (parse-text "type U=struct{a:int;b:int;};U{b:2,a:1}->a==1")))
@@ -33,7 +33,7 @@
   (dolist (pair '((:struct.make (0 0)) (:enum.make 8) (:struct.field 9)
                   (:enum.payload ((:enum 1) 0 0)) (:interface.pack 99)
                   (:call.interface ((:interface 2) 0 (999)))))
-    (let* ((module (native-ir "type U=struct{s:string;n:int;};type E=enum{A;B(U);};interface A{function f():string;}implement U against A{let f=function():string{this->s};}let use=function(a:A):string{a->f()};branch on(E::B(U{s:\"ok\",n:1})){E::A=>false,E::B(u)=>use(u)==\"ok\"}"))
+    (let* ((module (native-ir "type U=struct{s:string;n:int;};type E=enum{A;B(U);};interface A{let f = function():string;}implement U against A{let f=function():string{this->s};}let use=function(a:A):string{a->f()};branch on(E::B(U{s:\"ok\",n:1})){E::A=>false,E::B(u)=>use(u)==\"ok\"}"))
            (inst (v07-operation module (first pair))))
       (setf (mognitio.ir:instruction-value inst) (second pair))
       (signals internal-failure (mognitio.ir:verify-module module))))
@@ -110,7 +110,7 @@
       (same 0 code) (same (format nil "true~%") out) (same "" err))))
 
 (deftest v07-native-static-layout-and-table-order
-  (let* ((source "type U=struct{flag:bool;s:string;unit:void;};type E=enum{Empty;Pair(int,U,string);};interface I{function b():string;function a():int;}implement U against I{let a=function():int{1};let b=function():string{this->s};}true")
+  (let* ((source "type U=struct{flag:bool;s:string;unit:void;};type E=enum{Empty;Pair(int,U,string);};interface I{let b = function():string;let a = function():int;}implement U against I{let a=function():int{1};let b=function():string{this->s};}true")
          (code (mognitio.machine:lower-module (native-ir source))))
     (multiple-value-bind (bytes symbols) (mognitio.amd64:encode code)
       (dolist (pair '(((:descriptor 0 0) (1 0 0 3 1 1))
@@ -140,7 +140,7 @@
         (signals internal-failure (mognitio.frame:verify-sections function allocation roots layout sections body))))))
 
 (deftest v07-interface-table-faults
-  (let ((source "type U=struct{};type V=struct{};interface I{function f():int;}implement U against I{let f=function():int{1};}implement V against I{let f=function():int{2};}let pack=function():I{U{}};let held=pack();let dead=V{};held->f()==1")
+  (let ((source "type U=struct{};type V=struct{};interface I{let f = function():int;}implement U against I{let f=function():int{1};}implement V against I{let f=function():int{2};}let pack=function():I{U{}};let held=pack();let dead=V{};held->f()==1")
         (original (fdefinition 'mognitio.native.runtime::value-helper-units)))
     (dolist (wrong '(nil t))
       (replacing (mognitio.native.runtime::value-helper-units

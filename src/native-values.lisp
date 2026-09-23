@@ -15,6 +15,19 @@
                                       (mognitio.semantic:variant-info-types variant))))
             (:interface (list (row 3 0 '(:string))))))))))
 
+(defun ordered-implementation-tables (context)
+  ;; Sort an output-only copy. Registry order controls source visibility and
+  ;; implementation IDs, so changing it here would alter semantic identity.
+  (sort (remove-if-not #'mognitio.semantic:implementation-info-contract
+                      (coerce (mognitio.semantic:value-context-implementations context) 'list))
+        (lambda (a b)
+          (let ((a-type (second (mognitio.semantic:implementation-info-concrete a)))
+                (b-type (second (mognitio.semantic:implementation-info-concrete b))))
+            (or (< a-type b-type)
+                (and (= a-type b-type)
+                     (< (second (mognitio.semantic:implementation-info-contract a))
+                        (second (mognitio.semantic:implementation-info-contract b)))))))))
+
 (defun metadata-unit (context)
   (let ((forms nil))
     (labels ((record (name words)
@@ -23,8 +36,8 @@
       (dolist (row (descriptors context))
         (destructuring-bind (name kind id variant count refs) row
           (record name (append (list kind id variant count (length refs)) refs))))
-      (loop for impl across (mognitio.semantic:value-context-implementations context)
-            for contract = (mognitio.semantic:implementation-info-contract impl) when contract do
+      (loop for impl in (ordered-implementation-tables context)
+            for contract = (mognitio.semantic:implementation-info-contract impl) do
         (let ((ids (loop for req in (mognitio.semantic:type-info-methods (mognitio.semantic:context-type context contract))
                          collect (mognitio.semantic:signature-id
                            (cdr (assoc (mognitio.semantic:requirement-name req)
@@ -58,7 +71,15 @@
                 (push (runtime-unit (second name)
                   (append (helper-frame 2)
                     `((:imm-rax ,(* 8 (max 1 count))) (:store-out 0 :rax) (:call (:runtime :allocate-block))
-                      (:mov-reg :rdx :rax) (:imm-rcx ,(1+ (* kind 16))) (:store-word :rdx 8 :rcx)
+                      (:mov-reg :rdx :rax))
+                    ;; Clear the entire physical payload, including the empty
+                    ;; value's word and any unsplit remainder, before filling
+                    ;; slots. This interval contains no allocation/safepoint.
+                    '((:load-word :r9 :rdx 0) (:add-reg :r9 :rdx) (:lea-base :r8 :rdx 32)
+                      (:imm-rax 0) (:label :zero-payload) (:cmp-reg :r8 :r9) (:jae :payload-ready)
+                      (:store-word :r8 0 :rax) (:add-imm :r8 8) (:jmp :zero-payload)
+                      (:label :payload-ready))
+                    `((:imm-rcx ,(1+ (* kind 16))) (:store-word :rdx 8 :rcx)
                       (:lea-meta (:descriptor ,(second type) ,variant)) (:store-word :rdx 16 :rax))
                     (if (eq op :interface.pack)
                         `((:lea-meta (:method-table ,data)) (:store-word :rdx 24 :rax))
