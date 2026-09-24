@@ -1,4 +1,4 @@
-let unitPrice = 120;
-var count = 2;
+let unitPrice: int = 120;
+var count: int = 2;
 count = count + 1;
 count * unitPrice == 360

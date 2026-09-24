@@ -10,16 +10,16 @@
   (v07-accept "type U=struct{n:int;};interface I{let number = function():int;}implement U against I{let number=function():int{this->n};}implement U{let asI=function():I{this};let pass=function(u:U):int{u->n};let forward=function():int{this->pass(this)};}branch when{U{n:7}->asI()->number()==7=>U{n:7}->forward()==7,else=>false}")
   (v03-reject "interface Step{let step = function():bool;}type Alias=Step;type Stop=struct{};implement Stop against Alias{let step=function():bool{true};}let apply=function(v:Alias):bool{v->step()};type Again=struct{};implement Again against Step{let step=function():bool{apply(Stop{})};}apply(Stop{})" "semantic")
   (dolist (suffix '("render(U{s:\"a\"})+render(V::Item(\"b\"))==\"ab\""
-                    "let make=function():N{U{s:\"a\"}}; var n=make();let old=n;n=V::Item(\"b\");old->name()+n->name()==\"ab\""
+                    "let make=function():N{U{s:\"a\"}}; var n:N=make();let old:N=n;n=V::Item(\"b\");old->name()+n->name()==\"ab\""
                     "U{s:\"a\"}->name()+V::Item(\"b\")->name()==\"ab\""))
     (v07-accept (concatenate 'string *v07-contract-source* suffix)))
   (v07-accept (concatenate 'string *v07-same-name-source* "a(U{})+b(U{})==\"ab\""))
   (v07-reject (concatenate 'string *v07-same-name-source* "U{}->name()==\"a\"") "semantic")
   (dolist (source
     '("type U=struct{s:string;};let raw=function(u:U):string{u->s};implement U{let name=function():string{raw(this)};let copy=function():U{return this;};let value=function():U{this};} U{s:\"ok\"}->copy()->value()->name()==\"ok\""
-      "type U=struct{};implement U{let f=function():int{this->g()};let g=function():int{7};}let f=2;U{}->f()+f==9"
+      "type U=struct{};implement U{let f=function():int{this->g()};let g=function():int{7};}let f: int=2;U{}->f()+f==9"
       "type U=struct{};implement U{let a=function():int{1};}implement U{let b=function():int{2};}U{}->a()+U{}->b()==3"
-      "type U=struct{x:int;};implement U{let add=function(a:int,b:int,):int{this->x*100+a*10+b};}var n=0;let x=({n=n+1;U{x:n}})->add({n=n+1;n},{n=n+1;n},);x+n==126"
+      "type U=struct{x:int;};implement U{let add=function(a:int,b:int,):int{this->x*100+a*10+b};}var n: int=0;let x: int=({n=n+1;U{x:n}})->add({n=n+1;n},{n=n+1;n},);x+n==126"
       "type U=struct{};implement U{let f=function(a:int):int{a};}let g=function():int{({return 7;})->f(1/0)};g()==7"
       "type U=struct{};implement U{let f=function(a:int,b:int):int{a+b};}let g=function():int{U{}->f({return 7;},1/0)};g()==7"
       "type U=struct{};interface A{let f = function():int;}interface B{let f = function():int;}implement U against A{let f=function():int{1};}let first=function(u:U):int{u->f()};implement U against B{let f=function():int{2};}first(U{})==1"

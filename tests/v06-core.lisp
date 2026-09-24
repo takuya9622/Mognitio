@@ -23,7 +23,7 @@
                   (mognitio.ir:basic-block-terminator b))))))
 
 (deftest v06-core-text-lowering
-  (let* ((source "let f=function(s:string):string{s->slice(0,1)+\"\"}; let x=\"日本\"; let y=f(x); let unused=x!=y; y->length()==1")
+  (let* ((source "let f=function(s:string):string{s->slice(0,1)+\"\"}; let x: string=\"日本\"; let y: string=f(x); let unused: bool=x!=y; y->length()==1")
          (module (v06-native-ir source)))
     (is (mognitio.ir:verify-module module))
     (same (v06-core-snapshot module) (v06-core-snapshot (v06-native-ir source)))
@@ -32,14 +32,14 @@
     (same '(:string) (mognitio.ir:ir-function-parameter-types (second (mognitio.ir:module-functions module))))
     (same :string (mognitio.ir:ir-function-result-type (second (mognitio.ir:module-functions module))))
     (same 2 (length (mognitio.ir:module-literal-pool module))))
-  (let* ((module (v06-native-ir "let a=\"x\"; let b=\"x\"; let unused=\"\"+\"\"; a==b"))
+  (let* ((module (v06-native-ir "let a: string=\"x\"; let b: string=\"x\"; let unused: string=\"\"+\"\"; a==b"))
          (literals (remove-if-not (lambda (i) (eq :const.text (mognitio.ir:instruction-op i)))
                                   (v06-core-instructions module))))
     (same '(1 1 0 0) (mapcar #'mognitio.ir:instruction-value literals))
     (same 2 (length (mognitio.ir:module-literal-pool module)))
     ;; Even an unused empty concat retains its allocation/failure operation.
     (is (v06-core-op module :text.concat)))
-  (let ((module (v06-native-ir "branch when{(false)=>{let bad=\"a\"->slice(9,10); false},else=>{true}}")))
+  (let ((module (v06-native-ir "branch when{(false)=>{let bad: string=\"a\"->slice(9,10); false},else=>{true}}")))
     (is (mognitio.ir:verify-module module))
     (is (not (find :text.slice (mognitio.ir:basic-block-instructions (first (entry-blocks module)))
                    :key #'mognitio.ir:instruction-op)))
@@ -74,7 +74,7 @@
             (lambda (m) (setf (mognitio.ir:instruction-operands (v06-core-op m :text.concat))
                               (list (mognitio.ir:instruction-result (v06-core-op m :constant))
                                     (mognitio.ir:instruction-result (v06-core-op m :const.text)))))))
-    (let ((module (v06-native-ir "let n=1; let s=\"a\"+\"b\"; s->length()==n")))
+    (let ((module (v06-native-ir "let n: int=1; let s: string=\"a\"+\"b\"; s->length()==n")))
       (funcall mutate module)
       (signals internal-failure (mognitio.ir:verify-module module))))
   (let ((module (v06-native-ir "let f=function(s:string):string{s}; f(\"x\")==\"x\"")))
@@ -128,31 +128,31 @@
 
 (deftest v06-core-ordered-execution
   (dolist (source
-            '("var s=\"abc\"; s->slice({s=\"z\"; 0},1)==\"a\""
-              "var s=\"a\"; s+{s=\"b\"; s}==\"ab\""
+            '("var s: string=\"abc\"; s->slice({s=\"z\"; 0},1)==\"a\""
+              "var s: string=\"a\"; s+{s=\"b\"; s}==\"ab\""
               "let f=function(a:string,b:string):string{a+b}; f(\"先\"+\"行\",\"後\"+\"続\")==\"先行後続\""
-              "let a=function(s:string):string{s+\"a\"}; let b=function(s:string):string{s+\"b\"}; var choose=true; (branch when{(choose)=>{a},else=>{b}})({choose=false; \"x\"})==\"xa\""
-              "var s=\"a\"; let r=loop {s=s+\"b\"; branch when{(s->length()<3)=>{continue;}}; break s;}; r==\"abb\""
-              "var s=\"a\"; loop while(s->length()<5){s=s+\"b\";}; s==\"abbbb\""
+              "let a=function(s:string):string{s+\"a\"}; let b=function(s:string):string{s+\"b\"}; var choose: bool=true; (branch when{(choose)=>{a},else=>{b}})({choose=false; \"x\"})==\"xa\""
+              "var s: string=\"a\"; let r: string=loop {s=s+\"b\"; branch when{(s->length()<3)=>{continue;}}; break s;}; r==\"abb\""
+              "var s: string=\"a\"; loop while(s->length()<5){s=s+\"b\";}; s==\"abbbb\""
               "let f=function():string{\"x\"->slice({return \"ok\";},0)}; f()==\"ok\""
-              "let r=loop {\"x\"->slice({break \"ok\";},0);}; r==\"ok\""
-              "var n=0; loop while(n<2){n=n+1; \"x\"->slice({continue;},0);}; n==2"
-              "let a=branch when{(true)=>{\"x\"+\"y\"},else=>{\"z\"}}; a==\"xy\""
-              "branch when{(false)=>{let bad=\"a\"->slice(9,10); false},else=>{true}}"
+              "let r: string=loop {\"x\"->slice({break \"ok\";},0);}; r==\"ok\""
+              "var n: int=0; loop while(n<2){n=n+1; \"x\"->slice({continue;},0);}; n==2"
+              "let a: string=branch when{(true)=>{\"x\"+\"y\"},else=>{\"z\"}}; a==\"xy\""
+              "branch when{(false)=>{let bad: string=\"a\"->slice(9,10); false},else=>{true}}"
               "\"a\\0日\"->slice(1,3)==\"\\0日\""))
     (let ((module (v06-native-ir source)))
       (is (mognitio.ir:verify-module module))
       (is (mognitio.roots:analyze-roots module))
       (same 1 (v06-evaluate-core module))))
   (loop for count from 0 to 20 do
-    (let* ((source (format nil "var s=\"日\"; var i=0; loop while(i<~D){s=s+\"本\"; i=i+1;}; s==\"日~A\""
+    (let* ((source (format nil "var s: string=\"日\"; var i: int=0; loop while(i<~D){s=s+\"本\"; i=i+1;}; s==\"日~A\""
                            count (make-string count :initial-element #\本)))
            (module (v06-native-ir source)))
       (is (mognitio.roots:analyze-roots module))
       (same 1 (v06-evaluate-core module)))))
 
 (deftest v06-core-operation-contracts
-  (let ((source "let n=0; let s=\"ab\"; let a=s->slice(n,1); let b=a+\"x\"; let c=b!=s; let d=b==s; a->length()==1"))
+  (let ((source "let n: int=0; let s: string=\"ab\"; let a: string=s->slice(n,1); let b: string=a+\"x\"; let c: bool=b!=s; let d: bool=b==s; a->length()==1"))
     (dolist (op '(:const.text :text.slice :text.concat :text.not-equal :text.equal :text.length))
       (dolist (corruption '(:result :arity :operand :effect))
         (let* ((module (v06-native-ir source)) (inst (v06-core-op module op)))
@@ -170,7 +170,7 @@
     (let ((pool (mognitio.ir:module-literal-pool (v06-native-ir source))))
       (same 0 (length (text-payload-octets (aref pool 0))))
       (same 0 (text-payload-scalar-count (aref pool 0)))))
-  (let* ((module (v06-native-ir "let f=function():string{let nested=function():string{\"first\"}; \"second\"}; let unused=\"third\"; f()==\"second\""))
+  (let* ((module (v06-native-ir "let f=function():string{let nested=function():string{\"first\"}; \"second\"}; let unused: string=\"third\"; f()==\"second\""))
          (pool (mognitio.ir:module-literal-pool module)))
     (same '("" "first" "second" "third")
           (loop for p across pool collect (sb-ext:octets-to-string (text-payload-octets p) :external-format :utf-8)))

@@ -161,9 +161,15 @@
                     (unless (normal child) (fail-at (node-span node) :semantic "Initializer has no normal type"))
                     (when (and (eq (local-binding-mutability node) :var) (function-type-p (normal child)))
                       (fail-at (node-span node) :semantic "Mutable function values are not supported"))
-                    (setf (local-symbol-type (car entry)) (normal child) (cdr entry) :visible
-                          (local-symbol-targets (car entry)) (completion-targets child)
-                          (local-symbol-static-target (car entry)) (static-target (local-binding-initializer node)))
+                    (let* ((annotation (local-binding-annotation node))
+                           (static (static-target (local-binding-initializer node)))
+                           (type (if annotation (resolve-type-token values-context annotation) (normal child))))
+                      (unless (or annotation (and (eq (local-binding-mutability node) :let) static))
+                        (fail-at (node-span node) :semantic "Ordinary binding requires a type annotation"))
+                      (check-adaptation values-context (local-binding-initializer node) (normal child) type)
+                      (setf (local-symbol-type (car entry)) type (cdr entry) :visible
+                            (local-symbol-targets (car entry)) (completion-targets child)
+                            (local-symbol-static-target (car entry)) static))
                     (summary node :void (list child))))
                  (assignment
                   (let* ((symbol (reference node (assignment-name node) scopes))

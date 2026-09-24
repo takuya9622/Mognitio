@@ -37,9 +37,9 @@
     (same :text.slice (operation-info-kind (checked-operation checked inner)))
     (same :string (checked-normal-type checked inner)))
   (dolist (source
-    '("let f=function(x:string):string {x}; let a=f(\"a\"); var b=a; b=\"b\"; a==\"a\""
-      "let length=1; let slice=2; let string_length=function(x:string):int {x->length()}; let string_slice=string_length; string_slice(\"a\")==1"
-      "let class=1; class==1"
+    '("let f=function(x:string):string {x}; let a: string=f(\"a\"); var b: string=a; b=\"b\"; a==\"a\""
+      "let length: int=1; let slice: int=2; let string_length=function(x:string):int {x->length()}; let string_slice=string_length; string_slice(\"a\")==1"
+      "let class: int=1; class==1"
       "let f=function():string {branch when{(true)=>{return \"a\";},else=>{\"b\"}}}; f()==\"a\""
       "loop {break \"a\";}==\"a\""
       "let f=function():int {({return 7;})->unknown(1,2)}; f()==7"
@@ -55,8 +55,8 @@
       "\"a\"->length(1)==1" "\"a\"->slice(0)==\"a\"" "\"a\"->slice(0,1,2)==\"a\""
       "\"a\"->slice(false,1)==\"a\"" "\"a\"->slice(0,\"a\")==\"a\""
       "string_length(\"a\")==1" "string_slice(\"a\",0,1)==\"a\""
-      "let a=\"a\"; let f=function():string {a}; true"
-      "let f=function():string {f()}; true" "var a=\"a\"; a=1; true"
+      "let a: string=\"a\"; let f=function():string {a}; true"
+      "let f=function():string {f()}; true" "var a: string=\"a\"; a=1; true"
       "branch when{(true)=>{\"a\"},else=>{1}}" "loop {branch when{(true)=>{break \"a\";}}; break 1;}==\"a\""
       "loop {branch when{(true)=>{break;}}; break \"a\";}; true"
       "let f=function():string {return;}; true"

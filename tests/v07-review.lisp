@@ -39,10 +39,10 @@
   ;; Dirty a block, keep its neighbor alive to prevent coalescing, collect,
   ;; then call the actual constructor helper. Inspect every unused word,
   ;; including a whole-block remainder too small to split.
-  (dolist (pair '(("type Z=struct{};let z=Z{};true" :struct.make 0)
-                  ("type Z=enum{Empty;};let z=Z::Empty;true" :enum.make 0)
-                  ("type Z=struct{n:int;};let z=Z{n:7};true" :struct.make 1)
-                  ("type Z=enum{Item(int);};let z=Z::Item(7);true" :enum.make 1)))
+  (dolist (pair '(("type Z=struct{};let z: Z=Z{};true" :struct.make 0)
+                  ("type Z=enum{Empty;};let z: Z=Z::Empty;true" :enum.make 0)
+                  ("type Z=struct{n:int;};let z: Z=Z{n:7};true" :struct.make 1)
+                  ("type Z=enum{Item(int);};let z: Z=Z::Item(7);true" :enum.make 1)))
     (destructuring-bind (source op slots) pair
       (let ((helper (mognitio.native.runtime::value-helper-name (v07-operation (native-ir source) op))))
         (dolist (size '(40 48 56 80))

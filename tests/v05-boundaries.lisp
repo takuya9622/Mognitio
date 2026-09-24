@@ -33,7 +33,7 @@
          (symbol (aref (checked-program-bindings checked) 1)))
     (setf (local-symbol-static-target symbol) 1)
     (signals internal-failure (compile-program checked)))
-  (let* ((checked (check-program (parse-text "let f=function(): int {1}; let selected={f}; true")))
+  (let* ((checked (check-program (parse-text "let f=function(): int {1}; let selected:int=1; true")))
          (symbol (aref (checked-program-bindings checked) 1)))
     (setf (local-symbol-static-target symbol) 1)
     (signals internal-failure (compile-program checked))))
@@ -187,9 +187,9 @@
 
 (deftest v05-handwritten-caller-generated-callee
   (let ((source (v05-cross-abi-source
-                 "branch when{(a != 7)=>{let bad=1/0;}}; branch when{(b)=>{},else=>{let bad=1/0;}};
-                  branch when{(c != 11)=>{let bad=1/0;}}; branch when{(d)=>{let bad=1/0;}};
-                  branch when{(e != 13)=>{let bad=1/0;}};" "true"))
+                 "branch when{(a != 7)=>{let bad:int=1/0;}}; branch when{(b)=>{},else=>{let bad:int=1/0;}};
+                  branch when{(c != 11)=>{let bad:int=1/0;}}; branch when{(d)=>{let bad:int=1/0;}};
+                  branch when{(e != 13)=>{let bad:int=1/0;}};" "true"))
         (caller
           (append
             '((:label (:function 0)) (:push-rbp) (:mov-reg :rbp :rsp))
@@ -229,10 +229,10 @@
 
 (deftest v05-generated-caller-handwritten-callee
   (let ((source (v05-cross-abi-source ""
-                 "var i=0; var total=0;
+                 "var i: int=0; var total: int=0;
                   loop while(i < 3){
-                    let a=i+10; let b=i+20; let c=i+30;
-                    let d=i+40; let e=i+50; let f=i+60;
+                    let a: int=i+10; let b: int=i+20; let c: int=i+30;
+                    let d: int=i+40; let e: int=i+50; let f: int=i+60;
                     probe(void, 7, void, true, 11, void, false, 13);
                     total=total+a+b+c+d+e+f;
                     i=i+1;

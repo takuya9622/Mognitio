@@ -11,6 +11,12 @@ compatibility, and verification boundaries.
 The [follow-up review record](verification/v0.7.0-review.md) covers the current
 interface requirement syntax and subsequent implementation corrections.
 
+This development branch is preparing v0.8.0. Ordinary local `let` / `var`
+bindings now require type annotations. Direct function signatures and static
+function aliases remain explicit binding forms; selected function values can
+be called directly. See [development progress](verification/v0.8.0-progress.md)
+for implemented and pending work.
+
 ## Requirements
 
 The supported compiler host is Linux with SBCL and its bundled ASDF, UIOP,
@@ -70,8 +76,8 @@ Declarations and statements use semicolons. Blocks can have a final expression,
 or produce `void` when they finish without one.
 
 ```mgn
-let unitPrice = 120;
-var count = 2;
+let unitPrice: int = 120;
+var count: int = 2;
 count = count + 1;
 count * unitPrice == 360
 ```
@@ -96,7 +102,7 @@ scalar range. The receiver and arguments are evaluated once, left to right.
 Invalid bounds fail at runtime. String methods cannot be used as function values.
 
 ```mgn
-let text = "A日😀";
+let text: string = "A日😀";
 text->length() == 3
 ```
 
@@ -119,7 +125,7 @@ return a function value. Mutable function values and recursion are excluded.
 
 Names become visible in source order. A function may refer to an earlier
 direct function binding or its static aliases. It cannot capture outer
-outer data or functions selected by a block, `branch`, or loop.
+data or functions selected by a block, `branch`, or loop.
 Nested functions use the same rule. There are no forward declarations.
 
 The callee is evaluated once, before arguments. Arguments are evaluated
@@ -145,8 +151,8 @@ All arms, arguments, and unused functions are still checked.
 ### Loops
 
 ```mgn
-var count = 0;
-let result = loop {
+var count: int = 0;
+let result: int = loop {
     count = count + 1;
     branch when { count < 4 => { continue; } };
     break count * 10;
@@ -170,7 +176,7 @@ Break and continue target the nearest loop in the same function.
 
 The reserved words are `true false if match else let var function return int bool
 loop while break continue void string type struct enum interface implement against
-this branch when on`. Names are ASCII and case-sensitive.
+this branch when on try panic`. Names are ASCII and case-sensitive.
 Comments, collections and a `never` source type are not supported.
 
 Old `if` / `match` syntax is rejected. Replace an `if` with `branch when`, keeping
