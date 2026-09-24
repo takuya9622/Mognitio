@@ -75,6 +75,8 @@
                  ((or data-declaration contract-declaration implementation-declaration struct-expression enum-expression
                       field-expression this-expression branch-expression)
                   (lower-value-node node checked block env #'lower #'emit-value #'new-block #'new-value))
+                 ((or try-expression panic-expression)
+                  (lower-error-node node checked block env #'lower #'emit-value #'new-block))
                  (loop-expression
                   (let* ((info (checked-loop checked node))
                          (ids (sort (remove-duplicates
@@ -280,7 +282,7 @@
   (let ((term (basic-block-terminator block)))
     (case (first term)
       (:branch (list (third term) (fourth term)))
-      (:jump (list (second term))) ((:return :trap) nil)
+      (:jump (list (second term))) ((:return :trap :panic) nil)
       (otherwise (internal-error "Invalid SSA terminator")))))
 
 (defun verify-function (function functions edges pool context)
@@ -320,7 +322,7 @@
       (dolist (b (ir-function-blocks function))
         (let ((term (basic-block-terminator b)))
           (require-ir (case (first term) (:branch (= (length term) 4))
-                        (:jump (= (length term) 3)) (:return (= (length term) 2)) (:trap (= (length term) 1))) "Invalid terminator")
+                        (:jump (= (length term) 3)) ((:return :panic) (= (length term) 2)) (:trap (= (length term) 1))) "Invalid terminator")
           (dolist (next (successors b))
             (require-ir (gethash next blocks) "Missing successor")
             (pushnew (basic-block-id b) (gethash next pred)))))
@@ -420,6 +422,7 @@
                  (require-ir (= (length params) (length args)) "Wrong jump arity")
                  (loop for p in params for a in args do
                    (require-ir (equal (cdr p) (check-use a id pos)) "Wrong jump argument type"))))
+              (:panic (require-ir (eq (check-use (second term) id pos) :string) "Non-string panic message"))
               (:trap nil)
               (:return (require-ir (equal (check-use (second term) id pos) (ir-function-result-type function)) "Wrong return type"))))))
       function)))

@@ -18,7 +18,7 @@
           (member (length name) '(2 3))
           (every (lambda (id) (typep id '(integer 0 *))) (rest name))) :metadata)
     ((and (listp name) (= (length name) 2) (eq (first name) :helper)
-          (member (second name) '(:text.length :text.equal :text.not-equal :text.concat :text.slice))) :helper)
+          (member (second name) '(:text.length :text.equal :text.not-equal :text.concat :text.slice :panic))) :helper)
     ((and (listp name)
           (case (first name)
             (:function (and (= 2 (length name)) (typep (second name) '(integer 0 *))))

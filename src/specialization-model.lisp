@@ -55,6 +55,9 @@
     (append (when summary (list (completion-normal-type summary)))
             (when member (list (member-info-type member) (member-info-contract member)))
             (when call (cons (call-info-type call) (call-info-type-arguments call)))
+            (when (checked-error checked node)
+              (let ((info (checked-error checked node)))
+                (list (error-info-operand-type info) (error-info-result-type info) (error-info-return-type info))))
             (when operation (cons (operation-info-result-type operation) (operation-info-parameter-types operation)))
             (when symbol (list (local-symbol-type symbol))))))
 

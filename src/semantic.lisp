@@ -8,6 +8,7 @@
          (bindings (make-array 0 :adjustable t :fill-pointer 0))
          (signatures (make-array 0 :adjustable t :fill-pointer 0))
          (functions (make-hash-table :test #'eq)) (loops (make-hash-table :test #'eq))
+         (errors (make-hash-table :test #'eq))
          (node-owners (make-hash-table :test #'eq))
          (controls (make-hash-table :test #'eq)) (values-context (make-value-context)) (loop-stack nil) (edges (make-hash-table)) (owner 0))
     (labels ((lookup (token scopes)
@@ -95,6 +96,23 @@
              (expression (node scopes &optional (use :value))
                (setf (gethash node node-owners) owner)
                (typecase node
+                 (panic-expression
+                  (let* ((child (expression (panic-expression-block node) scopes)) (type (normal child)))
+                    (require-type node type :string)
+                    (setf (gethash node errors) (make-error-info :kind :panic :operand-type type :owner owner))
+                    (summary node nil (list child))))
+                 (try-expression
+                  (when (zerop owner) (fail-at (node-span node) :semantic "Try requires a function"))
+                  (let* ((child (expression (try-expression-operand node) scopes)) (type (normal child))
+                         (arguments (when type (canonical-result-arguments values-context type)))
+                         (returned (when type (signature-result-type (aref signatures owner))))
+                         (target (when type (canonical-result-arguments values-context returned))))
+                    (when (and type (not (and arguments target (equal (second arguments) (second target)))))
+                      (fail-at (node-span node) :semantic "Try requires canonical Result with identical error types"))
+                    (setf (gethash node errors) (make-error-info :kind :try :operand-type type
+                                                :result-type (first arguments) :return-type returned :owner owner))
+                    (summary node (first arguments) (list child) nil (not (null type))
+                             (when type (list (list :return owner nil nil))))))
                  (loop-expression
                   (let* ((info (make-loop-info :id (hash-table-count loops) :owner owner :node node))
                          (outer loop-stack))
@@ -312,7 +330,7 @@
       (check-call-graph (loop for id below (length signatures) collect id) edges
                         (lambda (span) (fail-at span :semantic "Recursive call graph")))
       (%make-checked-program :program program :summaries summaries :symbols resolved
-        :literals literals :consumed consumed :bindings bindings :signatures signatures :calls calls :returns returns :functions functions :loops loops :controls controls :operations operations :values values-context :node-owners node-owners))))
+        :literals literals :consumed consumed :bindings bindings :signatures signatures :calls calls :returns returns :functions functions :loops loops :controls controls :operations operations :values values-context :node-owners node-owners :errors errors))))
 
 (defun checked-string-literals (checked)
   ;; Checked summaries cover every child, including nonexecuted prefixes and

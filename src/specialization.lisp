@@ -113,6 +113,13 @@
                        (setf (loop-info-node loop) target (gethash target (checked-program-loops result)) loop)))
                    (when (gethash source (checked-program-controls checked))
                      (setf (gethash target (checked-program-controls result)) (loop-for (checked-control checked source) instance)))
+                   (when (checked-error checked source)
+                     (let ((info (checked-error checked source)))
+                       (setf (gethash target (checked-program-errors result))
+                             (make-error-info :kind (error-info-kind info) :owner (function-instance-id instance)
+                               :operand-type (type-for (error-info-operand-type info) instance)
+                               :result-type (type-for (error-info-result-type info) instance)
+                               :return-type (type-for (error-info-return-type info) instance)))))
                    (when operation
                      (setf (gethash target (checked-program-operations result))
                            (make-operation-info :kind (operation-info-kind operation)
