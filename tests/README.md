@@ -355,3 +355,25 @@ source-language limit.
 The [follow-up review record](../verification/v0.7.0-review.md) documents the
 new requirement spelling and review regressions. Current constructor rejection
 fixtures bind their result before a valid bool tail to isolate the violation.
+
+## v0.8.0 coverage
+
+The 55 versioned acceptance IDs have 156 source fixtures in
+`v08-conformance.lisp`; source hashes and explicit expected outcomes are in
+`../verification/v0.8.0-cases.json`. Successful fixtures run on both backends,
+including native GC stress. Rejected sources check phase and existing artifact
+preservation. `scripts/verify-v08.py` independently records CLI and standalone
+process statuses, output bytes, source hashes, and deterministic artifact hashes.
+
+| Group files | Additional checks |
+|---|---|
+| v08-frontend, v08-bindings | Token-only generic commitment, spans, block panic, explicit binding categories |
+| v08-types, v08-functions | Rigid type checking, identity/alias/domain, excluded features, static calls and recursion |
+| v08-specialization | Canonical closure, nested free types, fresh tables, erasure, backend gates and corruption |
+| v08-errors | Canonical try, exact E, lexical owners, noncompletion, message bytes, metadata corruption |
+| v08-runtime, v08-core | Terminal roots, Err last-use roots, guarded payloads, frame corruption, private ABI, descriptor bytes, write faults |
+| v08-lifetime | Strong child survival, dead parent reclamation, region reuse, GC mutants, host weak references |
+
+Existing regression groups remain enabled. `v08-migration.json` records the
+annotation and function-binding fixture changes without changing historical
+release sources or records.

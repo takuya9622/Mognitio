@@ -110,4 +110,4 @@
         (is end "Unclosed README example")
         (v03-positive (subseq text body end) :true t)
         (incf count) (setf cursor (+ end 3))))
-    (same 5 count)))
+    (same 6 count)))

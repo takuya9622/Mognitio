@@ -1,21 +1,18 @@
 # Mognitio
 
-Mognitio is a small language with typed function values, structured iteration,
-and immutable data. Version 0.7.0 adds nominal structs and enums,
-type aliases, unified branch expressions, and interfaces with concrete methods
-and dynamic dispatch. Both execution backends reclaim unreachable data.
+Mognitio is a small language with typed functions, structured iteration,
+and immutable data. This v0.8.0 development branch adds explicit generics,
+canonical `Result<T, E>`, prefix `try`, and `panic { ... }` to the existing
+struct, enum, interface, method, and garbage-collected value system.
 
-It can run an expression through SBCL or build a standalone Linux amd64 executable.
-See the [v0.7.0 release validation](verification/v0.7.0-release.md) for coverage,
-compatibility, and verification boundaries.
-The [follow-up review record](verification/v0.7.0-review.md) covers the current
-interface requirement syntax and subsequent implementation corrections.
+It can run a program through SBCL or build a standalone Linux amd64 executable.
+Ordinary local `let` / `var` bindings require type annotations. Direct function
+signatures and static aliases remain explicit binding forms; selected
+nongeneric function values can be called directly.
 
-This development branch is preparing v0.8.0. Ordinary local `let` / `var`
-bindings now require type annotations. Direct function signatures and static
-function aliases remain explicit binding forms; selected function values can
-be called directly. See [development progress](verification/v0.8.0-progress.md)
-for implemented and pending work.
+See [v0.8.0 validation](verification/v0.8.0.md) for the acceptance catalog and
+verification boundaries. Version-branch integration is not a release; the
+latest published release remains [v0.7.0](verification/v0.7.0-release.md).
 
 ## Requirements
 
@@ -223,6 +220,51 @@ may define the same method name; calls through an interface select its contract,
 while ambiguous calls through a concrete value are rejected. Method references,
 downcasts, recursive data, and call cycles are unavailable in this version.
 
+### Explicit generics and error handling
+
+Generic structs, enums, aliases and functions require every type argument.
+Arguments may be primitive or concrete struct/enum types, including aliases;
+interfaces are excluded. Alias expansion preserves identity and generic types
+are invariant. Type parameters cannot shadow visible types or remain unused.
+Bodies are checked with opaque parameters before any concrete call is compiled.
+
+```mgn
+let identity = function<T>(value: T): T { value };
+let forward = function<T, E>(result: Result<T, E>): Result<T, E> {
+    let value: T = try result;
+    Result<T, E>::Ok(value)
+};
+let result: Result<int, string> =
+    forward<int, string>(Result<int, string>::Ok(identity<int>(42)));
+branch on (result) {
+    Result<int, string>::Ok(value) => value == 42,
+    Result<int, string>::Err(error) => false,
+}
+```
+
+Use `identity<int>(42)`, including through direct static aliases. Type arguments
+are never inferred from values or expected types. A generic template is not a
+runtime function value; standalone specialization and arbitrary generic callees
+are excluded. Generic methods, interfaces, implementations and constraints are
+outside this version. Implementing a concrete generic type through an alias is
+also rejected.
+
+`Result<T, E>` is a predeclared nominal enum. `Ok` and `Err` are ordinary variants,
+and an Err value does not itself interrupt execution. Prefix `try` unwraps Ok or
+returns Err from the nearest lexical function/method. Its error type must equal
+the function's error type after alias expansion. A different error type requires
+an explicit branch and reconstruction. `try` binds after postfix operations and
+before binary operators; write `(try parse(text))->method()` for an unwrapped
+receiver. Top-level try is rejected.
+
+`panic { "invalid state" }` evaluates an ordinary block once. If that block
+completes normally it must produce a string, which becomes the panic message.
+If it exits through return, break, continue, inner panic or another failure,
+that earlier transfer/failure propagates and the outer panic does not occur.
+Panic never completes normally. `panic {}` and `panic { 42 }` are type errors;
+the older `panic "message"` and `panic("message")` spellings are syntax errors.
+No recovery, stack trace, runtime source location, or deferred cleanup is added.
+
 ## Results
 
 Successful `run` and native execution print `true` or `false` followed by
@@ -237,10 +279,11 @@ Compiler exit statuses:
 | 1 | Source encoding, lexical, syntax, or semantic failure |
 | 2 | Invalid invocation, target, source path, or output I/O |
 | 3 | Internal compilation, execution, or bootstrap failure |
-| 4 | Detected arithmetic, string bounds, string size, or allocation failure during execution |
+| 4 | Detected arithmetic, string bounds, string size, allocation failure, or panic during execution |
 
-Runtime failures print a fixed runtime diagnostic to stderr, leave stdout
-empty, and do not resume evaluation. Building such a program succeeds;
+Runtime failures leave stdout empty and do not resume evaluation. Panic writes
+`runtime: panic: `, the evaluated message bytes, and a final newline to stderr;
+other runtime failures print their existing fixed diagnostic. Building such a program succeeds;
 running it reports the failure.
 
 Diagnostics go to stderr. Source diagnostics include a filename, 1-based
