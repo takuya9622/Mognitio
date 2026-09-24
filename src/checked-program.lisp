@@ -367,6 +367,8 @@
   checked)
 
 (defun verify-checked-program (checked)
+  (when (and (checked-program-p checked) (checked-program-specialization checked))
+    (return-from verify-checked-program (verify-specialization checked)))
   (handler-case (verify-checked-program-internal checked)
     (internal-failure (condition) (error condition))
     (error () (internal-error "Malformed CheckedProgram"))))

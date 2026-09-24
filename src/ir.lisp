@@ -161,7 +161,7 @@
                  (string-literal
                   (values (emit-value block :string :const.text (node-span node)
                                       :value (funcall intern-text (string-literal-payload node))) block env))
-                 (function-expression
+                 ((or function-expression concrete-function-reference)
                   (values (emit-value block (checked-normal-type checked node) :function (node-span node)
                                       :value (signature-id (checked-function checked node))) block env))
                  (boolean-literal
@@ -256,7 +256,7 @@
                           :entry (basic-block-id entry) :blocks (nreverse blocks) :span span)))))
 
 (defun lower-program (checked)
-  (verify-checked-program checked)
+  (setf checked (mognitio.semantic::prepare-runtime-program checked))
   (let ((pool (make-array 0 :adjustable t :fill-pointer 0))
         (ids (make-hash-table :test #'equalp)))
     (labels ((register (payload)

@@ -5,9 +5,10 @@
 (defun verify-core-types (context functions)
   (let ((types (value-context-types context)))
     (labels ((valid (type &optional bound)
-               (and (valid-value-type-p type)
+               (declare (ignore bound))
+               (and (not (mognitio.semantic::symbolic-type-p type)) (valid-value-type-p type)
                     (or (not (nominal-type-p type))
-                        (and (< (second type) (or bound (length types)))
+                        (and (< (second type) (length types))
                              (equal type (canonical-type (aref types (second type))))))))
              (data (type bound) (and (valid type bound) (not (nominal-type-p type :interface)))))
       (loop for info across types for id from 0 do
@@ -33,6 +34,16 @@
                           (every (lambda (x) (and (valid (requirement-result x) id)
                                                  (every (lambda (t1) (valid t1 id)) (requirement-parameters x)))) methods))
                (internal-error "Invalid Core interface"))))))
+      ;; Runtime IDs follow canonical keys, not dependency order. Validate the
+      ;; complete graph independently instead of assuming every edge points back.
+      (let ((edges (make-hash-table)))
+        (loop for info across types for id from 0 do
+          (dolist (type (append (mapcar #'cdr (type-info-fields info))
+                               (mapcan (lambda (variant) (copy-list (variant-info-types variant))) (type-info-variants info))
+                               (mapcan (lambda (method) (cons (requirement-result method) (copy-list (requirement-parameters method)))) (type-info-methods info))))
+            (when (nominal-type-p type) (push (cons (second type) nil) (gethash id edges)))))
+        (check-call-graph (loop for id below (length types) collect id) edges
+                          (lambda (span) (declare (ignore span)) (internal-error "Recursive Core type graph"))))
       (let ((pairs nil))
         (loop for implementation across (value-context-implementations context) for id from 0
               for concrete = (implementation-info-concrete implementation) for contract = (implementation-info-contract implementation)

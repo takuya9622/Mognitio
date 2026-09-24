@@ -12,7 +12,7 @@
              "type Alias<T> =T; let Result:int=42; let x:Alias<int> =Result; x==42"
              "type Box<T> =struct{value:T;}; true"))
     (handler-case
-        (let ((checked (check-program (parse-text source)))) (is (verify-checked-program checked)))
+        (let ((checked (check-program (parse-text source)))) (is (verify-checked-program checked)) (v07-accept source))
       (compiler-failure (condition) (error "Source ~A: ~A" source (diagnostic-message (failure-diagnostic condition))))))
   (let* ((checked (check-program (parse-text "type Box<T> =struct{value:T;}; type A=Box<int>; type B=Box<int>; true")))
          (context (mognitio.semantic::checked-program-values checked)))
