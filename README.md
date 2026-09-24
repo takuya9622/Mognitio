@@ -1,7 +1,7 @@
 # Mognitio
 
 Mognitio is a small language with typed functions, structured iteration,
-and immutable data. This v0.8.0 development branch adds explicit generics,
+and immutable data. Version 0.8.0 adds explicit generics,
 canonical `Result<T, E>`, prefix `try`, and `panic { ... }` to the existing
 struct, enum, interface, method, and garbage-collected value system.
 
@@ -11,8 +11,8 @@ signatures and static aliases remain explicit binding forms; selected
 nongeneric function values can be called directly.
 
 See [v0.8.0 validation](verification/v0.8.0.md) for the acceptance catalog and
-verification boundaries. Version-branch integration is not a release; the
-latest published release remains [v0.7.0](verification/v0.7.0-release.md).
+verification boundaries, and [release validation](verification/v0.8.0-release.md)
+for distribution, compatibility and release-candidate checks.
 
 ## Requirements
 
