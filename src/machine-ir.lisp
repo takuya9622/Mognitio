@@ -181,6 +181,10 @@
               (push (list :operation (list (mognitio.ir:basic-block-id block) index) (ldiff code start)) sections))))
         (let ((term (mognitio.ir:basic-block-terminator block)))
           (ecase (first term)
+            (:panic
+             (let ((start code))
+               (load-value (second term)) (emit :store-out 0 :rax) (emit :call '(:helper :panic)) (emit :ud2)
+               (push (list :panic (list (mognitio.ir:basic-block-id block) :panic) (ldiff code start)) sections)))
             (:trap (emit :mov-edi 3) (emit :mov-eax 60) (emit :syscall) (emit :ud2))
             (:branch (load-value (second term)) (emit :test)
                      (emit :jz (label-id (fourth term))) (emit :jmp (label-id (third term))))
@@ -220,4 +224,7 @@
              (literals (mognitio.object:make-code-unit :owner :literals :instructions
                          (loop for form in (mognitio.native.runtime:literal-forms (mognitio.ir:module-literal-pool module))
                                collect (make-instruction :opcode (first form) :operands (rest form))))))
-        (mognitio.object:layout-units (append (nreverse units) helpers value-helpers (list (mognitio.native.runtime::metadata-unit (mognitio.ir:module-values module)) literals)))))))
+        (mognitio.object:layout-units (append (nreverse units) helpers value-helpers
+          (when (some (lambda (f) (some (lambda (b) (eq :panic (first (mognitio.ir:basic-block-terminator b))))
+                                      (mognitio.ir:ir-function-blocks f))) (mognitio.ir:module-functions module))
+            (list (mognitio.native.runtime::panic-helper-unit))) (list (mognitio.native.runtime::metadata-unit (mognitio.ir:module-values module)) literals)))))))

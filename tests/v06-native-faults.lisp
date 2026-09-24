@@ -2,7 +2,7 @@
 
 (defun v06-raw-result (forms &optional options)
   (let ((mognitio.native.runtime::*test-options* options))
-    (v05-cross-abi "let x=\"a\"+\"b\"; true" 0
+    (v05-cross-abi "let x: string=\"a\"+\"b\"; true" 0
       (append (v06-raw-frame) forms
         '((:mov-reg :rsp :rbp) (:pop-rbp) (:ret))))))
 

@@ -22,7 +22,7 @@
 
 (defun terminator-uses (block)
   (let ((term (mognitio.ir:basic-block-terminator block)))
-    (ecase (first term) ((:return :branch) (list (second term))) (:jump (third term)) (:trap nil))))
+    (ecase (first term) ((:return :branch :panic) (list (second term))) (:jump (third term)) (:trap nil))))
 
 (defun set-equal (a b) (and (subsetp a b) (subsetp b a)))
 

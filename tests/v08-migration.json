@@ -1,0 +1,1594 @@
+{
+  "baseline": "ac5b116ed011d515d9137c730ce3ac41f3e05fde",
+  "baseline_results": {
+    "tests": 156,
+    "assertions": 17510,
+    "processes": 1501,
+    "failures": 0
+  },
+  "source_hash_encoding": "UTF-8 decoded source or generator template",
+  "cases": [
+    {
+      "group": "v06-postfix-and-static-contracts",
+      "source_sha256": "8a3ae0577375392aae68c1984106a5f4f784f271fdc0a021442406fb698bc0f1",
+      "new_source_sha256": "8a3ae0577375392aae68c1984106a5f4f784f271fdc0a021442406fb698bc0f1",
+      "change": "Local annotations now parse; preserve this source as an annotation AST assertion. Type compatibility is tested with the v0.8 binding checks."
+    },
+    {
+      "path": "tests/native-generated.lisp",
+      "source_sha256": "4382318afb434e6790237cf549106bc7a1033a2351eee6e7a7d9351e00fc0990",
+      "new_source_sha256": "27431b5ec7c2550e143e32c2638854121c2bb65f1c15e7a979c56cb36fd51c65",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 2
+    },
+    {
+      "path": "tests/v03-generated.lisp",
+      "source_sha256": "7a6a3f2a4b70d526ab784133ad3d96b49222d82f25fba23ffa95d3f8a70c6a0d",
+      "new_source_sha256": "1802d5cc9398250bd58ed4041e0deda0732591ad45643dcf45c8b5e27b3a32fe",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 2
+    },
+    {
+      "path": "tests/v03-kernel.lisp",
+      "source_sha256": "d9a324e5b8e4cec4c671226de6faf79e981e5ed223fbd734bc77b7dd6bb9152d",
+      "new_source_sha256": "2e26af3d1f6eac32c171f526e4e6baf2fe85614322951c9d8935fe657f4c740d",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 2
+    },
+    {
+      "path": "tests/v03-kernel.lisp",
+      "source_sha256": "62d52da83af92200274d0a2e822ea0f34e859fb9d3949976bc174a93a2b91907",
+      "new_source_sha256": "25602c5d772d940c37d93b284699936b035ee07deb325e54674987eb934b4d17",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 2
+    },
+    {
+      "path": "tests/v03-kernel.lisp",
+      "source_sha256": "d0e694e35a92fc191ced44c329872741aa8c0bf444fd13214e33be2ca65b10fb",
+      "new_source_sha256": "d1bc4d2a3d7b0f44e46f1bc24f4dc1b67b6a638ede448be90096fa61c6bd9798",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 1
+    },
+    {
+      "path": "tests/v03-kernel.lisp",
+      "source_sha256": "aef8e3b0072a9aff4fc5628a621d7056b441c22771f71e1c664bc896adc99298",
+      "new_source_sha256": "2d293d81087722137fa2e25d6611eccfcc2a705d33df984cbf61780484048354",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 3
+    },
+    {
+      "path": "tests/v03-kernel.lisp",
+      "source_sha256": "dcb9e8285190309bb1268ffb0d12d8fd88bf53e311bbb25e5fe584bb813bce96",
+      "new_source_sha256": "1497b887789d679199dffa41f753432ab4fc1b70b875ddebc9cb51239c8d968d",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 2
+    },
+    {
+      "path": "tests/v03-kernel.lisp",
+      "source_sha256": "b9bb522b129162891772cb598abd96ffeed69907acb795320295d84597a18892",
+      "new_source_sha256": "872ebaad753bfca956de809c574dbadb6d95436221455d7af39b970b486df61d",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 2
+    },
+    {
+      "path": "tests/v03-kernel.lisp",
+      "source_sha256": "7bbef5e596706a3d2db31b1b2ace6b954925be719486c80c89081c9208712222",
+      "new_source_sha256": "13338f4abcf8586b487fc612b840dd402aa4c362e2c28073552c9371058beea7",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 2
+    },
+    {
+      "path": "tests/v03-kernel.lisp",
+      "source_sha256": "cccf7839c356c88e9bb45793e47c7d9470975b9352cea3460eb9a7dda3dba512",
+      "new_source_sha256": "299da8d3f47b442bb48a4e6d4a7a92c81e48b17a986fd8a4da4f8461022bae89",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 2
+    },
+    {
+      "path": "tests/v03-kernel.lisp",
+      "source_sha256": "79de28345622a3048bed6464879cb5672167a47c9484870811ea0b9d57e035a1",
+      "new_source_sha256": "de6fc518f43597fb0e7b71c951abb71740c32082fc31c1a80beafcf9d5b04101",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 2
+    },
+    {
+      "path": "tests/v03-kernel.lisp",
+      "source_sha256": "613af319801e49b0bc5c740b08f6e74e0ee721a78174849a29d8cfe9bbf1ff4f",
+      "new_source_sha256": "cf1d063c8d91a33af3a8330ea1fda0aed485263be583df63b66b24596022f591",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 3
+    },
+    {
+      "path": "tests/v03-kernel.lisp",
+      "source_sha256": "c04e7f08721432d2ea1cb559d0d824ef730a2a46eef16217ed929cd867e3b262",
+      "new_source_sha256": "7042edac8d1ddcb0ef3189fb434449dfd066bcf12f1d677b6b18160c8163df17",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 1
+    },
+    {
+      "path": "tests/v03-kernel.lisp",
+      "source_sha256": "591b34c2a210104d49777c4b0cc342148fca07b05815acf2a14a742779ad4457",
+      "new_source_sha256": "bda99cc4f767938814eea74383268df2ba125f86152c4328ad250663b5e7c103",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 4
+    },
+    {
+      "path": "tests/v03-kernel.lisp",
+      "source_sha256": "ed1339272181ff66009d4d81e619cbf8dc812a1b404a4e76aebc483f3b6886a7",
+      "new_source_sha256": "4f595bfacbff46a6c402e7d789bea8f82ca81435b7602aa4e5164c790f529653",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 2
+    },
+    {
+      "path": "tests/v03-kernel.lisp",
+      "source_sha256": "7e323ced405f8053547a3c0e8e04a13df4012080fdc820ff2eb931fa848df592",
+      "new_source_sha256": "ba134610b47772021d6654d9595065a560e43be4e6f6a96057e5907a7f58b5eb",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 3
+    },
+    {
+      "path": "tests/v03-kernel.lisp",
+      "source_sha256": "469a3f6df71610f0d2f29f08201bcd80e272c5f3679360272ade0413ae4243e7",
+      "new_source_sha256": "61ed942181777921d6b357f8c8ab74991d9fdeba292f9e9a759e0e3fb12cf6a3",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 3
+    },
+    {
+      "path": "tests/v03-kernel.lisp",
+      "source_sha256": "c93f54a6fb24ce6c103ca419886693cc4235e02844a1e113a6b97b6c3bd4587f",
+      "new_source_sha256": "492681bdaa8258be15bb8e70815c2ed6a0b575c935f6452265981346bd1092ce",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 2
+    },
+    {
+      "path": "tests/v03-kernel.lisp",
+      "source_sha256": "c2376f37413d2c751ad59fa0ae7922a9db5edbddb44b156d881b5e0ae95b3841",
+      "new_source_sha256": "9d4553364311096453cfac4408fe62078cf66f02298820a41044b34f932fc72a",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 2
+    },
+    {
+      "path": "tests/v03-kernel.lisp",
+      "source_sha256": "22d6f11f9ad88a156d43d84c8f9a9ce39c2e9ba185064735b439ff3739751715",
+      "new_source_sha256": "c1dc993634d3e46718857592bfef468f2f23e92ee31159d613288bea92d46dc9",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 1
+    },
+    {
+      "path": "tests/v03-kernel.lisp",
+      "source_sha256": "91b19afe97906b846f059b1c1ccb04e5c5425acf4c391c38a6ee255e330ce320",
+      "new_source_sha256": "ea66ecc353da333ffb52a780b98ef4aaaa5f3b88b72e800afb88dcf87b4abea5",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 1
+    },
+    {
+      "path": "tests/v03-kernel.lisp",
+      "source_sha256": "3c42ceaa5a3a39aa3c2d2d03a2f0bb9fc61d16b422d4cb930dc95827b0679a5a",
+      "new_source_sha256": "66dbde4e0d5b53322ac898b1a7bd02696c1d1f714098113e836ec01b9dff8be5",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 1
+    },
+    {
+      "path": "tests/v03-kernel.lisp",
+      "source_sha256": "85be97dc153edab8adcb0fe3c919688f2203dd452b0a73c0da97a637a0e683f2",
+      "new_source_sha256": "c5640c0d4ebfea0bb1c7623bfaa89b992ec0ac17cfbad22877856f8e50bd0d03",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 1
+    },
+    {
+      "path": "tests/v03-kernel.lisp",
+      "source_sha256": "1beb0382cffc38c9209515fdbf32b1e402ca422170d1546755f6c31872b816b6",
+      "new_source_sha256": "72fc46a35b3cf7fb1f1c75ce652c0cb88ceacca54585c424eab4a578ec5d0b52",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 2
+    },
+    {
+      "path": "tests/v03-kernel.lisp",
+      "source_sha256": "8c3e2e0cf80887cb0c5fbb8fec62620c740d33569e6f5b156670a09cf46fa2b8",
+      "new_source_sha256": "f04a7febcd1a9ca458991b052df395c7547b71bad12744b548402c817c0683fc",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 1
+    },
+    {
+      "path": "tests/v03-kernel.lisp",
+      "source_sha256": "4877d2733b112b47034637707f09e9ae7c3ce2a08536a0ee4d0f2f2bce606387",
+      "new_source_sha256": "1c48b6a728364ec11b05d24c8d4c7b7e82043dbb5ab9c0d2ae6ed2d293d4070c",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 1
+    },
+    {
+      "path": "tests/v03-kernel.lisp",
+      "source_sha256": "250b66e4e8a1111f964f63ddf8f09291383a6a6944c8996efca542793d3f83c6",
+      "new_source_sha256": "623904764d0d4160ab56267fb986e43918544ba1938a1161da06244c8d2a9064",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 1
+    },
+    {
+      "path": "tests/v03-kernel.lisp",
+      "source_sha256": "8ee6d6ce3f4a546a0852c4bacfa09c6950dae09ea069f6e0decc6c2e42a2e5e2",
+      "new_source_sha256": "fdafef4156fae4de8abf85df744e41d55f03b295d2d9c8ef4981237bee5f73f0",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 1
+    },
+    {
+      "path": "tests/v03-kernel.lisp",
+      "source_sha256": "d2339469bd3e52deeda24c39974a32e2b718f26453b80b88c311565239f6a250",
+      "new_source_sha256": "e7949dc4e470668f82bb6ee58c8848075758c3521de8fc2f724521d62ddee049",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 1
+    },
+    {
+      "path": "tests/v03-kernel.lisp",
+      "source_sha256": "5ed9b320993677628cbf88f08f1de9f394d511cdca69b2a698a3d8c07e8bdfc0",
+      "new_source_sha256": "2577e7b0403ecc6526b0935f34d46dddef430a3b059fd2de8e33f4eb40b9f71c",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 1
+    },
+    {
+      "path": "tests/v03-kernel.lisp",
+      "source_sha256": "93edaa58713b54e6fbdfe4294b1f62256c7d42d21271c5c4861bb79b1700bfd9",
+      "new_source_sha256": "9722cdcdf395f1093ba5e56db96501407f8009d9e5edf912ded9646e80957391",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 1
+    },
+    {
+      "path": "tests/v03-kernel.lisp",
+      "source_sha256": "ce1c2a714b1211389b9a72223a3c7ad13f69b39ced85a24e5897b30ce0226fb9",
+      "new_source_sha256": "e4a0935ee8bcb1358cd6b5b2725b5782ca19308fa95e6218cebafc62bbcb18ff",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 1
+    },
+    {
+      "path": "tests/v03-kernel.lisp",
+      "source_sha256": "e77da84a38a1c2f04a299e5ee651b13b0b9e69c656bab4e13c98d8038180f823",
+      "new_source_sha256": "c6ea34649051c4fc63f4b384c58fda464c6fb5dc610e242aa74333c0d7fb58cc",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 2
+    },
+    {
+      "path": "tests/v03-kernel.lisp",
+      "source_sha256": "36f5ed1afac1661f87e6cc3c1a044144936e0c7f2992ac0da8f9c999b4114c28",
+      "new_source_sha256": "3a052859aa484a51e6eb0c98b385fc1f95c7d268f1e071d0878e04a580b67698",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 1
+    },
+    {
+      "path": "tests/v03-kernel.lisp",
+      "source_sha256": "daaa7b3ec60ee96fa4adcee827438147c37e47248584dc52352f8a31b72c9070",
+      "new_source_sha256": "104e4495ccf4fb53a43f9da53873e6c01bcd9b2c4ffdc550442de72e866c7397",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 4
+    },
+    {
+      "path": "tests/v03-kernel.lisp",
+      "source_sha256": "6eb918dd7bf85a12fcb1adfa3d4e9351d82590f012cffb2635722ed2553cb7fe",
+      "new_source_sha256": "0de6e973c09d1ef9a9516a982c94b94716014b7f5b5cbef89e9749fd696badfa",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 1
+    },
+    {
+      "path": "tests/v03-kernel.lisp",
+      "source_sha256": "b52f0fe62c7a50df9f6d74073c87a3153cfb11ec0d187aa94901e20b0f7dfe10",
+      "new_source_sha256": "11517b4d1556ec1521bc4e8e2659cb1dd301e57fd6590f49d14014b39bdc666f",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 1
+    },
+    {
+      "path": "tests/v03-kernel.lisp",
+      "source_sha256": "29f234d9a78135269c4c2f10bd5975aaefba0d2c4f07bac80ec84e0a1326f301",
+      "new_source_sha256": "b77072af399a6073c3ebebf98ec32349297ebdbcebfd29bd084a8dd502c53be8",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 1
+    },
+    {
+      "path": "tests/v03-merge.lisp",
+      "source_sha256": "1a1489b9e50a5b2dbe79bfa4cff566f690a2e4834a139166a9101ce65513b5c1",
+      "new_source_sha256": "b4ff6c9686c98111f49935c65714426c90a68432813fd366f0a30e846697408d",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 2
+    },
+    {
+      "path": "tests/v03-merge.lisp",
+      "source_sha256": "4f60a2e438533ab923b886367e37f94490850fac1f74efd8c529e2fee3b8981b",
+      "new_source_sha256": "8501ba901f8b74b4465604558e8f6bba6e38294e93828e2e3d98d3be9899dd8b",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 2
+    },
+    {
+      "path": "tests/v03-merge.lisp",
+      "source_sha256": "7b76afb4dbf805f8714ba79dac03fe67546e9a184106308babd02942750ea89e",
+      "new_source_sha256": "335fe056d918655e2c5d21b37397858f3c8da69b59d161c71d62b56606086262",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 2
+    },
+    {
+      "path": "tests/v03-merge.lisp",
+      "source_sha256": "dd8a8910b39dca4d3ab5c2feba23a963b9eabff1f7188a882a59ff24deadc190",
+      "new_source_sha256": "bc4852be3d36111854a5007a47b73f4aeacbcee4b3284be13e1f8b96ab6de34b",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 4
+    },
+    {
+      "path": "tests/v03-merge.lisp",
+      "source_sha256": "38cc990e178cd2236567ad36ff387b73f3ca4eb08855e13405c4373aed191d9b",
+      "new_source_sha256": "fe0fe250053d9ca5ee99e408871a2fe2e5357e625e068c3bdbeb4c332ab60f1c",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 2
+    },
+    {
+      "path": "tests/v03-merge.lisp",
+      "source_sha256": "0bc6e37de8dad5d6f744335df1adf88990bf238912e3926cce8e5a0cd50ca6b9",
+      "new_source_sha256": "7ff332f03b9a1b22a875634ee9fe1b62cba3c44c8071ef6c25fd528b384fd3ac",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 2
+    },
+    {
+      "path": "tests/v03-merge.lisp",
+      "source_sha256": "2b637fbe55ccf169a02f8e87282b075bff4389442c10127d03872d68577b3fd6",
+      "new_source_sha256": "77ce81f86296e00f2dd22d750f90dc1605dac5a815c6fe5b834931c0ecfe9ee7",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 3
+    },
+    {
+      "path": "tests/v04-allocation.lisp",
+      "source_sha256": "b6b18e486e5402a769cb1d1c5d4ff9069cfe7bce91b88576b61160f661702758",
+      "new_source_sha256": "39cc05ae3d83691ecfaea89149c35d681636016a333d46b755e9a8ec75199236",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 2
+    },
+    {
+      "path": "tests/v04-allocation.lisp",
+      "source_sha256": "7f7253c9f3781592c7fae753a80d381b745f91b28180b3c460077c4a073ead47",
+      "new_source_sha256": "9db2bd9ab81d155163cb3ad1d4e14e6c8f88a6b9d9cf12f95872e4621aa1215e",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 4
+    },
+    {
+      "path": "tests/v04-boundaries.lisp",
+      "source_sha256": "9759d486f4bf5721354bf7515115cc25ff711a34f659bb5b0f65228f923cfe59",
+      "new_source_sha256": "247bfaa70ff95821fb0a893f409c089a098e3d7d1c4a3803104e3b59827d6bf1",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 1
+    },
+    {
+      "path": "tests/v04-boundaries.lisp",
+      "source_sha256": "acedd30d77bca38302a36fb1298cf325e77753cd1b8a511ebb25c30041c3f296",
+      "new_source_sha256": "41affc041ce979229a41770a7c7496e645d27d345c284f9f56dc2c2d4e0e1d09",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 1
+    },
+    {
+      "path": "tests/v04-functions.lisp",
+      "source_sha256": "93b0c1ca3a1f758ce5390e29ee9b1289b2bc978d0d2143e12b82680dd8f51cc6",
+      "new_source_sha256": "2c598f0096e5a53f3191b471a24ff5205fbafbb000befebc40f2fd7bf50142d5",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 1
+    },
+    {
+      "path": "tests/v04-functions.lisp",
+      "source_sha256": "87bc324f6159d3d59998a531dd7dbe0f3fad9a97dfa50bcd6600b5eeb36ba9de",
+      "new_source_sha256": "1f4f97e4218bd3c18234963ea4cc71ba3df4b73d834f0b8a77b472058f7a6d86",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 1
+    },
+    {
+      "path": "tests/v04-functions.lisp",
+      "source_sha256": "a2045a3598a79dbcbacbaf874350120008c869d8403aa741997283770b0d819f",
+      "new_source_sha256": "e58ee959755f6df2f48f92bed088e2650b56f33f423f0f1e6cc72ed6cfedddf7",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 4
+    },
+    {
+      "path": "tests/v04-functions.lisp",
+      "source_sha256": "4b6cd4aa8151901183a5bf7a3549ef7b9285c338d8d41941a55fb15439f73c6b",
+      "new_source_sha256": "e205a3987b0746c29095ac1e04dd62eaef25f01c5ea624f0b83d8725447eac61",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 4
+    },
+    {
+      "path": "tests/v04-functions.lisp",
+      "source_sha256": "24182b83f1182a42dd905341bdfc27dfce86e6e8f6a67b7351e1f4c4664bcf2c",
+      "new_source_sha256": "dab9d9c76cf3504e091530296decbfae3fa7c78456e99fe3bc30810c6b5d5727",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 3
+    },
+    {
+      "path": "tests/v04-functions.lisp",
+      "source_sha256": "41637240f6f65ff1fabdc20828b2aecee65a79e60a4f8fad8e408dcdeb4991a1",
+      "new_source_sha256": "88eb600fb84541ccd30fdd0ce4d7c99a61cc778ccb10e1bfd3dd5cf2d3407d7d",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 1
+    },
+    {
+      "path": "tests/v04-functions.lisp",
+      "source_sha256": "193fc66035aba76312e943d81b7510798d9831351b9581bdcf21d1621348b210",
+      "new_source_sha256": "b939f224b8a2f667241da0ea6d4a6ed50622e80393697fc00f1d7bd06d0b5b31",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 2
+    },
+    {
+      "path": "tests/v04-functions.lisp",
+      "source_sha256": "bb62307371de83784fea5a63bd495a99c27d93859e77f2673153f62caf2151a6",
+      "new_source_sha256": "6ff0d9bbda4de0908804919c9fd3f7c6d0bb152475e883c2645dc44d2c7a58b8",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 2
+    },
+    {
+      "path": "tests/v04-functions.lisp",
+      "source_sha256": "d6cb0389cd10d6f1c7928e9200071319e86ac3347046d798c158b4a892d134a4",
+      "new_source_sha256": "960ed1d215c3d7df466fc2eb09202c5c497f0cff3dbf152f8b854f4ad4f6634d",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 1
+    },
+    {
+      "path": "tests/v04-functions.lisp",
+      "source_sha256": "ec0609929d2902476262734547b4c5b9c87fc1cfe865a4db6970e5a90733150d",
+      "new_source_sha256": "51c61e4803f5069255f560cdf0e7365208c917f44bc4cf81b0447f163570ecce",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 1
+    },
+    {
+      "path": "tests/v04-functions.lisp",
+      "source_sha256": "9aaae55582995c8dff9d92b493209c65d18a67a395b35658ec7acd4fc2e51768",
+      "new_source_sha256": "a4268efc90258f1c4894675bc12cc25624e6d51ed825e099b368383ffca12b3b",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 1
+    },
+    {
+      "path": "tests/v04-functions.lisp",
+      "source_sha256": "483c41237c53e1e829082d4adc08c5b41f5e2b23b5c6878d627463a2c16cc7c9",
+      "new_source_sha256": "2466bf9b59a5fbefa1fa68b03c0e8281b680e9352ce94a92a7605d1266d07407",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 1
+    },
+    {
+      "path": "tests/v04-functions.lisp",
+      "source_sha256": "d1dec8dcaedf051557145fd900c59849e0079e55ae3ee3cdd02eb6eae05bf481",
+      "new_source_sha256": "ee4c97752cff04d66ca05aed883be772b86098db01620a8a9f785596e2ac3616",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 1
+    },
+    {
+      "path": "tests/v04-functions.lisp",
+      "source_sha256": "523d618f9f388f29292200962110fb7f8e68fa500291c90f663084c6bb18563a",
+      "new_source_sha256": "5f15de0cfec688969e3b45ea7a928af52469555a960bd3d51d8bd68a535899d5",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 1
+    },
+    {
+      "path": "tests/v04-generated.lisp",
+      "source_sha256": "3a90aba08f8c7487ea1649b81e3fffec06bb05c9b110a3f8e29e44a882be77af",
+      "new_source_sha256": "e4acfab4274298ea5113189cbdc1cbf6cbc16598842be3293c806380ab00167d",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 1
+    },
+    {
+      "path": "tests/v05-boundaries.lisp",
+      "source_sha256": "6e12a8961183f34c52e6c900818b0e4a9c45ef9aee9d11be69408af61612f54c",
+      "new_source_sha256": "53236d2a5e76493cd0d33711463eb7b7ea2db13fc188db1a57ecd2357b305b6f",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 8
+    },
+    {
+      "path": "tests/v05-conformance.lisp",
+      "source_sha256": "17603113139cc247ced6156395cd97ce8c0de27d559439dadc57fe1292085c3f",
+      "new_source_sha256": "729f236ffbd31175eee0450221bdf878eb84eb1d78e68f71e0845a60c39dc405",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 2
+    },
+    {
+      "path": "tests/v05-conformance.lisp",
+      "source_sha256": "94c248217318cf7eac357dd9b119afd3a002f060c76d670252a7d1dcfe90c42e",
+      "new_source_sha256": "8ed800fd83edc5f2d6d38d82b5e24646e0173cb81cfd778f26d2c6619c82260b",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 2
+    },
+    {
+      "path": "tests/v05-conformance.lisp",
+      "source_sha256": "f2c2fac3e40108774052ccc5753f6cd08771f52bb085862debf66d078b3a8794",
+      "new_source_sha256": "87899ebf75ef0d7d890f756b7972b4f6a6768cbbc44e10cf646e9b27b6da7355",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 2
+    },
+    {
+      "path": "tests/v05-conformance.lisp",
+      "source_sha256": "496ce2942215e85adaac70929dd0e69dfb28fe5a780b423d20a05d0e35d70db8",
+      "new_source_sha256": "173ef04d29190b203abeff514c2f88c6c4849a67135b4193884569291ce1f2af",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 2
+    },
+    {
+      "path": "tests/v05-conformance.lisp",
+      "source_sha256": "50417a3b8ab4de4485eaf5a5dbee7045a16cd945117d6ac330749f2c027f9992",
+      "new_source_sha256": "a0676d3aa9eba40256712435c2e89b324e35a07aa61fd4c88be39e66aabc224f",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 1
+    },
+    {
+      "path": "tests/v05-conformance.lisp",
+      "source_sha256": "d00abe21fe246d782a1d509842714882d7168a9b3b19e03d169a9d6ab8ef7c32",
+      "new_source_sha256": "f5b051e7c9c8ee01254a2fb9c06103981cb07b9888cbb87767df9dd994fedf9a",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 1
+    },
+    {
+      "path": "tests/v05-conformance.lisp",
+      "source_sha256": "2c2c54ed7d8767c4a474baae6f46f51af24bb34fca9dae343ef6e4b81907576e",
+      "new_source_sha256": "b656e50f1517d798b4421cfcf85f9f456b2797ec97fa66fa528cc92fd7225639",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 1
+    },
+    {
+      "path": "tests/v05-conformance.lisp",
+      "source_sha256": "9c0f2acd8e1a523aca917391a51e16df1f6d116b74f05130ef96bff6d0b746ed",
+      "new_source_sha256": "d5fac41c65d8a640d88b4d943193c34f847de11fc5afe984b1decc4211f2b921",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 1
+    },
+    {
+      "path": "tests/v05-conformance.lisp",
+      "source_sha256": "11c40e8de27684a9d67ede6d65cc57a043184e6f4a9115d838f93d53248c103a",
+      "new_source_sha256": "b1f530e701ec616829bdadeb57fb50e2c0fe6d6a5583d2ae541a3c18846f4a12",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 1
+    },
+    {
+      "path": "tests/v05-conformance.lisp",
+      "source_sha256": "b9c8cfb43a8a569debacf173e5e648a1a1ac6b2e68c9a88571640ad367bf8b09",
+      "new_source_sha256": "0c63cbd55717d401ba1338416ee1e1d9282cea0e527b9b145dbe6d4e5e1f4d99",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 1
+    },
+    {
+      "path": "tests/v05-functions.lisp",
+      "source_sha256": "f1b1d167fe91e16764f3b51fb9306c3ff711e560e1e79db2a2a83b1ec22d36e5",
+      "new_source_sha256": "3d5e27113eebbba9289109c5310a7738809af65d67b6548bce472d23a5bfb55c",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 1
+    },
+    {
+      "path": "tests/v05-functions.lisp",
+      "source_sha256": "62dbb2081594bc5e6862770dfd116fcf2955c93e8d9cce36af1744dd0b47a951",
+      "new_source_sha256": "8feb2017b576520741f395f548dd949a3f656463b2251df258c18bf175e3ba7d",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 1
+    },
+    {
+      "path": "tests/v05-functions.lisp",
+      "source_sha256": "a3c00a85e7fab9a8e46ef983beec1214b7d5c5960b5dc5862685a279b09e643b",
+      "new_source_sha256": "2dc7f3393418606db22f2a5ffd871c725e1b5dbd8bb71921ff3a65c5db275ba1",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 1
+    },
+    {
+      "path": "tests/v05-generated.lisp",
+      "source_sha256": "3a90aba08f8c7487ea1649b81e3fffec06bb05c9b110a3f8e29e44a882be77af",
+      "new_source_sha256": "e4acfab4274298ea5113189cbdc1cbf6cbc16598842be3293c806380ab00167d",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 1
+    },
+    {
+      "path": "tests/v05-loops.lisp",
+      "source_sha256": "7fef89b652e70ddf52536b1fd8b7b474ac8a039476b2fe36ad862966551394cc",
+      "new_source_sha256": "d56133760382971cc8e896348fe5287ef8469c686a7735d0a8e8841b24b173a6",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 1
+    },
+    {
+      "path": "tests/v05-loops.lisp",
+      "source_sha256": "02b8679fb1cae46d96a45b2555559696bfd2ac78ad3705238b6c2a86f706dade",
+      "new_source_sha256": "5933f3b9f3de859852423c087e2893d9109708b3e4f8d08b326eee8925a86618",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 2
+    },
+    {
+      "path": "tests/v05-loops.lisp",
+      "source_sha256": "776866e19be3762018657a435428289d4e11c1ae0639f7762c63331c5a634567",
+      "new_source_sha256": "15261d022d8dd088729bd764c97cc2fb203253ad5b82cdb91ea3ee4db32ce255",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 3
+    },
+    {
+      "path": "tests/v05-loops.lisp",
+      "source_sha256": "13c6d52e735216f672b28070adb5abe641d5af0e6b5ad8d6a61ef3b55fc06ffc",
+      "new_source_sha256": "16e7c2f9abd904338aca56ed32933f331bf8ad6089a999d7517b9f15248497fa",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 1
+    },
+    {
+      "path": "tests/v05-loops.lisp",
+      "source_sha256": "fb28a75112c78ae4d655424c0c75b9414924c114c4fd5cb5474661406cf2378f",
+      "new_source_sha256": "a551c65f0c27f38d2f361086ad4b87e61c644a052fbf787035087024b57846d9",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 1
+    },
+    {
+      "path": "tests/v05-loops.lisp",
+      "source_sha256": "8874f1179207d634992b4a08574aed5fb810a27005863a080f76dea3e77927a3",
+      "new_source_sha256": "5af2529e933ef4c3418d0344dee067ac15e6d45dd680942b0d5e0c9dda0cd5da",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 4
+    },
+    {
+      "path": "tests/v05-loops.lisp",
+      "source_sha256": "42ec24eb7f60b5c5ab996407c71559b6e35ec445fc1e8b53fd7228eb69b521ff",
+      "new_source_sha256": "ae8205de3b1f1e58461d6d28518c976072c8016a37d700079664e83bd14c0f3f",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 1
+    },
+    {
+      "path": "tests/v05-loops.lisp",
+      "source_sha256": "06b5506f68d664282e9d2de43264ed67eec6ee13386e5b1f05a8db4cc9a517e9",
+      "new_source_sha256": "5b4fdbda52a150b8812d80c68e3b8e0ac1028589776e5e8e0c89788034ab387c",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 1
+    },
+    {
+      "path": "tests/v05-loops.lisp",
+      "source_sha256": "05d916f7322289586da2101d296e31706602c3a2a1d9ce18b1f5b831fa961fc7",
+      "new_source_sha256": "fa93a9ae1f2934ea6c1762884652ed3e9f656d8a489d2580a6287c6b686c259b",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 1
+    },
+    {
+      "path": "tests/v05-loops.lisp",
+      "source_sha256": "5ae19087ac676cf754e2adcad5eadd27e1f7a988c774e0ca505c59170a8bc9b8",
+      "new_source_sha256": "435b2e85284f110a71fd153db18604507926f34955f4fcc5ff52a6783121246c",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 1
+    },
+    {
+      "path": "tests/v05-loops.lisp",
+      "source_sha256": "1ffd62b069f8919070889ba18319c3146d1d4061763c7531a52610d0c760ebb1",
+      "new_source_sha256": "af2db5add616f74f9bc759d59b5788199dad1f3a47c09cca3bb4303f689590e5",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 1
+    },
+    {
+      "path": "tests/v05-loops.lisp",
+      "source_sha256": "8272617f2e5c9dc99fcbd4019e2d37a8d92cae96622a36876fc224f6e4218dfa",
+      "new_source_sha256": "37cc66fe28f3719dfa0d28244ac6b9474bc33f6ef851317842cdf0cbbab6a089",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 1
+    },
+    {
+      "path": "tests/v05-loops.lisp",
+      "source_sha256": "0ed213c5e3e5d8a855eb9b94df77e34b798c38e7f34bbd1712422380b44a3437",
+      "new_source_sha256": "3c44f81e505998e5a93fe6556c209cdfdaf8ef046287f79e51e23a331e5dc3e9",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 1
+    },
+    {
+      "path": "tests/v05-loops.lisp",
+      "source_sha256": "755275fbe57fe5fed131e253136cb1fc97f7bb5c12ad5b1976ad6ba81bddf0ce",
+      "new_source_sha256": "394238b11bb476b2a9cb0153887d04dcdc619db6d2a4674154834c67e502025d",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 2
+    },
+    {
+      "path": "tests/v05-loops.lisp",
+      "source_sha256": "9c41d204851ecf99fac026b5a823c510129a4e1da23b3f0518492a6321249efe",
+      "new_source_sha256": "e783445b4ea26ad22322ba031902dac83be153e20299068ba6637ff31f4a04c3",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 1
+    },
+    {
+      "path": "tests/v05-loops.lisp",
+      "source_sha256": "4851c65eba5c0f48c1123f333d86c88b578785b580034eb4d7f458503a01ab3a",
+      "new_source_sha256": "fb19c05d917ec17220c953d71c855c3c768da52a65dd00846bbba2de16627885",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 2
+    },
+    {
+      "path": "tests/v05-loops.lisp",
+      "source_sha256": "527cf194b5b80633df4b8bb43738ae2ba8632012b4378abcb757cf2ffda07f81",
+      "new_source_sha256": "f1c225bb2fcdb5934a05f7220d38cda81ae5912c393e3f93b7521f8ccb1c1a0e",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 1
+    },
+    {
+      "path": "tests/v05-loops.lisp",
+      "source_sha256": "9ae6190a9c95df2a4717b03383b811567bb7137721f7d35cd60cc062eebe80d6",
+      "new_source_sha256": "51ade5991044bf934b5972033963325b88ea2de28aa9bd786e3469480cfc7d13",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 1
+    },
+    {
+      "path": "tests/v05-loops.lisp",
+      "source_sha256": "356531bc2ec8599b547c4a8e452251fd1e628afbb1b8a92bb54f8351fca1b4ce",
+      "new_source_sha256": "7275dd90d637388fe2850f002d8d318ce6c2715c90700f78412aec054c826958",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 2
+    },
+    {
+      "path": "tests/v05-loops.lisp",
+      "source_sha256": "e4ec9913f190a644fbe1019408fbeee1678e258f5b022dc63e6643a3b69fc95a",
+      "new_source_sha256": "d34ddd5251570474f42b32878c24497ff831db63cb33a2734426e79fda878d66",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 3
+    },
+    {
+      "path": "tests/v05-loops.lisp",
+      "source_sha256": "76d9416a95ebfe69ef3de1661128141e315eb8dd59330accc5a071dc6bf5b4c1",
+      "new_source_sha256": "1e59dee651803ebecae1abf1f812286c84c8ab893e2e738aed54dc96eb609326",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 1
+    },
+    {
+      "path": "tests/v05-values.lisp",
+      "source_sha256": "b459ff371c25d2a056b4d37bd6466cef92ba94c458230bc5b285707d96eef1a7",
+      "new_source_sha256": "cbc08c6ac3062db5362a0cc78d4bc3e32d808aadf4e934637d807e3fcc456b2b",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 2
+    },
+    {
+      "path": "tests/v05-values.lisp",
+      "source_sha256": "a5dfe7b44295932082df73fc0a3fe09d99f8b75457534ed3bdc8cc7e2c67fb58",
+      "new_source_sha256": "2e651c85698493e03ab7c7039d903371c0587f47d702bdea1e13ffaf51a0fd96",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 1
+    },
+    {
+      "path": "tests/v05-values.lisp",
+      "source_sha256": "3e6874175ce14473a999d60d98f077099f9a2e84b30687d67f84cde079563d7f",
+      "new_source_sha256": "4b2aa94e7f71daebeceb58592a2d842c2d5b8bc13667cc44612923c83ac21523",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 1
+    },
+    {
+      "path": "tests/v06-compatibility.lisp",
+      "source_sha256": "93b0c1ca3a1f758ce5390e29ee9b1289b2bc978d0d2143e12b82680dd8f51cc6",
+      "new_source_sha256": "2c598f0096e5a53f3191b471a24ff5205fbafbb000befebc40f2fd7bf50142d5",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 1
+    },
+    {
+      "path": "tests/v06-compatibility.lisp",
+      "source_sha256": "87bc324f6159d3d59998a531dd7dbe0f3fad9a97dfa50bcd6600b5eeb36ba9de",
+      "new_source_sha256": "1f4f97e4218bd3c18234963ea4cc71ba3df4b73d834f0b8a77b472058f7a6d86",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 1
+    },
+    {
+      "path": "tests/v06-compatibility.lisp",
+      "source_sha256": "a2045a3598a79dbcbacbaf874350120008c869d8403aa741997283770b0d819f",
+      "new_source_sha256": "e58ee959755f6df2f48f92bed088e2650b56f33f423f0f1e6cc72ed6cfedddf7",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 4
+    },
+    {
+      "path": "tests/v06-compatibility.lisp",
+      "source_sha256": "4b6cd4aa8151901183a5bf7a3549ef7b9285c338d8d41941a55fb15439f73c6b",
+      "new_source_sha256": "e205a3987b0746c29095ac1e04dd62eaef25f01c5ea624f0b83d8725447eac61",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 4
+    },
+    {
+      "path": "tests/v06-compatibility.lisp",
+      "source_sha256": "2e4e9c29645d5fbe4277c382fd6d52f2de212cb60dc57035411d4f1175bfa892",
+      "new_source_sha256": "bfaf8af218a4c7dba219e35dd7899d57b038fe8d7af902cfb6c5ce155c1c304d",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 1
+    },
+    {
+      "path": "tests/v06-compatibility.lisp",
+      "source_sha256": "24182b83f1182a42dd905341bdfc27dfce86e6e8f6a67b7351e1f4c4664bcf2c",
+      "new_source_sha256": "dab9d9c76cf3504e091530296decbfae3fa7c78456e99fe3bc30810c6b5d5727",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 3
+    },
+    {
+      "path": "tests/v06-core.lisp",
+      "source_sha256": "4474bfb669b9cfa7e4474735da2937c54117db38847dbb0b8ef8087b84aafed1",
+      "new_source_sha256": "deecb1a501cd7bfb350c8b238affcd54697e9e090892c451db0115f8bd50d0e5",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 3
+    },
+    {
+      "path": "tests/v06-core.lisp",
+      "source_sha256": "c90ddcae913fd92f0d6141198e3df24f54c5911c3f81c6657e1fdbe565d03016",
+      "new_source_sha256": "0bd591a1dc9ef1341b6e19291857d5d566319e43079a49a29b8b1a796a72287f",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 3
+    },
+    {
+      "path": "tests/v06-core.lisp",
+      "source_sha256": "ca6923aa798e3a2be94d81ab2ada593f03f7530e6551a18131526e38426e4ba6",
+      "new_source_sha256": "13f99fee8a3bb59fa7b3927e3c0168182a60d5ef1ee6b8565d5d212315fcee39",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 1
+    },
+    {
+      "path": "tests/v06-core.lisp",
+      "source_sha256": "6aca20c897efa6fd87f528eeb29bb25d4c16fb333b7d2ae67a957e3dcb82f182",
+      "new_source_sha256": "bcc6f40e72594231144f167d777a45ea9a28cd7e955a5197a3403e5142bcad6a",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 2
+    },
+    {
+      "path": "tests/v06-core.lisp",
+      "source_sha256": "4d4367882da94e043daa27980e37c28646d9df0047f268ffda284fdecc3c15ac",
+      "new_source_sha256": "e65ed72fea168024d8e9f90ed7133bcaa4c0108a9af8ec233d93dfa5b34b49bc",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 1
+    },
+    {
+      "path": "tests/v06-core.lisp",
+      "source_sha256": "171daa359e7dd44785faa1916e76e45c3ce2aaac55605870268153e802c43e27",
+      "new_source_sha256": "cbbf1affb8bcf22752867a797408d78bdafa2062345d3aaf00acac002a5f96b8",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 1
+    },
+    {
+      "path": "tests/v06-core.lisp",
+      "source_sha256": "75c7954721ed0c328878d6b0e0568a59dee69a61e296d28e42d57aec043c1995",
+      "new_source_sha256": "eb51a23adc8cf8ed7f362ed7b9df44b4732dea7aa3280f344a4b038e796285d7",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 1
+    },
+    {
+      "path": "tests/v06-core.lisp",
+      "source_sha256": "4696dcde1d0f9a5eda93c2475793cf4bcc21caf6870754bae26e69212dc038e8",
+      "new_source_sha256": "65a768c108ec6d6bf8b8ebf1a4fe8285f360d3e585dc4d4abd0a5c269faa54ca",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 2
+    },
+    {
+      "path": "tests/v06-core.lisp",
+      "source_sha256": "5ba20ab25f6069285c3dda2cf6d0b885369cee6f6da62d3792e22618c81dafef",
+      "new_source_sha256": "54d78baa2ead79acbe1dbc87ff022891e60e5d151a787e6311305de44eb53a44",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 1
+    },
+    {
+      "path": "tests/v06-core.lisp",
+      "source_sha256": "c25cb26b01e210c42b77f873c9d190f2aefe270fdae61fdeb89b86bd0a1a0e94",
+      "new_source_sha256": "1307c6a05045aabf95072cb88092a6ade6ce273810c0a934a4170737b8fd732a",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 1
+    },
+    {
+      "path": "tests/v06-core.lisp",
+      "source_sha256": "35f15fa1deb56eb966263b46c1b8b147addc0c3474ff48eab0fc93e494b4acd6",
+      "new_source_sha256": "41d59a1c4295f358851da7352a60b0c0c72046c90d54be3efa49cf0b527adcbe",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 1
+    },
+    {
+      "path": "tests/v06-core.lisp",
+      "source_sha256": "5ef38e142728f84ade2594c6506d02ad8082f8a062be85c610dd2f68da841d3a",
+      "new_source_sha256": "177baab5fc2d38c5377d05ccaa611562fe6df9463afce54bac2f770ccf53e3b7",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 1
+    },
+    {
+      "path": "tests/v06-core.lisp",
+      "source_sha256": "ca6923aa798e3a2be94d81ab2ada593f03f7530e6551a18131526e38426e4ba6",
+      "new_source_sha256": "13f99fee8a3bb59fa7b3927e3c0168182a60d5ef1ee6b8565d5d212315fcee39",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 1
+    },
+    {
+      "path": "tests/v06-core.lisp",
+      "source_sha256": "b08f3413565c98ee184c5135dbea45a57cab52528eba410eae90b3149ab5b726",
+      "new_source_sha256": "cc27d6ba9e46101cb70ccc3e1b893610ed279937e9365acdda5b117b2b48f27b",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 2
+    },
+    {
+      "path": "tests/v06-core.lisp",
+      "source_sha256": "5b2a667f7708fa3696427bb9b20220b0acd9a2172e1506390e546907bb5abb86",
+      "new_source_sha256": "08a295427cf2d751bb7ca5938661d01e8b8e2cd30ceaa44ed978681cdd05c2ad",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 6
+    },
+    {
+      "path": "tests/v06-core.lisp",
+      "source_sha256": "744a72493ebfa62aa9df111d363315f7ce503a42882500cf05fcaf20ee5b1813",
+      "new_source_sha256": "7862d7f6294b884e1133e1723be173ee2526b380511945991f1b1e32f29721d2",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 1
+    },
+    {
+      "path": "tests/v06-frontend.lisp",
+      "source_sha256": "290d3ac71e35ad60eab72cd14cbbe030c41d1c8cbeb97df905ade702a19c5d39",
+      "new_source_sha256": "ff57131316af34d288bacbf13ad6014f2c0f02e0fb658fdd0a3bbf5f699562f9",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 2
+    },
+    {
+      "path": "tests/v06-frontend.lisp",
+      "source_sha256": "085401d9986a722ff11fe157c85402b64b8f5038bfd6bd02b1730210aa33c6aa",
+      "new_source_sha256": "4ae4fd42d957c0589041245042ffd469174d41d0955552a7acd6141b8b702d6d",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 2
+    },
+    {
+      "path": "tests/v06-frontend.lisp",
+      "source_sha256": "ceb0427c080fe5ea78f437f84afe3551336e0b4d6c60279c298a10ce1ca5a7cc",
+      "new_source_sha256": "b27fc3e3a37eb4fcd56485367b8607146cad60fb997f2d94e419dcd2fa494e39",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 1
+    },
+    {
+      "path": "tests/v06-frontend.lisp",
+      "source_sha256": "f9cbf608d0bbf3252f08197086f47b875289ef8b4e3a7d3dc76e3ea9efd83b52",
+      "new_source_sha256": "3c8bcfe33e39e6d15836f982e1501dd6dbc6a4f31cb6d5048514f34f64e702bb",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 1
+    },
+    {
+      "path": "tests/v06-frontend.lisp",
+      "source_sha256": "93e823f95fe267989cfdc272b6fafa1e34646bf2d6f9d52dd13b4b156e99849b",
+      "new_source_sha256": "44dc6905899fb7642a7a87e72400f5e365b847ac1b9e99e3e4be8232e776f38a",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 1
+    },
+    {
+      "path": "tests/v06-host.lisp",
+      "source_sha256": "e2aebf9d3c9ae8c8707b9fee2430c406364cf15db1328c3ff3e8906bab30c5bb",
+      "new_source_sha256": "c2398aab18f00bed11d10f68699b659489d5f855af89e93794bd2166eb053777",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 2
+    },
+    {
+      "path": "tests/v06-host.lisp",
+      "source_sha256": "b0ef2dd24d7f2eaad85a596809a3a0f133e334accabe47b793f155c1b863316d",
+      "new_source_sha256": "6bd7bd1bcc00f8a9b250d2c3bbb220a9942114ea66de8d22daabf01c54df9c81",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 2
+    },
+    {
+      "path": "tests/v06-host.lisp",
+      "source_sha256": "7fe10ec4a5119c329fc21e4ad8af845fd71be103a930461d243221e0d8c7cf70",
+      "new_source_sha256": "632992853e89774ca487af4ca27e8ca31565b4101f3d9699cfb84bd6a47caf30",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 2
+    },
+    {
+      "path": "tests/v06-host.lisp",
+      "source_sha256": "4b6bed7350247f2310759de2b2dbb9da4e478b072d4985d464b14b769c1dee28",
+      "new_source_sha256": "66998d246689e0806b70f1b3bef8832466be717163960443239ec23af66e187d",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 2
+    },
+    {
+      "path": "tests/v06-host.lisp",
+      "source_sha256": "544c0ba894c38673064aca22b3c7ba4839a1ac62cae3da249a8e00358c50c834",
+      "new_source_sha256": "f497aeb1e00973fbe0ee05f732ce040b3615475f415865e46d95cb6f9df743f0",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 1
+    },
+    {
+      "path": "tests/v06-host.lisp",
+      "source_sha256": "e56b73ded045cd54e24bbab5a4362f6ba50e5e50caf8d749d66fbd8292b60847",
+      "new_source_sha256": "507b5aebf97d0d9be8c6ab8d41bdcf6e5c5a5c7458f71617097d90b17773f3e1",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 1
+    },
+    {
+      "path": "tests/v06-host.lisp",
+      "source_sha256": "975e81da9cafaf3cc1bd3677c7e9b6f31348850d02c2db7b16ac4fff92b9f768",
+      "new_source_sha256": "d64aba337f4b808404509e51e294a8626f796b26eb2599d7e4600865294b1ace",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 2
+    },
+    {
+      "path": "tests/v06-host.lisp",
+      "source_sha256": "bdf970f997f9bde2366f55e36b60df2a017485ee917b036bacbc3ce139694de1",
+      "new_source_sha256": "9e1672f0b679b757dbb4f746bed9f9d1fe8d38a61b0663be54b5e4753cdf3f51",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 1
+    },
+    {
+      "path": "tests/v06-host.lisp",
+      "source_sha256": "d07819fde4853d6b53faeff6cef459a81dcaa9c4783e492526d0a60108372a67",
+      "new_source_sha256": "169c9eb4ae0bb1dcd6d05b158d4b53c017c24f614f62ac0caa806bef885777e9",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 1
+    },
+    {
+      "path": "tests/v06-host.lisp",
+      "source_sha256": "e17836f71b9968d697e02a27422426b8afb8239664c466c321ff7855082f5bc0",
+      "new_source_sha256": "6d656dbf352d83780fb3fb92c1c3abbab8e07ddb241f8621f25ef3f94690e592",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 5
+    },
+    {
+      "path": "tests/v06-host.lisp",
+      "source_sha256": "5cdb9ee9c4a5db4645e2b5f74a5f9156512156be93acebe6f0b931e3efce31ee",
+      "new_source_sha256": "a6719afdb8dc822f2418af33eed0211322453783a7a513baa3514bbdde7815e7",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 2
+    },
+    {
+      "path": "tests/v06-host.lisp",
+      "source_sha256": "aeb9732ebc7b2129a6a36f45011570b288af36c33ccac73cd5fea2f72d3865d8",
+      "new_source_sha256": "d9dbcbb706ff37e4f38589a003a3e5dc7cb018a1a406ede56589462878500ffa",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 2
+    },
+    {
+      "path": "tests/v06-host.lisp",
+      "source_sha256": "aeb9732ebc7b2129a6a36f45011570b288af36c33ccac73cd5fea2f72d3865d8",
+      "new_source_sha256": "d9dbcbb706ff37e4f38589a003a3e5dc7cb018a1a406ede56589462878500ffa",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 2
+    },
+    {
+      "path": "tests/v06-integration.lisp",
+      "source_sha256": "8061f8f1fc653a4fbf95274e63fd132385d57fbf104723c7b0df2b358b6cb8b7",
+      "new_source_sha256": "1d9a1e1ed3fa35ea74b0e074e6dc165dc92fa8b97d9528a1a9de8cb10c6e0a6c",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 1
+    },
+    {
+      "path": "tests/v06-integration.lisp",
+      "source_sha256": "215cb13abbecc53ff7f670bb16ff60186d0feaddd86f40af2e41a44ad0c4ceb7",
+      "new_source_sha256": "662cc9080fb6476fb46378be4aa4848ebfcbc57de49e25e23d1f477454b2c41d",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 4
+    },
+    {
+      "path": "tests/v06-integration.lisp",
+      "source_sha256": "0a25b9f8178cf7f69fc50df6afe1dbd3451eb3d34a91f1dca158337d5d5d2bde",
+      "new_source_sha256": "d565fb3585026f53f3c7e99531313b1cc5aaa058c37c5aee0e52b53d8f688ac8",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 3
+    },
+    {
+      "path": "tests/v06-integration.lisp",
+      "source_sha256": "55796af4a27c6d234cc7a6d7f48aa61d0f7cba2fc78842a460bdfcee1cac598c",
+      "new_source_sha256": "086319d85441aec6afff03c7e3ba5b66dd50399c1f356ad6eea027f765ee4195",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 2
+    },
+    {
+      "path": "tests/v06-native-faults.lisp",
+      "source_sha256": "1a1c0f106085f0d17a7cbb9c2b1df56a64375dfd3be4d230bf052012470f1256",
+      "new_source_sha256": "c9907049d5bee355c8a4b57f1839a674de7c6ebdc45be422282ec218214e25e9",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 1
+    },
+    {
+      "path": "tests/v06-native-frames.lisp",
+      "source_sha256": "c2bf3e419b31647beb1ead32b930de0adc6c0f13eb70ec02ed0ee486185fa93f",
+      "new_source_sha256": "996da24e17da73525066c9dbb07961b97d1e4d67969988ebc27809f2a3b02a81",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 1
+    },
+    {
+      "path": "tests/v06-native-frames.lisp",
+      "source_sha256": "c2bf3e419b31647beb1ead32b930de0adc6c0f13eb70ec02ed0ee486185fa93f",
+      "new_source_sha256": "996da24e17da73525066c9dbb07961b97d1e4d67969988ebc27809f2a3b02a81",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 1
+    },
+    {
+      "path": "tests/v06-native-frames.lisp",
+      "source_sha256": "270663e07fec5841ada1d83b5472799f242b58295296ff3b4ae3b05f72104829",
+      "new_source_sha256": "dcc6fdd699167c895caf6b790b4aeef6337e11b811ac60ee914c913c56afb8d1",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 2
+    },
+    {
+      "path": "tests/v06-native-frames.lisp",
+      "source_sha256": "2548fcc5ff450c5f31162e074ba74f275fce3736ef4ce6fc02eb6d97763c88a3",
+      "new_source_sha256": "44ca1e81b5142ca030d63196549d270b186f08d6838fdc8e393a94fbd3287134",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 2
+    },
+    {
+      "path": "tests/v06-native-frames.lisp",
+      "source_sha256": "4a2556a7ed74eb9e212eaac4b51d575fd7c6aa22fa85e71ca88372e08681afb8",
+      "new_source_sha256": "ba7544d23a11c8b16a6a37a3e78cea12ea166c2a7af0c7f5d7f7c8aa3260a146",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 1
+    },
+    {
+      "path": "tests/v06-native-frames.lisp",
+      "source_sha256": "402e3c9beba51f413c6a08901183bd58cf015fedff89f1b6fec35b9f18e17f53",
+      "new_source_sha256": "4fdde7a5823fe9bcc42cf2e357976e866d5af8200885cb275fb27648f1b1740d",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 4
+    },
+    {
+      "path": "tests/v06-native-gc.lisp",
+      "source_sha256": "669e629d2fc9ad4dfb9b6d30bfc19e7103c1406f2aefdc0ad90d2b211a21ba40",
+      "new_source_sha256": "1c5769327619c6dc5aab847d23ab58da144e94b70a958a73871049ceb025c5d8",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 7
+    },
+    {
+      "path": "tests/v06-native-gc.lisp",
+      "source_sha256": "1a1c0f106085f0d17a7cbb9c2b1df56a64375dfd3be4d230bf052012470f1256",
+      "new_source_sha256": "c9907049d5bee355c8a4b57f1839a674de7c6ebdc45be422282ec218214e25e9",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 1
+    },
+    {
+      "path": "tests/v06-native-gc.lisp",
+      "source_sha256": "1a1c0f106085f0d17a7cbb9c2b1df56a64375dfd3be4d230bf052012470f1256",
+      "new_source_sha256": "c9907049d5bee355c8a4b57f1839a674de7c6ebdc45be422282ec218214e25e9",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 1
+    },
+    {
+      "path": "tests/v06-native-gc.lisp",
+      "source_sha256": "1a1c0f106085f0d17a7cbb9c2b1df56a64375dfd3be4d230bf052012470f1256",
+      "new_source_sha256": "c9907049d5bee355c8a4b57f1839a674de7c6ebdc45be422282ec218214e25e9",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 1
+    },
+    {
+      "path": "tests/v06-native-text.lisp",
+      "source_sha256": "bdf970f997f9bde2366f55e36b60df2a017485ee917b036bacbc3ce139694de1",
+      "new_source_sha256": "9e1672f0b679b757dbb4f746bed9f9d1fe8d38a61b0663be54b5e4753cdf3f51",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 1
+    },
+    {
+      "path": "tests/v06-native-text.lisp",
+      "source_sha256": "aeb9732ebc7b2129a6a36f45011570b288af36c33ccac73cd5fea2f72d3865d8",
+      "new_source_sha256": "d9dbcbb706ff37e4f38589a003a3e5dc7cb018a1a406ede56589462878500ffa",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 2
+    },
+    {
+      "path": "tests/v06-native-text.lisp",
+      "source_sha256": "99d9bbd73dd6b37cf882e525d7017c8eeaf910767649e1fa23b582439eee3849",
+      "new_source_sha256": "1b7babb0f5d2fd3309f1dd6171a3e8a9749f7b98ed0749905f3381764930bd7f",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 2
+    },
+    {
+      "path": "tests/v06-native-text.lisp",
+      "source_sha256": "d15db0e8fab2d34aea73f428f69c49fb4029eb59d41eed3b795b9e98153979f8",
+      "new_source_sha256": "69938d2ae78ce65aa64ff4c9da7c654f716bd0d7f75f9e8f3ba572ce9a3d5cee",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 7
+    },
+    {
+      "path": "tests/v06-native-text.lisp",
+      "source_sha256": "d2d9be04e539f6b9b8f31e7062537831f64a7e359121174d28678fe81ac362ba",
+      "new_source_sha256": "a4f640c159e78b460452c246b8621cfd51acc41a2ce4e743facdd82eb0f1bd77",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 2
+    },
+    {
+      "path": "tests/v06-native-text.lisp",
+      "source_sha256": "fbb69dbfd1fa4d82963c2ebb4cb4384bc31549a6e39a46c4278daabfe93a29d0",
+      "new_source_sha256": "1a9b9acefd30fcc63284a8935175c5579d19e5ce958061b98f6bfbaf5cbc77c0",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 2
+    },
+    {
+      "path": "tests/v06-native-text.lisp",
+      "source_sha256": "9925ed8e988c066abcfe4f4d02d033e17fbead467fa80893a316e8f494a4429e",
+      "new_source_sha256": "2ae89f955e2c92d912da213d7a0a0ccc555c80d280753e99b69664afc093c0ee",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 3
+    },
+    {
+      "path": "tests/v06-native-text.lisp",
+      "source_sha256": "a366cfc18e89e1b7c82112c5ddfccbefe7e27460726c66ad58400c6b68acf527",
+      "new_source_sha256": "845f5d66d49e4b606e81240d8acbb04701362900d30677272948a07883144cf6",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 1
+    },
+    {
+      "path": "tests/v06-roots.lisp",
+      "source_sha256": "334d6617e4e69b4ea8baf99aa35c1a8ca83428db6734447ff9e0c3ff17b5d248",
+      "new_source_sha256": "4023626abae2a7b46b84135cbfa9591bfb2f9a6b25c20004e28ef37879cd8c7c",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 2
+    },
+    {
+      "path": "tests/v06-roots.lisp",
+      "source_sha256": "ef635a71200e3d5e824303e01338bd52276f4e7b82e03972945367bd09ae18c7",
+      "new_source_sha256": "983f4e4901f840354b48398e2c087256d985f1aa93ae914c3fb2f59ab997fa6d",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 1
+    },
+    {
+      "path": "tests/v07-boundaries.lisp",
+      "source_sha256": "d8e5c02b20e7a167aba981ef330cbd833276ca03d125ddf3fe3e0ce1d302de99",
+      "new_source_sha256": "fd667b83d730a939c0f1f7954d55093b7617eba1a56522c133d1e94b73a87ec8",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 2
+    },
+    {
+      "path": "tests/v07-boundaries.lisp",
+      "source_sha256": "c5d48744316353c47a9d386b5c72948c1d902cc545b9a95fd16579a2c961e82f",
+      "new_source_sha256": "5c3ec19d93c3ec94d87aeb44e47a758c6010d6ff63639c7d80a1d5c5aac462e2",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 3
+    },
+    {
+      "path": "tests/v07-boundaries.lisp",
+      "source_sha256": "f20d282e1716347265c22e094a13640a556833d654ecc7d74482bf3dd4bd648b",
+      "new_source_sha256": "36ac8c04490e55ac9bd9918c12ba4d705a9303b52da072a830eaee7ef3c7a496",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 1
+    },
+    {
+      "path": "tests/v07-boundaries.lisp",
+      "source_sha256": "f4c40d3f84f84baee0b030d52eb56ea15471efe397e7e14a3e8fdea7c0674640",
+      "new_source_sha256": "d9a8d88924d3df5d29f97bc8ec56cf2ed24a30eb0b51913c01c75d697d755812",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 2
+    },
+    {
+      "path": "tests/v07-host-gc-entry.lisp",
+      "source_sha256": "8eaa0f6505bb9b87211391c18cecbd663132ecaab647b5bb5e158a6534c42762",
+      "new_source_sha256": "5726f3f43993944c3b0f7dabb2127c186bc1e9baed3e585ce2a5f9a81b23a956",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 3
+    },
+    {
+      "path": "tests/v07-integration.lisp",
+      "source_sha256": "14bceba21786d6ef222449feb1a9c681a35248ff16edf3fb845dcc084cb1c788",
+      "new_source_sha256": "2abd6bdbadc23653e415dfbdec943f345aaf889b676f7dc9fea25801f61b53de",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 1
+    },
+    {
+      "path": "tests/v07-lifetime.lisp",
+      "source_sha256": "dfc79b15e418e045506c26720a297898e6af22f7d1983337596c7fd186df9729",
+      "new_source_sha256": "1e6a37017b82df1126349439abcf51237e82f4ebd53871ff8a64de3f44825245",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 8
+    },
+    {
+      "path": "tests/v07-lifetime.lisp",
+      "source_sha256": "d01bfe482d2bfa438bf99a9576cbaa55edf94e7aab406c19217353facc17a5c7",
+      "new_source_sha256": "1cf0ef063d52950ecb620b1e665651050a4c89929f5d06c362605049168ecc95",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 2
+    },
+    {
+      "path": "tests/v07-lifetime.lisp",
+      "source_sha256": "d01bfe482d2bfa438bf99a9576cbaa55edf94e7aab406c19217353facc17a5c7",
+      "new_source_sha256": "1cf0ef063d52950ecb620b1e665651050a4c89929f5d06c362605049168ecc95",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 2
+    },
+    {
+      "path": "tests/v07-methods.lisp",
+      "source_sha256": "48a4b2e0777b89a74e2f0f8ca6b138989100ff2923e68f285b1d5265ba8afcb4",
+      "new_source_sha256": "7a1dc26c19b1b32f2f5dda3a055a00501455db0ecc99293b8b1e75aad9af2fdc",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 1
+    },
+    {
+      "path": "tests/v07-methods.lisp",
+      "source_sha256": "a262190340376d722d3b53744df8539ffd1375f7cfcb5c6f2047082d460b8c77",
+      "new_source_sha256": "2c1b5e9419e7d4c3a027fd6824c0541aa647c75fd08cb9f6e9b5b0b88ace5549",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 2
+    },
+    {
+      "path": "tests/v07-review.lisp",
+      "source_sha256": "03c34e302dbeec81512f1b877cac5b10f7dc63ce77b97ba337a5fbbdfc6be790",
+      "new_source_sha256": "19532e96cb5ae5b100cbee5c4a91b6e3e3cd9ab44e238fe43849be0b2e5d8c17",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 1
+    },
+    {
+      "path": "tests/v07-review.lisp",
+      "source_sha256": "ec5a6751bb8d436d89c1d2ce438dd41618c0f4a4b11f2ceb557c430c4adfccb8",
+      "new_source_sha256": "79c98ad0bda2262af475aaf11e724eb6f58a8717d30b1b841a1efff7b32cdd25",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 1
+    },
+    {
+      "path": "tests/v07-review.lisp",
+      "source_sha256": "bed46bd9f1e6427444ecad495748b640fe4eb7ca14c0c581ddb669ea4248fe95",
+      "new_source_sha256": "26041bc344d8e92f4b76b81a90ddadc87f49f8c95806e930dd78f6c58d754006",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 1
+    },
+    {
+      "path": "tests/v07-review.lisp",
+      "source_sha256": "bbb6c5a5616aba7968909f6e9341b4d5fc20f3c3e1bed5ef2fb3e4ca917cc4a1",
+      "new_source_sha256": "271249990d028f539ec4bc3936be516ada5bda64aaac859875bb8f16012719a2",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 1
+    },
+    {
+      "path": "tests/v07-values.lisp",
+      "source_sha256": "5bf806f91172489c6c3741a282541b9f2fb24ac624bc0598f0aabbb2b0fb85bc",
+      "new_source_sha256": "d6e5e1c858710c3840f641846e666d0106302d5e7c685f1ebf69d971244c8ed5",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 1
+    },
+    {
+      "path": "tests/v07-values.lisp",
+      "source_sha256": "27f31c6c1f9f50b19e8ffd0927cd694009bb9ecf5ac01e66f7a8d9667c6c9bec",
+      "new_source_sha256": "b5586a286fded73d87c90cea8304ebcad6712bbc77da125ce07712185b773820",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 2
+    },
+    {
+      "path": "tests/v07-values.lisp",
+      "source_sha256": "f5a2bd0adac1b099c987ff868d936ad0c4ca3b4455e195733b3d8ece804cde4b",
+      "new_source_sha256": "b167caac7f1d354e439157c1fa7621565e95eeea73c036dde625275ac350547a",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 2
+    },
+    {
+      "path": "tests/v07-values.lisp",
+      "source_sha256": "a4fb3f37ef71865701c87653a9ceb3a50bb77e413533bd0012e1f6cb7abf2b0a",
+      "new_source_sha256": "89b00deb182af352cc6d34fc3e17f0020f69e2b9bb2be4d09a34993aed4dd742",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 2
+    },
+    {
+      "path": "tests/v07-values.lisp",
+      "source_sha256": "eb7181d74edcda2343979488a86e9c584929ca89738bfac9bb86878a2639f89f",
+      "new_source_sha256": "471e6e72098f0153ac95c9639fc9f901cd8b2c2dc270e063db0b8f4b15009635",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 1
+    },
+    {
+      "path": "tests/v07-values.lisp",
+      "source_sha256": "b448768b8e92ad3a53e3024bbd5b1809caf5ce3ca10621e5fadb52ed828eb4c0",
+      "new_source_sha256": "b0b8b7f9425e3f6cf9f15c0d2eb95d16a969403bcbd2fe7816ddbe312b0a7869",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 1
+    },
+    {
+      "path": "tests/v07-values.lisp",
+      "source_sha256": "873111c960edea8dcc3afaa3c1f757cc985512fdda657102a2007074c6524b5f",
+      "new_source_sha256": "ae1d98d8eb765e5fc0ed594ea29c36c7e722b9b5af643e643457556df0908150",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 1
+    },
+    {
+      "path": "tests/v07-values.lisp",
+      "source_sha256": "5e25ca9f486e9db5f785b6f1fc268b6a68528e2b4666b09e3697b3acd5d4ec20",
+      "new_source_sha256": "53ec221153e01e707caa92c9b5646e5ac9b44c4f4cd80d60c0ba392609e21a68",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 1
+    },
+    {
+      "path": "tests/v07-values.lisp",
+      "source_sha256": "c0311d415e52c34bc905f5b908ef2aac41ee6277ed680647a3ee962ad1966e51",
+      "new_source_sha256": "c68baea37f642c6f39c5b905b2a0385ccf5ac18ef908157aa09f2b99c2f9f29f",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 1
+    },
+    {
+      "path": "tests/v07-values.lisp",
+      "source_sha256": "ad81abb697a8a356d2e539a22d4ab4c2d0ec191af44ab80972afb3bae6ce6796",
+      "new_source_sha256": "4ae54ade2a5060663548c34fc32df4bda173b6199068382081805d0ee65e9da9",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 2
+    },
+    {
+      "path": "tests/v07-values.lisp",
+      "source_sha256": "deccc193f3d2e2d8eb79418e9afd1328c0fc6387edbc4d069fcd8c39030b6225",
+      "new_source_sha256": "76c0e0818774a4cfa24618b916631bef91a6a4b371ce61022b3814b8210ae423",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 2
+    },
+    {
+      "path": "tests/v07-values.lisp",
+      "source_sha256": "4ee2ddac63a92dc68832fa8dc819beba06576fde7c6a3854f15bb812f85d1773",
+      "new_source_sha256": "40d9c1233dd8625c953bcafe763ad5b177f26f4e0900d5ce49bfd5902e6e618f",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 2
+    },
+    {
+      "path": "tests/v07-values.lisp",
+      "source_sha256": "4a4afc2d6e54afcd75b090674989a8713c280b2e163e67cb10c9147d4fe775fd",
+      "new_source_sha256": "1eac43421ba11c46629d8f63668595179d7d593a0a3ec6056190e33ce1e67916",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 1
+    },
+    {
+      "path": "examples/branch-update.mgn",
+      "source_sha256": "93df1640de323cab58f31d56a067d05b2b047315e361218fb35119ee4931be15",
+      "new_source_sha256": "e8d82ef93c6a21ff52f3b3c1cae9a3bfa715f3fd61361652a835fd44e7bc9152",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 2
+    },
+    {
+      "path": "examples/function-values.mgn",
+      "source_sha256": "e661d2bcfccd10c98f36ba909e7e8c32f121f58ca055fda2e6e280dda5c752ba",
+      "new_source_sha256": "ee47840bb2f4ed8acfd137a961c0ed29fbdfc92f50a3a5bce6e0172e4094da05",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 2
+    },
+    {
+      "path": "examples/invoice.mgn",
+      "source_sha256": "9c83ae5025ac60fa5ced63780f5fd74aef203a4f23a665eb0b600f7d7e1a1051",
+      "new_source_sha256": "c77073deb9272344f4214d661d0990e721e7688a1470873822451d5cee6f92fd",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 2
+    },
+    {
+      "path": "examples/loops.mgn",
+      "source_sha256": "7f12dbbe4db70213610e256effeb60c35343ca828842d0853b0134ccb67c0067",
+      "new_source_sha256": "98532af448201544b011378d02c60a6a5867ac0fec38e3fa7efab54acfa93ebf",
+      "change": "Add explicit local annotations from the previous checker while preserving the original operations and expected result.",
+      "bindings": 2
+    },
+    {
+      "path": "tests/v03-kernel.lisp",
+      "source_sha256": "fc830753818bf45072a208eb95762c388268102774a9753c9583aaeddbff1062",
+      "new_source_sha256": "bcdfdb5695d8722ad0aa1363cd5f9a9a8875bfb3b4bb50929a94d3a101976aaa",
+      "change": "Annotate generated source without changing the original oracle or expected behavior.",
+      "hash_scope": "file"
+    },
+    {
+      "path": "tests/v04-allocation.lisp",
+      "source_sha256": "061cf18842a2915c66d2c13639464eec6453b2c83d88174ada0f29e272a76df0",
+      "new_source_sha256": "078340abfea3bedd3ab70a01192400db1476154616cabc14d952a17f022850b0",
+      "change": "Annotate generated source without changing the original oracle or expected behavior.",
+      "hash_scope": "file"
+    },
+    {
+      "path": "tests/v04-boundaries.lisp",
+      "source_sha256": "ac279ddd8dd45352fbd0557620e107176068e119a6d529cccd29934e63c360da",
+      "new_source_sha256": "60988b61891f61b0d66b410da00a200127d032a1aff2a1c2586aa641b843e4cc",
+      "change": "Annotate generated source without changing the original oracle or expected behavior.",
+      "hash_scope": "file"
+    },
+    {
+      "path": "tests/v03-kernel.lisp",
+      "source_sha256": "bcdfdb5695d8722ad0aa1363cd5f9a9a8875bfb3b4bb50929a94d3a101976aaa",
+      "new_source_sha256": "952fa34f255ad7e6218cd505ce87437b4886e968df3d6951abe7a7bf7fa2d75c",
+      "change": "Annotate generated source without changing the original oracle or expected behavior.",
+      "hash_scope": "file"
+    },
+    {
+      "path": "tests/v03-merge.lisp",
+      "source_sha256": "8eca227c3dbdbd331e38ca89468353962731e6bc3bfd81e5a8684bfdc9edbf1d",
+      "new_source_sha256": "fed6354d5f76a732a10ccab5ff192ce46e37aee05785f74282d39aed3ec3ac13",
+      "change": "Annotate generated source without changing the original oracle or expected behavior.",
+      "hash_scope": "file"
+    },
+    {
+      "path": "tests/v04-generated.lisp",
+      "source_sha256": "0da5abd16b5ccca56c3c70898e4258d6351a9bb478c9fa2e450826fa248e145f",
+      "new_source_sha256": "86ba2366a1a439a12766740d9b241eaeb937886898352e67867cb486a15a0e68",
+      "change": "Annotate generated source without changing the original oracle or expected behavior.",
+      "hash_scope": "file"
+    },
+    {
+      "path": "tests/v04-boundaries.lisp",
+      "source_sha256": "60988b61891f61b0d66b410da00a200127d032a1aff2a1c2586aa641b843e4cc",
+      "new_source_sha256": "0d06a7d382950e3d19731ef09acca51761f31a86458019a25cdc2df4514e72da",
+      "change": "Annotate generated source without changing the original oracle or expected behavior.",
+      "hash_scope": "file"
+    },
+    {
+      "path": "tests/v05-functions.lisp",
+      "source_sha256": "5b4525d8e46b4eda261d641831299c11748de3794827edf6cb1539064fda906c",
+      "new_source_sha256": "83a0c792d872fde7f94f5095c9da8f95a626b454f28b9d6d3cce23d46c45277b",
+      "change": "Preserve selected function execution through a direct call; separately reject the former unannotated binding in v08-explicit-local-boundaries.",
+      "hash_scope": "file"
+    },
+    {
+      "path": "tests/v05-values.lisp",
+      "source_sha256": "fe9792eb8a8b8ea0593f600ab7ea3e7a5d6e1240d6101d987501c6fa6106cc6b",
+      "new_source_sha256": "f3dffb6057d2647eb2faffc620587c9a0a50191933d4308a4b8ac6e3323c9136",
+      "change": "Keep block-selected function execution as a direct call; the old binding is covered by v08-explicit-local-boundaries rejection.",
+      "hash_scope": "file"
+    },
+    {
+      "path": "tests/v05-loops.lisp",
+      "source_sha256": "68027d57803b10373ac48114e4c0e3045ef2ec9fcb1f8d26a06c39b99d0ab4ef",
+      "new_source_sha256": "97583c98d8f5fbc4bf1b14492315554f96bcba45b950b40c216fb24237f2ea12",
+      "change": "Annotate generated locals and preserve loop-selected function execution through a direct call; separately reject selected function bindings.",
+      "hash_scope": "file"
+    },
+    {
+      "path": "tests/v05-generated.lisp",
+      "source_sha256": "3428ed48598e4e10107e9b8b8fdc8fe2ffd42ead086b7fb861b4eb8c42d29a2a",
+      "new_source_sha256": "e4fc9b7233ff55ef0b64df460ca52f6cdc87311938ed5644b993bb62f588ed43",
+      "change": "Carry explicit local types in test-only generated trees; the independent evaluator remains unchanged.",
+      "hash_scope": "file"
+    },
+    {
+      "path": "tests/v05-conformance.lisp",
+      "source_sha256": "0077239235cbe03164443def105ce87d934ebee5e82b500cd6058412fea6e631",
+      "new_source_sha256": "0887307f39d59108b00f680a2490486a78de508b8376849160421d76312b1304",
+      "change": "Annotate generated source without changing the original oracle or expected behavior.",
+      "hash_scope": "file"
+    },
+    {
+      "path": "tests/v06-compatibility.lisp",
+      "source_sha256": "507ca82de62ba79e2b2f368c0a3bb866ed733ce3bb91822729caa289e6556dc2",
+      "new_source_sha256": "dcf7d9d6548ce895e92d6280966dcab9153e861b233cff610391766457fba7f7",
+      "change": "Annotate generated source without changing the original oracle or expected behavior.",
+      "hash_scope": "file"
+    },
+    {
+      "path": "tests/v05-conformance.lisp",
+      "source_sha256": "0887307f39d59108b00f680a2490486a78de508b8376849160421d76312b1304",
+      "new_source_sha256": "ee8fe1ce644e8b4853949908fd2994443d22534e8951578291726b506a10ace1",
+      "change": "Keep runtime-capture rejection reachable after annotation enforcement.",
+      "hash_scope": "file"
+    },
+    {
+      "path": "tests/v05-boundaries.lisp",
+      "source_sha256": "035c66a2172e8fa50a1c0d5da40fc156a7de51bcc263a6408eb154e44a63b617",
+      "new_source_sha256": "e4698f36ebea44ed616cb16683351bf4c162c7a7c2b3e319cbb37ba5de8557ae",
+      "change": "Preserve forged static-target rejection using an explicitly typed nonfunction local; annotate failure branches in the handwritten ABI fixture.",
+      "hash_scope": "file"
+    },
+    {
+      "path": "examples/function-values.mgn",
+      "source_sha256": "ee47840bb2f4ed8acfd137a961c0ed29fbdfc92f50a3a5bce6e0172e4094da05",
+      "new_source_sha256": "91290783a89b7ac768a34d1ab67e5d4973d169b4613e80abda4df9c0be897049",
+      "change": "Use a selected function directly at its call site while preserving callee-before-argument evaluation and result.",
+      "hash_scope": "file"
+    },
+    {
+      "path": "tests/v06-host.lisp",
+      "source_sha256": "74a40f075ba40eef8ac61624ae7ac71da3b8e71b6ed5151e23d24ff9744cfea6",
+      "new_source_sha256": "6d0a3febfc68b1fd131d077e8a0dc892e254f9022ce129a11abc3411e1d7a7dc",
+      "change": "Annotate message-processing locals and correct the scalar-oracle template to string rather than the numeric probe placeholder type.",
+      "hash_scope": "file"
+    },
+    {
+      "path": "tests/v06-host-gc-entry.lisp",
+      "source_sha256": "6307040e380ee60ad24bb5bd08f5d06e2cd64fa1065ad129d1e0cd08d8fd7177",
+      "new_source_sha256": "b8e00b5dcefb40c43ad4560565c1bf863c18bf8cbd263364e1d9f7dd00573873",
+      "change": "Annotate generated source without changing the original oracle or expected behavior.",
+      "hash_scope": "file"
+    },
+    {
+      "path": "tests/v06-native-text.lisp",
+      "source_sha256": "cde06d44288a87ac20868b42dc726a09b75ad6e27649d52fc559e77f980d1ca1",
+      "new_source_sha256": "97c484a1442482687ce983c2363b58a3f3d7ca9589de1029e30b35f470c5ef3c",
+      "change": "Preserve two selected function calls and live text roots without an unannotated selected function binding.",
+      "hash_scope": "file"
+    },
+    {
+      "path": "tests/v07-values.lisp",
+      "source_sha256": "ac679d2e0bdf10dbfe711c973a29d4869bdac5505b0fd0a72c09f86537b26df2",
+      "new_source_sha256": "60f94dd0fe05438c168ce77c49c4c9ffa67cc8c5fd8f06353a25c49c938bd211",
+      "change": "Preserve expression-arm function selection as a direct call; retain binding rejection separately.",
+      "hash_scope": "file"
+    },
+    {
+      "path": "tests/v07-methods.lisp",
+      "source_sha256": "14c5f1a70df2cb954bebdeca54e8e46d7b0f3d92e30f68550bdf467a3aabebef",
+      "new_source_sha256": "91abd14f2291a50efbae99a006a35e7bdc0ec9ed10d5ce0fa89fab05eebe89cb",
+      "change": "Annotate generated source without changing the original oracle or expected behavior.",
+      "hash_scope": "file"
+    },
+    {
+      "path": "tests/v07-lifetime.lisp",
+      "source_sha256": "3424a138f4b0cf31b33211cb3240262950e5f79016702ccd8ca9bd7bd1a0a268",
+      "new_source_sha256": "ff28e16c75d6bdd99bc9442fedcf538220b7b74d26b0711ebf16eaee8fc59bc0",
+      "change": "Annotate deep-data generators and update the retention-mutant splice markers to match the annotated source, preserving the heap observer failure.",
+      "hash_scope": "file"
+    },
+    {
+      "path": "tests/v07-integration.lisp",
+      "source_sha256": "931136762043bdaecc53a8a46a6c5b1bd47cbac4807da083d1c78e8c9d65b53f",
+      "new_source_sha256": "4778c0cdfcfc044e79eebdc4f561e9c4c71830ae9d10e01fec2ee78b3337ea39",
+      "change": "Annotate generated source without changing the original oracle or expected behavior.",
+      "hash_scope": "file"
+    },
+    {
+      "path": "tests/v08-bindings.lisp",
+      "source_sha256": "58adf77a849abeab01498bdb06faefafcf022e17b6b2485f0e1d826e5f67ad9a",
+      "new_source_sha256": "d0d15c10916708648da9ca47c2dff14976bbebb1d6af0f49a566ca9631a95739",
+      "change": "Cover the former block and loop selected function bindings as semantic rejections.",
+      "hash_scope": "file"
+    },
+    {
+      "path": "README.md",
+      "hash_scope": "file",
+      "source_sha256": "79f5288a530b6edc9f4af3e84bb36a52e15ee6929380fdf15d884dfc22ac4a9d",
+      "new_source_sha256": "29b2129deeda336bfd1cef325e853aab2454ebde83e4767ece82cffb25180e57",
+      "change": "Annotate all runnable examples and identify the development-branch binding change."
+    }
+  ],
+  "keyword_migration": "No existing source fixtures use try or panic as whole identifiers. Both are covered by v08-error-expression-ast rejection cases."
+}

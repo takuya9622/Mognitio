@@ -37,7 +37,7 @@
            (inst (v07-operation module (first pair))))
       (setf (mognitio.ir:instruction-value inst) (second pair))
       (signals internal-failure (mognitio.ir:verify-module module))))
-  (let* ((module (native-ir "type E=enum{A(int);};let a=E::A(1);let b=E::A(2);branch on(a){E::A(x)=>x==1}"))
+  (let* ((module (native-ir "type E=enum{A(int);};let a: E=E::A(1);let b: E=E::A(2);branch on(a){E::A(x)=>x==1}"))
          (constructors (remove-if-not (lambda (i) (eq :enum.make (mognitio.ir:instruction-op i))) (v07-instructions module)))
          (payload (v07-operation module :enum.payload)))
     (setf (mognitio.ir:instruction-operands payload) (list (mognitio.ir:instruction-result (second constructors))))
@@ -49,7 +49,7 @@
     (signals internal-failure (mognitio.ir:verify-module module))))
 
 (deftest v07-root-last-use-and-child-independence
-  (let* ((module (native-ir "type U=struct{s:string;};type P=struct{u:U;};let p=P{u:U{s:\"a\"+\"b\"}};let child=p->u;let dead=U{s:\"d\"+\"e\"};child->s==\"ab\""))
+  (let* ((module (native-ir "type U=struct{s:string;};type P=struct{u:U;};let p: P=P{u:U{s:\"a\"+\"b\"}};let child: U=p->u;let dead: U=U{s:\"d\"+\"e\"};child->s==\"ab\""))
          (plans (mognitio.roots:analyze-roots module)) (plan (first plans))
          (instructions (v07-instructions module))
          (parent (find '(:struct 1) instructions :key #'mognitio.ir:instruction-type :test #'equal))
@@ -73,7 +73,7 @@
   ;; Build the parent by hand, and let the real collector classify each child
   ;; before dereferencing it. Metadata addresses are static image symbols.
   (dolist (kind '(:unmapped :interior :free :fake-static :descriptor))
-    (let* ((source "type U=struct{s:string;};let u=U{s:\"a\"+\"b\"};true")
+    (let* ((source "type U=struct{s:string;};let u: U=U{s:\"a\"+\"b\"};true")
            (caller (append (v06-raw-frame)
                      (v06-raw-allocate 8)
                      '((:store-frame -8 :rax))
@@ -140,7 +140,7 @@
         (signals internal-failure (mognitio.frame:verify-sections function allocation roots layout sections body))))))
 
 (deftest v07-interface-table-faults
-  (let ((source "type U=struct{};type V=struct{};interface I{let f = function():int;}implement U against I{let f=function():int{1};}implement V against I{let f=function():int{2};}let pack=function():I{U{}};let held=pack();let dead=V{};held->f()==1")
+  (let ((source "type U=struct{};type V=struct{};interface I{let f = function():int;}implement U against I{let f=function():int{1};}implement V against I{let f=function():int{2};}let pack=function():I{U{}};let held: I=pack();let dead: V=V{};held->f()==1")
         (original (fdefinition 'mognitio.native.runtime::value-helper-units)))
     (dolist (wrong '(nil t))
       (replacing (mognitio.native.runtime::value-helper-units

@@ -8,6 +8,8 @@
          (bindings (make-array 0 :adjustable t :fill-pointer 0))
          (signatures (make-array 0 :adjustable t :fill-pointer 0))
          (functions (make-hash-table :test #'eq)) (loops (make-hash-table :test #'eq))
+         (errors (make-hash-table :test #'eq))
+         (node-owners (make-hash-table :test #'eq))
          (controls (make-hash-table :test #'eq)) (values-context (make-value-context)) (loop-stack nil) (edges (make-hash-table)) (owner 0))
     (labels ((lookup (token scopes)
                (loop for scope in scopes for entry = (gethash (token-text token) scope) when entry return entry))
@@ -27,6 +29,7 @@
                (setf (gethash node operations)
                      (make-operation-info :kind kind :operands operands :parameter-types parameters :result-type result)))
              (summary (node type children &optional targets returns-p extra-exits)
+               (setf (gethash node node-owners) owner)
                (let ((may-return returns-p) (reachable t) (exits nil))
                  (dolist (child children)
                    (when reachable (setf may-return (or may-return (completion-may-return child))
@@ -64,6 +67,11 @@
                  (summary node (when reachable (if terminal (normal (first children)) :void))
                           (reverse children) (when terminal (completion-targets (first children))))))
              (function-check (node scopes &optional existing receiver-type)
+               (let ((id (if existing (signature-id existing) (length signatures)))
+                     (outer-types (visible-type-parameters values-context)))
+                 (call-with-type-parameters values-context (function-expression-type-parameters node) (list :function id)
+                   (lambda (parameters) (function-check-inner node scopes existing receiver-type parameters outer-types)))))
+             (function-check-inner (node scopes existing receiver-type parameters outer-types)
                (let* ((sig (or existing
                               (make-signature :id (length signatures) :declaration node
                                 :parameter-types (map 'list (lambda (p) (resolve-type-token values-context (parameter-type p)))
@@ -71,6 +79,8 @@
                                 :result-type (resolve-type-token values-context (function-expression-result-type node)))))
                       (id (signature-id sig)) (outer owner) (outer-loops loop-stack)
                       (body-scope (cons (make-hash-table :test #'equal) scopes)))
+                 (setf (signature-type-parameters sig) parameters (signature-lexical-parameters sig) outer-types
+                       (signature-parent sig) owner)
                  (unless existing (vector-push-extend sig signatures))
                  (setf (gethash node functions) sig owner id loop-stack nil)
                  (when receiver-type
@@ -82,9 +92,27 @@
                  (let ((body (expression (function-expression-body node) body-scope)))
                    (check-adaptation values-context (function-expression-body node) (normal body) (signature-result-type sig)))
                  (setf owner outer loop-stack outer-loops)
-                 (summary node (signature-type sig) nil (list id))))
-             (expression (node scopes)
+                 (summary node (if parameters :void (signature-type sig)) nil (unless parameters (list id)))))
+             (expression (node scopes &optional (use :value))
+               (setf (gethash node node-owners) owner)
                (typecase node
+                 (panic-expression
+                  (let* ((child (expression (panic-expression-block node) scopes)) (type (normal child)))
+                    (require-type node type :string)
+                    (setf (gethash node errors) (make-error-info :kind :panic :operand-type type :owner owner))
+                    (summary node nil (list child))))
+                 (try-expression
+                  (when (zerop owner) (fail-at (node-span node) :semantic "Try requires a function"))
+                  (let* ((child (expression (try-expression-operand node) scopes)) (type (normal child))
+                         (arguments (when type (canonical-result-arguments values-context type)))
+                         (returned (when type (signature-result-type (aref signatures owner))))
+                         (target (when type (canonical-result-arguments values-context returned))))
+                    (when (and type (not (and arguments target (equal (second arguments) (second target)))))
+                      (fail-at (node-span node) :semantic "Try requires canonical Result with identical error types"))
+                    (setf (gethash node errors) (make-error-info :kind :try :operand-type type
+                                                :result-type (first arguments) :return-type returned :owner owner))
+                    (summary node (first arguments) (list child) nil (not (null type))
+                             (when type (list (list :return owner nil nil))))))
                  (loop-expression
                   (let* ((info (make-loop-info :id (hash-table-count loops) :owner owner :node node))
                          (outer loop-stack))
@@ -142,14 +170,19 @@
                  (integer-literal (setf (gethash node literals) (literal node nil)) (summary node :int nil))
                  (variable-reference
                   (let ((symbol (reference node (variable-reference-name node) scopes)))
-                    (summary node (local-symbol-type symbol) nil (local-symbol-targets symbol))))
-                 (function-expression (function-check node scopes))
+                    (when (and (local-symbol-template symbol) (not (member use '(:binding :generic-callee))))
+                      (fail-at (node-span node) :semantic "Generic function is not a runtime value"))
+                    (summary node (if (local-symbol-template symbol) :void (local-symbol-type symbol)) nil (local-symbol-targets symbol))))
+                 (function-expression
+                  (when (and (plusp (length (function-expression-type-parameters node))) (not (eq use :binding)))
+                    (fail-at (node-span node) :semantic "Generic function requires a direct let binding"))
+                  (function-check node scopes))
                  ((or data-declaration contract-declaration implementation-declaration struct-expression enum-expression
                       field-expression field-assignment this-expression branch-expression)
                   (check-value-node node scopes values-context #'expression #'summary #'require-type
                                     #'declare-local #'function-check owner signatures))
                  (grouping
-                  (let ((child (expression (grouping-expression node) scopes)))
+                  (let ((child (expression (grouping-expression node) scopes use)))
                     (summary node (normal child) (list child) (completion-targets child))))
                  (sequence-node
                   (sequence-check node (sequence-node-statements node) (sequence-node-terminal node)
@@ -157,13 +190,25 @@
                  (local-binding
                   (unless (member (local-binding-mutability node) '(:let :var)) (internal-error "Invalid mutability"))
                   (let* ((entry (declare-local node (local-binding-name node) (local-binding-mutability node) scopes))
-                         (child (expression (local-binding-initializer node) scopes)))
+                         (child (expression (local-binding-initializer node) scopes :binding)))
                     (unless (normal child) (fail-at (node-span node) :semantic "Initializer has no normal type"))
                     (when (and (eq (local-binding-mutability node) :var) (function-type-p (normal child)))
                       (fail-at (node-span node) :semantic "Mutable function values are not supported"))
-                    (setf (local-symbol-type (car entry)) (normal child) (cdr entry) :visible
-                          (local-symbol-targets (car entry)) (completion-targets child)
-                          (local-symbol-static-target (car entry)) (static-target (local-binding-initializer node)))
+                    (let* ((annotation (local-binding-annotation node))
+                           (static (static-target (local-binding-initializer node)))
+                           (template (and static (signature-type-parameters (aref signatures static))))
+                           (type (unless template (if annotation (resolve-type-token values-context annotation) (normal child)))))
+                      (if template
+                          (unless (and (eq (local-binding-mutability node) :let) (null annotation))
+                            (fail-at (node-span node) :semantic "Generic binding requires its explicit function signature"))
+                          (progn
+                            (unless (or annotation (and (eq (local-binding-mutability node) :let) static))
+                              (fail-at (node-span node) :semantic "Ordinary binding requires a type annotation"))
+                            (check-adaptation values-context (local-binding-initializer node) (normal child) type)))
+                      (setf (local-symbol-type (car entry)) type (cdr entry) :visible
+                            (local-symbol-template (car entry)) (when template static)
+                            (local-symbol-targets (car entry)) (completion-targets child)
+                            (local-symbol-static-target (car entry)) static))
                     (summary node :void (list child))))
                  (assignment
                   (let* ((symbol (reference node (assignment-name node) scopes))
@@ -205,7 +250,19 @@
                               (when (member-info-contract info) (push (list node owner info) (value-context-interface-calls values-context)))))))
                     (summary node (when (and (normal head) (every #'normal children)) result) (cons head children))))
                  (call-expression
-                  (let* ((callee (expression (call-expression-callee node) scopes)) (type (normal callee))
+                  (let* ((explicit (call-expression-type-arguments node))
+                         (head (call-expression-callee node))
+                         (callee (expression head scopes (if explicit :generic-callee :value)))
+                         (template (when explicit
+                                     (unless (typep head 'variable-reference)
+                                       (fail-at (node-span node) :semantic "Generic call requires a named binding"))
+                                     (or (local-symbol-template (gethash head resolved))
+                                         (fail-at (node-span node) :semantic "Callee is not generic"))))
+                         (arguments (when explicit (resolve-function-type-arguments values-context (aref signatures template) explicit node)))
+                         (type (if explicit (substitute-generic-type values-context (signature-type (aref signatures template))
+                                                                    (pairlis (signature-type-parameters (aref signatures template)) arguments))
+                                   (normal callee)))
+                         (targets (if explicit (list template) (completion-targets callee)))
                          (children (loop for arg across (call-expression-arguments node) collect (expression arg scopes))))
                     (when type
                       (unless (function-type-p type) (fail-at (node-span node) :semantic "Callee is not a function"))
@@ -213,8 +270,8 @@
                         (fail-at (node-span node) :semantic "Wrong argument count"))
                       (loop for arg across (call-expression-arguments node) for child in children for expected in (second type)
                             do (check-adaptation values-context arg (normal child) expected)))
-                    (setf (gethash node calls) (make-call-info :type type :targets (completion-targets callee) :owner owner))
-                    (dolist (target (completion-targets callee)) (push (cons target (node-span node)) (gethash owner edges)))
+                    (setf (gethash node calls) (make-call-info :type type :targets targets :owner owner :template template :type-arguments arguments))
+                    (dolist (target targets) (push (cons target (node-span node)) (gethash owner edges)))
                     (summary node (when (and type (every #'normal children)) (third type)) (cons callee children))))
                  (unary-expression
                   (unless (eq (token-kind (unary-expression-operator node)) :sub) (internal-error "Invalid unary operator"))
@@ -273,7 +330,7 @@
       (check-call-graph (loop for id below (length signatures) collect id) edges
                         (lambda (span) (fail-at span :semantic "Recursive call graph")))
       (%make-checked-program :program program :summaries summaries :symbols resolved
-        :literals literals :consumed consumed :bindings bindings :signatures signatures :calls calls :returns returns :functions functions :loops loops :controls controls :operations operations :values values-context))))
+        :literals literals :consumed consumed :bindings bindings :signatures signatures :calls calls :returns returns :functions functions :loops loops :controls controls :operations operations :values values-context :node-owners node-owners :errors errors))))
 
 (defun checked-string-literals (checked)
   ;; Checked summaries cover every child, including nonexecuted prefixes and

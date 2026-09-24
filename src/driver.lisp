@@ -59,6 +59,7 @@
              (handler-case (progn (render-diagnostic diagnostic stderr) code)
                ((or error storage-condition) () 3))))
     (handler-case (run-pipeline argv stdout)
+      (mognitio.runtime::program-panic (condition) (mognitio.runtime::write-panic condition stderr))
       (mognitio.runtime:program-runtime-failure (condition)
         (mognitio.runtime:write-runtime-failure condition stderr))
       (source-failure (condition)

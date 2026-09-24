@@ -28,6 +28,7 @@
   (is (v06-checked (format nil "~C~A" (code-char #xfeff) "\"A\"->length()==1"))))
 
 (deftest v06-postfix-and-static-contracts
+  (is (typep (local-binding-annotation (aref (program-statements (parse-text "let a:string=\"a\"; true")) 0)) 'token))
   (let* ((checked (v06-checked "\"Aあ😀\"->slice(1,3)->length()==2"))
          (outer (binary-expression-left (program-root (checked-program-program checked))))
          (inner (method-call-receiver outer)))
@@ -36,9 +37,9 @@
     (same :text.slice (operation-info-kind (checked-operation checked inner)))
     (same :string (checked-normal-type checked inner)))
   (dolist (source
-    '("let f=function(x:string):string {x}; let a=f(\"a\"); var b=a; b=\"b\"; a==\"a\""
-      "let length=1; let slice=2; let string_length=function(x:string):int {x->length()}; let string_slice=string_length; string_slice(\"a\")==1"
-      "let class=1; class==1"
+    '("let f=function(x:string):string {x}; let a: string=f(\"a\"); var b: string=a; b=\"b\"; a==\"a\""
+      "let length: int=1; let slice: int=2; let string_length=function(x:string):int {x->length()}; let string_slice=string_length; string_slice(\"a\")==1"
+      "let class: int=1; class==1"
       "let f=function():string {branch when{(true)=>{return \"a\";},else=>{\"b\"}}}; f()==\"a\""
       "loop {break \"a\";}==\"a\""
       "let f=function():int {({return 7;})->unknown(1,2)}; f()==7"
@@ -54,8 +55,8 @@
       "\"a\"->length(1)==1" "\"a\"->slice(0)==\"a\"" "\"a\"->slice(0,1,2)==\"a\""
       "\"a\"->slice(false,1)==\"a\"" "\"a\"->slice(0,\"a\")==\"a\""
       "string_length(\"a\")==1" "string_slice(\"a\",0,1)==\"a\""
-      "let a=\"a\"; let f=function():string {a}; true"
-      "let f=function():string {f()}; true" "var a=\"a\"; a=1; true"
+      "let a: string=\"a\"; let f=function():string {a}; true"
+      "let f=function():string {f()}; true" "var a: string=\"a\"; a=1; true"
       "branch when{(true)=>{\"a\"},else=>{1}}" "loop {branch when{(true)=>{break \"a\";}}; break 1;}==\"a\""
       "loop {branch when{(true)=>{break;}}; break \"a\";}; true"
       "let f=function():string {return;}; true"
@@ -68,7 +69,7 @@
   (dolist (source '("\"a\"->length" "(\"a\"->length)()")) (v03-reject source "semantic"))
   (dolist (source '("let string=1; true" "let f=function(string:int):int {1}; true"
                     "string::length" "string::length(\"a\")"
-                    "\"a\" \"b\"" "let a:string=\"a\"; true"))
+                    "\"a\" \"b\""))
     (v03-reject source "parse"))
   (dolist (source '("'a'" "\"a\"[0]" "\"a\".length()")) (v03-reject source "lex")))
 

@@ -65,7 +65,7 @@ identity. Matching semantic versions alone does not establish matching
 identities. Record the revision, content manifest (including uncommitted
 changes), SBCL/ASDF versions, and any code-generation configuration.
 Paths, timestamps, process IDs, and cache contents are not embedded in the
-executable. See the [v0.7.0 release validation](v0.7.0-release.md) for the current release.
+executable. See the [v0.8.0 release validation](v0.8.0-release.md) for the current release.
 The [v0.6.0 validation](v0.6.0.md) and [development progress](v0.6.0-progress.md)
 remain historical records.
 The [v0.5.0](v0.5.0.md), [v0.4.1](v0.4.1.md), [v0.4.0](v0.4.0.md), and
@@ -77,6 +77,11 @@ the version branch does not create a release.
 The [follow-up review validation](v0.7.0-review.md) covers the current interface
 requirement spelling, isolated rejection fixtures, reused payload initialization,
 and implementation-table layout order.
+
+The [v0.8.0 development validation](v0.8.0.md) covers explicit generics,
+Result propagation and block panic. The source acceptance evidence can be
+reproduced with `python3 scripts/verify-v08.py --output /tmp/v08-results.json`.
+This supplements the cumulative suite and does not create a release.
 
 ## Repository checks
 

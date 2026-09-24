@@ -81,7 +81,7 @@
           (progn (same 0 code) (same "" err) (same (format nil "~(~A~)~%" expected) out))))))
 
 (deftest n24-d08-deterministic-cold-warm-relocation
-  (check-native-relocation "var x = 1; let n = branch when{(true)=>{x = 2; 3},else=>{4}}; x + n == 6" :false))
+  (check-native-relocation "var x: int = 1; let n: int = branch when{(true)=>{x = 2; 3},else=>{4}}; x + n == 6" :false))
 
 (deftest v04-deterministic-standalone
   (check-native-relocation "let g = function(n: int): int { branch when{(n < 0)=>{return -n;},else=>{n}} }; let f = function(n: int): int { g(n) + 1 }; f(-3) == 4" :true)

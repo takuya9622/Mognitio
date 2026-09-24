@@ -2,14 +2,16 @@
 
 ;; Declaration and branch parsing shares the main parser's cursor through
 ;; lexical callbacks, keeping token consumption in one place.
-(defun parse-value-form (mode peek take expect expression block type-name comma-list function-reader binding-reader)
+(defun parse-value-form (mode peek take expect expression block type-name comma-list function-reader binding-reader type-parameters expression-name)
+  (declare (ignore block))
   (labels ((kind () (token-kind (funcall peek)))
            (get-token (k) (funcall expect k))
            (start (x) (span-start (if (typep x 'token) (token-span x) (node-span x))))
            (end (x) (span-end (if (typep x 'token) (token-span x) (node-span x))))
            (span (a b) (make-span (span-source (if (typep a 'token) (token-span a) (node-span a))) (start a) (end b)))
            (pattern ()
-             (let ((name (get-token :identifier)))
+             (let ((name (funcall type-name)))
+               (unless (eq (token-kind name) :identifier) (fail-at (token-span name) :parse "Expected pattern type"))
                (get-token :scope)
                (let* ((variant (get-token :identifier)) (last variant) (bindings nil))
                  (when (eq (kind) :left-paren)
@@ -22,10 +24,9 @@
                (get-token :colon)
                (let ((value (funcall expression)))
                  (make-named-member :name name :value value :span (span name value))))))
-    (declare (ignore block))
     (ecase mode
       (:type
-       (let ((keyword (get-token :type)) (name (get-token :identifier)))
+       (let* ((keyword (get-token :type)) (name (get-token :identifier)) (types (funcall type-parameters)))
          (get-token :assign)
          (let ((tag (kind)) (members nil) (target nil))
            (if (member tag '(:struct :enum))
@@ -41,7 +42,7 @@
                  (when (and (eq tag :enum) (null members)) (fail-at (token-span (funcall peek)) :parse "Empty enum"))
                  (get-token :right-brace))
                (setf tag :alias target (funcall type-name)))
-           (make-data-declaration :name name :kind tag :target target :members (coerce (nreverse members) 'vector)
+           (make-data-declaration :name name :kind tag :target target :type-parameters types :members (coerce (nreverse members) 'vector)
              :span (span keyword (get-token :semicolon))))))
       (:interface
        (let ((keyword (get-token :interface)) (name (get-token :identifier)) (methods nil))
@@ -61,8 +62,12 @@
          (loop until (eq (kind) :right-brace) do
            (unless (eq (kind) :let) (fail-at (token-span (funcall peek)) :parse "Expected method binding"))
            (let ((method (funcall binding-reader)))
+             (when (local-binding-annotation method)
+               (fail-at (node-span method) :parse "Method binding uses its function signature"))
              (unless (typep (local-binding-initializer method) 'function-expression)
                (fail-at (node-span method) :parse "Method requires a function expression"))
+             (when (plusp (length (function-expression-type-parameters (local-binding-initializer method))))
+               (fail-at (node-span method) :parse "Generic method is not supported"))
              (push method methods)))
          (make-implementation-declaration :target target :contract contract :methods (coerce (nreverse methods) 'vector)
            :span (span keyword (get-token :right-brace)))))
@@ -82,8 +87,16 @@
                              (make-branch-arm :selector selector :value value :span (span first value))))) :right-brace nil)))
            (make-branch-expression :mode tag :subject subject :arms arms :span (span keyword (get-token :right-brace))))))
       (:identifier
-       (let ((name (get-token :identifier)))
+       (let ((name (funcall expression-name)))
          (case (kind)
+           (:left-paren
+            (if (typep name 'type-syntax)
+                (progn (funcall take)
+                  (let* ((args (funcall comma-list expression)) (close (get-token :right-paren)))
+                    (make-call-expression :callee (make-variable-reference :name (type-syntax-name name)
+                                                    :span (token-span (type-syntax-name name)))
+                      :type-arguments (type-syntax-arguments name) :arguments args :span (span name close))))
+                (make-variable-reference :name name :span (token-span name))))
            (:scope
             (funcall take)
             (let* ((variant (get-token :identifier)) (last variant) (parens (eq (kind) :left-paren)) (arguments #()))

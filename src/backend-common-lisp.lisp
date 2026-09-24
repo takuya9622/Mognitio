@@ -32,6 +32,19 @@
     (typecase node
       ((or data-declaration contract-declaration implementation-declaration struct-expression enum-expression field-expression this-expression branch-expression)
        (value-expression-form node checked names functions exits loops))
+      (panic-expression
+       (let ((child (panic-expression-block node)))
+         (if (checked-normal-type checked child) (list 'mognitio.runtime::raise-panic (form child)) (form child))))
+      (try-expression
+       (let* ((child (try-expression-operand node)) (info (checked-error checked node)) (value (make-symbol "RESULT")))
+         (if (null (checked-normal-type checked child)) (form child)
+             (list 'cl:let (list (list value (form child)))
+                   (list 'cl:case (list 'mognitio.value:tag value)
+                         (list 0 (list 'mognitio.value:field value 0))
+                         (list 1 (list 'cl:return-from (gethash (error-info-owner info) exits)
+                                       (list 'mognitio.value:construct (list 'cl:quote (error-info-return-type info)) 1
+                                             (list 'mognitio.value:field value 0))))
+                         (list 'cl:otherwise (list 'mognitio.diagnostics:internal-error "Invalid Result tag")))))))
       (loop-expression
        (let* ((id (loop-info-id (checked-loop checked node))) (exit (make-symbol "BREAK")) (again (make-symbol "CONTINUE"))
               (inner (acons id (cons exit again) loops)))
@@ -61,6 +74,7 @@
       (assignment (list 'cl:progn (list 'cl:setq (symbol-for node) (form (assignment-rhs node))) (list 'cl:quote *void-value*)))
       (boolean-literal (ecase (boolean-literal-value node) (:true t) (:false nil)))
       (integer-literal (checked-literal checked node))
+      (concrete-function-reference (concrete-function-reference-target node))
       (function-expression (signature-id (checked-function checked node)))
       (variable-reference (or (local-symbol-static-target (checked-symbol checked node)) (symbol-for node)))
       (sequence-node (sequence-form (sequence-node-statements node) (sequence-node-terminal node) 0))
@@ -154,7 +168,7 @@
         (fail-at span :internal "Host compilation or execution failed" 'internal-failure)))))
 
 (defun compile-program (checked)
-  (verify-checked-program checked)
+  (setf checked (mognitio.semantic::prepare-runtime-program checked))
   (let* ((root (program-root (checked-program-program checked)))
          (span (node-span root)))
     (call-isolated

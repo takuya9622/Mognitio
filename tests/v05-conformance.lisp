@@ -11,7 +11,7 @@
     (dolist (template '("let ~A = 1; true" "var ~A = 1; true" "let f = function(~A: int): int {1}; true"))
       (v03-reject (format nil template word) "parse")))
   (dolist (name '("Loop" "Void" "loopCount" "discard" "over" "as" "rec" "never"))
-    (v03-positive (format nil "let ~A = true; ~A" name name) :true))
+    (v03-positive (format nil "let ~A: bool = true; ~A" name name) :true))
   (dolist (space (list " " (string #\Tab) (string #\Return) (string #\Newline)))
     (let* ((text (format nil "-~A-1 == 1" space))
            (diag (diagnostic-of (lambda () (parse-text text)))))
@@ -38,13 +38,13 @@
       "let f = function(left: int): int {left}; let g = function(right: int): int {right + 1}; (branch when{(false)=>{f},else=>{g}})(7) == 8"
       "let f = function(flag: bool): int {branch when{(flag)=>{loop {}},else=>{7}}}; f(false) == 7"
       "let f = function(): bool { let g = function(): bool {false}; g() }; f() == false"
-      "let x = {var n = 0; n = 1;}; x; (void); {true}"
-      "var i = 0; let answer = loop {i = i + 1; branch when{(i == 3)=>{break i * 10;}};}; answer == 30"
-      "var checks=0; var runs=0; loop while({checks=checks+1; branch when{(checks<3)=>{continue;}}; checks<5}){runs=runs+1;}; branch when{(checks==5)=>{runs==2},else=>{false}}"
-      "let double = function(value: int): int {value*2}; let inc = function(value: int): int {value+1}; var state=0; let result=(branch when{({state=1;true})=>{double},else=>{inc}})({state=state*10+2;3}); branch when{(result==6)=>{state==12},else=>{false}}"
+      "let x: void = {var n: int = 0; n = 1;}; x; (void); {true}"
+      "var i: int = 0; let answer: int = loop {i = i + 1; branch when{(i == 3)=>{break i * 10;}};}; answer == 30"
+      "var checks: int=0; var runs: int=0; loop while({checks=checks+1; branch when{(checks<3)=>{continue;}}; checks<5}){runs=runs+1;}; branch when{(checks==5)=>{runs==2},else=>{false}}"
+      "let double = function(value: int): int {value*2}; let inc = function(value: int): int {value+1}; var state: int=0; let result: int=(branch when{({state=1;true})=>{double},else=>{inc}})({state=state*10+2;3}); branch when{(result==6)=>{state==12},else=>{false}}"
       "let f = function(a: int,b: int): int {a+b}; let g = function(stop: bool): int {f(branch when{(stop)=>{return 7;},else=>{1}},1/0)}; g(true)==7"
       "let f = function(): int {loop {break {return 7;};}}; f()==7"
-      "var n=0; loop while(n<1){n=n+1;}; n==1"
+      "var n: int=0; loop while(n<1){n=n+1;}; n==1"
       "let f = function(a: void,b: bool,c: int,d: void,e: bool,fifth: int,g: void,h: int): void {a; d; g; branch when{(b)=>{branch when{(e)=>{return;}};}}; void}; f(void,true,3,{},false,5,void,8); true"))
     (v03-positive source :true))
   (v03-positive "loop {break false;}" :false)
@@ -68,22 +68,22 @@
   (dolist (type '("int" "bool" "void"))
     (dolist (mutable '("let" "var"))
       (let ((value (cond ((equal type "int") "1") ((equal type "bool") "true") (t "void"))))
-        (v03-reject (format nil "~A captured=~A; let f=function(): ~A {captured}; true" mutable value type) "semantic")
+        (v03-reject (format nil "~A captured:~A=~A; let f=function(): ~A {captured}; true" mutable type value type) "semantic")
         (v03-reject (format nil "let outer=function(captured: ~A): ~A {let inner=function(): ~A {captured}; inner()}; true" type type type) "semantic"))))
   (dolist (index '(0 1 2))
-    (v03-positive (format nil "let a=function(): int {10}; let b=function(): int {20}; let c=function(): int {30}; let n=~D; (branch when{(n==0)=>{a},else=>{branch when{(n==1)=>{b},else=>{c}}}})()==~D" index (* 10 (1+ index))) :true)))
+    (v03-positive (format nil "let a=function(): int {10}; let b=function(): int {20}; let c=function(): int {30}; let n: int=~D; (branch when{(n==0)=>{a},else=>{branch when{(n==1)=>{b},else=>{c}}}})()==~D" index (* 10 (1+ index))) :true)))
 
 (deftest v05-runtime-order-and-artifacts
   (dolist (pair
-    '(("let f=function(x: int): int {1%0}; ({let bad=1/0; f})(9223372036854775807+1)==0" "division by zero")
+    '(("let f=function(x: int): int {1%0}; ({let bad: int=1/0; f})(9223372036854775807+1)==0" "division by zero")
       ("let f=function(a: int,b: int): int {1%0}; f(9223372036854775807+1,1/0)==0" "integer overflow")
       ("let f=function(a: int,b: int): int {1%0}; f(1,1/0)==0" "division by zero")
       ("let f=function(a: int,b: int): int {1%0}; f(1,2)==0" "remainder by zero")
       ("let f=function(a: int,b: int): int {a+b}; let g=function(stop: bool): int {f(branch when{(stop)=>{return 7;},else=>{1}},1/0)}; g(false)==7" "division by zero")
-      ("var n=9223372036854775807; loop {n=n+1; break;}; true" "integer overflow")
-      ("loop {let bad=1%0; break;}; true" "remainder by zero")))
+      ("var n: int=9223372036854775807; loop {n=n+1; break;}; true" "integer overflow")
+      ("loop {let bad: int=1%0; break;}; true" "remainder by zero")))
     (v03-runtime (first pair) (second pair)))
-  (check-native-relocation "let f=function(): void {}; var n=0; loop while(n<3){f(); n=n+1;}; n==3" :true)
+  (check-native-relocation "let f=function(): void {}; var n: int=0; loop while(n<3){f(); n=n+1;}; n==3" :true)
   (check-native-relocation "let f=function(): int {1/0}; loop {break f();}==1" "division by zero"))
 
 (deftest v05-large-mixed-void-call
@@ -110,4 +110,4 @@
         (is end "Unclosed README example")
         (v03-positive (subseq text body end) :true t)
         (incf count) (setf cursor (+ end 3))))
-    (same 5 count)))
+    (same 6 count)))
