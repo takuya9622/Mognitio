@@ -19,7 +19,8 @@
              "let make=function():bool{let unused=function<T>(value:T):T{value}; let alias=unused; true}; make()"
              "let identity=function<T>(value:T):T{let copy:T=value; copy}; identity<void>(void); true"
              "let used=function<T>():void{let holder=function(value:T):T{value};}; true"))
-    (is (v08-check-template source)))
+    (is (v08-check-template source))
+    (v07-accept source))
   (let* ((checked (v08-check-template "let identity=function<T>(value:T):T{value}; let alias=identity; true"))
          (statements (program-statements (checked-program-program checked))))
     (loop for statement across statements do

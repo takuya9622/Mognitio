@@ -7,7 +7,7 @@
 (defstruct call-info type targets owner type-arguments template)
 (defstruct operation-info kind operands parameter-types result-type)
 (defstruct (checked-program (:constructor %make-checked-program))
-  program summaries symbols literals consumed bindings signatures calls returns functions loops controls operations values node-owners)
+  program summaries symbols literals consumed bindings signatures calls returns functions loops controls operations values node-owners specialization)
 (defun function-type-p (type) (and (consp type) (eq (first type) :function) (= (length type) 3)))
 (defun signature-type (signature)
   (list :function (signature-parameter-types signature) (signature-result-type signature)))

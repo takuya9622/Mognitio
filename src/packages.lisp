@@ -13,7 +13,8 @@
            #:span-diagnostic #:fail-at))
 (defpackage #:mognitio.syntax
   (:use #:cl #:mognitio.source)
-  (:export #:type-syntax #:make-type-syntax #:type-syntax-name #:type-syntax-arguments
+  (:export #:concrete-function-reference #:make-concrete-function-reference #:concrete-function-reference-target
+           #:type-syntax #:make-type-syntax #:type-syntax-name #:type-syntax-arguments
            #:data-declaration-type-parameters #:function-expression-type-parameters
            #:local-binding-annotation #:call-expression-type-arguments
            #:try-expression #:make-try-expression #:try-expression-operand

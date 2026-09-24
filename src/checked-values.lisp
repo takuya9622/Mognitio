@@ -6,7 +6,7 @@
   (reserved (make-hash-table :test #'eq)) (next-signature 1) pending)
 (defun verification-ensure (value message) (unless value (internal-error message)))
 (defun type-shape (info)
-  (list (type-info-id info) (type-info-kind info) (type-info-name info) (type-info-fields info) (type-info-origin info) (type-info-arguments info)
+  (list (type-info-id info) (type-info-kind info) (type-info-name info) (type-info-fields info) (type-info-origin info) (type-info-arguments info) (type-info-source-id info)
         (mapcar (lambda (x) (list (variant-info-id x) (variant-info-name x) (variant-info-types x))) (type-info-variants info))
         (mapcar (lambda (x) (list (requirement-name x) (requirement-parameters x) (requirement-result x))) (type-info-methods info))))
 (defun implementation-shape (info)

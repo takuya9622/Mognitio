@@ -61,6 +61,7 @@
       (assignment (list 'cl:progn (list 'cl:setq (symbol-for node) (form (assignment-rhs node))) (list 'cl:quote *void-value*)))
       (boolean-literal (ecase (boolean-literal-value node) (:true t) (:false nil)))
       (integer-literal (checked-literal checked node))
+      (concrete-function-reference (concrete-function-reference-target node))
       (function-expression (signature-id (checked-function checked node)))
       (variable-reference (or (local-symbol-static-target (checked-symbol checked node)) (symbol-for node)))
       (sequence-node (sequence-form (sequence-node-statements node) (sequence-node-terminal node) 0))
@@ -154,7 +155,7 @@
         (fail-at span :internal "Host compilation or execution failed" 'internal-failure)))))
 
 (defun compile-program (checked)
-  (verify-checked-program checked)
+  (setf checked (mognitio.semantic::prepare-runtime-program checked))
   (let* ((root (program-root (checked-program-program checked)))
          (span (node-span root)))
     (call-isolated

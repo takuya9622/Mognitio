@@ -1,6 +1,6 @@
 (in-package #:mognitio.semantic)
 
-(defstruct type-info id kind name fields variants methods origin arguments)
+(defstruct type-info id kind name fields variants methods origin arguments source-id)
 (defstruct variant-info id name types)
 (defstruct requirement name parameters result)
 (defstruct implementation-info id concrete contract methods)
