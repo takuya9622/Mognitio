@@ -77,7 +77,7 @@
       (:function (format nil "f~D" (second tree)))
       (:name (string-downcase (second tree)))
       (:set (format nil "~(~A~) = ~A;" (second tree) (render (third tree))))
-      (:let (format nil "var ~(~A~) = ~A;" (second tree) (render (third tree))))
+      (:let (format nil "var ~(~A~): ~(~A~) = ~A;" (second tree) (fourth tree) (render (third tree))))
       (:sequence
        (with-output-to-string (out)
          (write-string "{" out)
@@ -132,8 +132,8 @@
                              (list (list :if (binary :eq (name :i) (lit limit))
                                          (seq (list (list :break 0 (name :total)))) (seq nil)))))))
                (loop-node (list :loop 0 (when conditional (binary :lt (name :i) (lit limit))) body))
-               (worker (seq (list (list :let :base (lit (if (zerop (mod sample 11)) (1- (expt 2 63)) (- (next 19) 9))))
-                                  (list :let :i (lit 0)) (list :let :total (lit 0)) (list :let :flip (lit :true)))
+               (worker (seq (list (list :let :base (lit (if (zerop (mod sample 11)) (1- (expt 2 63)) (- (next 19) 9))) :int)
+                                  (list :let :i (lit 0) :int) (list :let :total (lit 0) :int) (list :let :flip (lit :true) :bool))
                             (if conditional (seq (list loop-node) (name :total)) loop-node))))
           (setf (aref functions 0) (list '(:left :right) (binary :add (name :left) (name :right)))
                 (aref functions 1) (list '(:left :right) (binary :sub (name :left) (name :right)))
@@ -146,7 +146,7 @@
                      (loop for fn across functions for id from 0 do
                        (format out "let f~D = function(~{~A~^,~}): int {~A}; " id
                                (mapcar (lambda (p) (format nil "~(~A~): int" p)) (first fn)) (v05-render (second fn))))
-                     (format out "let result = ~A; ~A" (v05-render entry)
+                     (format out "let result: int = ~A; ~A" (v05-render entry)
                              (if (stringp expected) "true" (format nil "result == (~D)" (second expected)))))))
             (handler-case
                 (if (stringp expected) (progn (incf failure-count) (v03-runtime source expected))

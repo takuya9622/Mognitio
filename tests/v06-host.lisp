@@ -8,25 +8,25 @@
       "\"a\\0\"+\"あ😀\"==\"a\\0あ😀\"" "\"a\"!=\"A\"" "\"é\"!=\"é\""
       "\"é\"->length()==2" "\"aあ😀\\0b\"->slice(1,4)==\"あ😀\\0\""
       "\"abc\"->slice(0,3)==\"abc\"" "\"abc\"->slice(0,0)==\"\"" "\"abc\"->slice(3,3)==\"\""
-      "var s=\"abc\"; let alias=s; s=\"z\"; alias==\"abc\""
-      "var s=\"abc\"; let part=s->slice({s=\"z\";1},3); part==\"bc\""
-      "var s=\"a\"; let result=s+{s=\"b\";s}; result==\"ab\""
-      "var n=0; let s={n=n+1;\"abc\"}->slice({n=n*10+2;0},{n=n*10+3;1}); branch when{(n==123)=>{s==\"a\"},else=>{false}}"
+      "var s: string=\"abc\"; let alias: string=s; s=\"z\"; alias==\"abc\""
+      "var s: string=\"abc\"; let part: string=s->slice({s=\"z\";1},3); part==\"bc\""
+      "var s: string=\"a\"; let result: string=s+{s=\"b\";s}; result==\"ab\""
+      "var n: int=0; let s: string={n=n+1;\"abc\"}->slice({n=n*10+2;0},{n=n*10+3;1}); branch when{(n==123)=>{s==\"a\"},else=>{false}}"
       "let f=function(x:string):string {x+\"!\"}; let g=function():string {f(\"あ\")}; g()==\"あ!\""
       "let f=function():int {({return 7;})->unknown(1/0)}; f()==7"
       "let f=function():int {\"abc\"->slice({return 7;},1/0)->length()}; f()==7"
       "let f=function():int {({return 7;})+\"a\"}; f()==7"
-      "let v=loop {\"a\"->slice({break \"ok\";},1/0);}; v==\"ok\""
-      "var i=0; loop while(i<3){i=i+1; \"a\"->slice({continue;},1/0);}; i==3"
+      "let v: string=loop {\"a\"->slice({break \"ok\";},1/0);}; v==\"ok\""
+      "var i: int=0; loop while(i<3){i=i+1; \"a\"->slice({continue;},1/0);}; i==3"
       "branch when{(true)=>{true},else=>{\"a\"->slice(-1,9)==\"\"}}"
       "let unused=function():string {\"a\"->slice(-1,9)}; true"
-      "let length=1; let slice=2; let string_length=function(x:string):int{x->length()}; let measure=string_length; measure(\"aあ😀\"->slice(1,3))==2"
+      "let length: int=1; let slice: int=2; let string_length=function(x:string):int{x->length()}; let measure=string_length; measure(\"aあ😀\"->slice(1,3))==2"
       "(branch when{(true)=>{\"abc\"},else=>{\"z\"}})->slice(0,1)->length()==1"
       "(loop {break \"abc\";})->length()==3"))
     (expect-source source :true))
   (expect-source "\"a\"==\"A\"" :false)
   (expect-source "\"a\"!=\"a\"" :false)
-  (let ((heading "let heading=function(source:string):string {let size=source->length(); var end=2; loop while(end<size){branch when{(source->slice(end,end+1)==\"\\n\")=>{break;}}; end=end+1;}; \"<h1>\"+source->slice(2,end)+\"</h1>\"}; "))
+  (let ((heading "let heading=function(source:string):string {let size:int=source->length(); var end:int=2; loop while(end<size){branch when{(source->slice(end,end+1)==\"\\n\")=>{break;}}; end=end+1;}; \"<h1>\"+source->slice(2,end)+\"</h1>\"}; "))
     (dolist (tail '("heading(\"# 題名😀\\n本文\")==\"<h1>題名😀</h1>\""
                     "heading(\"# 題名😀\")==\"<h1>題名😀</h1>\""
                     "heading(\"# \")==\"<h1></h1>\""))
@@ -38,7 +38,7 @@
                   ("\"a\"->slice(0,2)==\"\"" "string_index_out_of_bounds")
                   ("\"a\"->slice(-1,1/0)==\"\"" "division by zero")
                   ("\"a\"->slice(0,1/0)==\"\"" "division by zero")
-                  ("(\"a\"->slice(0,2)+{let bad=1/0;\"x\"})==\"\"" "string_index_out_of_bounds")))
+                  ("(\"a\"->slice(0,2)+{let bad: int=1/0;\"x\"})==\"\"" "string_index_out_of_bounds")))
     (let* ((path (put-text (fresh-path) (first pair)))
            (err (expect-cli (list "run" (namestring path)) 4)))
       (is (search (second pair) err))))
@@ -71,7 +71,7 @@
       (dotimes (i 60)
         (let* ((a (sample)) (b (sample)) (joined (append a b)) (start (next (1+ (length joined))))
                (end (+ start (next (1+ (- (length joined) start)))))
-               (source (format nil "let s=~A+~A; branch when{(s->length()==~D)=>{s->slice(~D,~D)==~A},else=>{false}}"
+               (source (format nil "let s: string=~A+~A; branch when{(s->length()==~D)=>{s->slice(~D,~D)==~A},else=>{false}}"
                                (v06-source-literal a) (v06-source-literal b) (length joined) start end
                                (v06-source-literal (subseq joined start end)))))
           (same :true (compiled-result source)))))))
@@ -87,8 +87,8 @@
   (let ((original (fdefinition 'mognitio.text::allocate-bytes)) (allocations 0))
     (replacing (mognitio.text::allocate-bytes
                  (lambda (size) (incf allocations) (sb-ext:gc :full t) (funcall original size)))
-      (same :true (compiled-result "let f=function(s:string):string {s+\"!\"}; let a=f(\"A\"); let b=f(\"B\"); let c=f(\"C\"); var carry=\"\"; var i=0; loop while(i<5){carry=f(carry); i=i+1;}; branch when{(a+b+c==\"A!B!C!\")=>{carry==\"!!!!!\"},else=>{false}}"))
-      (same :true (compiled-result "let f=function(s:string):string {s+\"!\"}; (f(\"abc\")->slice({let x=f(\"other\");1},{let y=f(\"value\");3}))+f(\"z\")==\"bcz!\"")))
+      (same :true (compiled-result "let f=function(s:string):string {s+\"!\"}; let a: string=f(\"A\"); let b: string=f(\"B\"); let c: string=f(\"C\"); var carry: string=\"\"; var i: int=0; loop while(i<5){carry=f(carry); i=i+1;}; branch when{(a+b+c==\"A!B!C!\")=>{carry==\"!!!!!\"},else=>{false}}"))
+      (same :true (compiled-result "let f=function(s:string):string {s+\"!\"}; (f(\"abc\")->slice({let x: string=f(\"other\");1},{let y: string=f(\"value\");3}))+f(\"z\")==\"bcz!\"")))
     (is (> allocations 10))))
 
 
@@ -101,7 +101,7 @@
     (is (search "allocations=9001 bytes=1179779072 dead=9001 held=3" out))))
 
 (deftest v06-host-fault-processes
-  (let ((path (put-text (fresh-path) "let unused=\"a\"+\"b\"; let later=1/0; true")))
+  (let ((path (put-text (fresh-path) "let unused: string=\"a\"+\"b\"; let later: int=1/0; true")))
     (dolist (test '(("allocation" 4 "allocation_failed") ("size" 4 "string_size_overflow")
                     ("compiler" 3 "internal")))
       (multiple-value-bind (out err code)
@@ -114,7 +114,7 @@
 
 
 (deftest v06-diagnostic-storage-failures
-  (let ((path (put-text (fresh-path) "let unused=\"a\"+\"b\"; let later=1/0; true")))
+  (let ((path (put-text (fresh-path) "let unused: string=\"a\"+\"b\"; let later: int=1/0; true")))
     (dolist (pair '(("allocation-report" 4) ("compiler-report" 3) ("source-report" 3)))
       (multiple-value-bind (out err code)
           (process-result (list "sbcl" "--noinform" "--script"

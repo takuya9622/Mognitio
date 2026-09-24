@@ -45,7 +45,7 @@
     (format t "~A" out)))
 
 (defparameter *v06-gc-source*
-  "let make=function(s:string):string{s+\"😀\\0\"}; let dead=\"discard\"+\"me\"; let hold=\"日\"+\"😀\\0\"; var carry=\"\"; var i=0; var good=true; loop while(i<100000){let t=make(\"Aあ\"); let c=t->slice(1,4); branch when{(c!=\"あ😀\\0\")=>{good=false; break;}}; carry=c; i=i+1;}; branch when{(good)=>{branch when{(hold==\"日😀\\0\")=>{carry==\"あ😀\\0\"},else=>{false}}},else=>{false}}")
+  "let make=function(s:string):string{s+\"😀\\0\"}; let dead: string=\"discard\"+\"me\"; let hold: string=\"日\"+\"😀\\0\"; var carry: string=\"\"; var i: int=0; var good: bool=true; loop while(i<100000){let t: string=make(\"Aあ\"); let c: string=t->slice(1,4); branch when{(c!=\"あ😀\\0\")=>{good=false; break;}}; carry=c; i=i+1;}; branch when{(good)=>{branch when{(hold==\"日😀\\0\")=>{carry==\"あ😀\\0\"},else=>{false}}},else=>{false}}")
 
 (deftest v06-native-gc-bounded-reclamation
   (dolist (stress '(nil t))
@@ -79,15 +79,15 @@
   ;; are zero; this fixture's checker inspects geometry, not artificial text.
   (dolist (pair '((3992 "split40") (4000 "whole32")))
     (v06-check-heap
-      (v06-gc-artifact "let x=\"a\"+\"b\"; true" '(:arena-unit 4096 :cap 4096)
+      (v06-gc-artifact "let x: string=\"a\"+\"b\"; true" '(:arena-unit 4096 :cap 4096)
         (append (v06-raw-frame) (v06-raw-allocate (first pair)) (v06-raw-finish))) (second pair)))
   (v06-check-heap
-    (v06-gc-artifact "let x=\"a\"+\"b\"; true" '(:arena-unit 4096 :cap 4096)
+    (v06-gc-artifact "let x: string=\"a\"+\"b\"; true" '(:arena-unit 4096 :cap 4096)
       (append (v06-raw-frame) (v06-raw-allocate 968) (v06-raw-allocate 968)
               (v06-raw-allocate 1968) '((:store-frame -32 :rax) (:call (:runtime :collect)))
               (v06-raw-allocate 1768) (v06-raw-finish))) "coalesce")
   (v06-check-heap
-    (v06-gc-artifact "let x=\"a\"+\"b\"; true" '(:arena-unit 4096 :cap 32768 :validate t)
+    (v06-gc-artifact "let x: string=\"a\"+\"b\"; true" '(:arena-unit 4096 :cap 32768 :validate t)
       (append (v06-raw-frame) (v06-raw-allocate 3000) '((:store-frame -32 :rax))
               (v06-raw-allocate 9000) '((:store-frame -24 :rax) (:call (:runtime :collect)))
               (v06-raw-finish))) "growth"))

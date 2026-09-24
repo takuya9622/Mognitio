@@ -62,6 +62,8 @@
          (loop until (eq (kind) :right-brace) do
            (unless (eq (kind) :let) (fail-at (token-span (funcall peek)) :parse "Expected method binding"))
            (let ((method (funcall binding-reader)))
+             (when (local-binding-annotation method)
+               (fail-at (node-span method) :parse "Method binding uses its function signature"))
              (unless (typep (local-binding-initializer method) 'function-expression)
                (fail-at (node-span method) :parse "Method requires a function expression"))
              (when (plusp (length (function-expression-type-parameters (local-binding-initializer method))))

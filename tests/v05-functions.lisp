@@ -7,13 +7,13 @@
       "let f = function(x: int): int { x + 1 }; let g = function(x: int): int { x - 1 }; (branch when{(false)=>{f},else=>{g}})(3) == 2"
       "let f = function(): int { 7 }; let alias = f; let g = function(): int { alias() }; g() == 7"
       "let f = function(): int { let g = function(x: int): int { x + 1 }; g(2) }; f() == 3"
-      "let a = function(): int { 10 }; let b = function(): int { 20 }; let choose = branch when{(true)=>{a},else=>{b}}; choose() == 10"
+      "let a = function(): int { 10 }; let b = function(): int { 20 }; (branch when{(true)=>{a},else=>{b}})() == 10"
       "let f = function(g: int): int { g }; let g = function(): int { 1 }; f(g()) == 1"
-      "let add = function(a: int, b: int): int { a + b }; let sub = function(a: int, b: int): int { a - b }; var flag = true; (branch when{(flag)=>{add},else=>{sub}})(10, branch when{(true)=>{flag = false; 3},else=>{0}}) == 13"))
+      "let add = function(a: int, b: int): int { a + b }; let sub = function(a: int, b: int): int { a - b }; var flag: bool = true; (branch when{(flag)=>{add},else=>{sub}})(10, branch when{(true)=>{flag = false; 3},else=>{0}}) == 13"))
     (v03-positive source :true))
   (dolist (source
-    '("let x = 1; let f = function(): int { x }; true"
-      "var x = 1; let f = function(): int { x }; true"
+    '("let x: int = 1; let f = function(): int { x }; true"
+      "var x: int = 1; let f = function(): int { x }; true"
       "let outer = function(x: int): int { let inner = function(): int { x }; inner() }; true"
       "let f = function(): int { 1 }; let selected = branch when{(true)=>{f},else=>{f}}; let g = function(): int { selected() }; true"
       "let f = function(): int { 1 }; var alias = f; true"

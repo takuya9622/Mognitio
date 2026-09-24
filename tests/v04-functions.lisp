@@ -6,14 +6,14 @@
               "let yes = function(): bool { true }; let value = function(): int { 42 }; branch when{(yes())=>{value() == 42},else=>{false}}"
               "let later = function(n: int): int { n * 2 }; let first = function(n: int): int { later(n) + later(2) }; first(3) == 10"
               "let add = function(a: int, b: int): int { a + b }; add(add(1, 2), add(3, 4)) == 10"
-              "let pair = function(a: int, b: int): int { a * 10 + b }; var n = 1; pair(n, branch when{(true)=>{n = 2; n},else=>{0}}) == 12"
-              "let twice = function(n: int): int { n * 2 }; let left = 7; left + twice(twice(3)) + left == 26"
-              "let update = function(n: int): int { var copy = n; copy = copy + 1; copy }; var n = 5; let a = update(n); let b = update(n); a + b + n == 17"
-              "let a = function(n: int): int { let local = n; local }; let b = function(n: int): int { let local = n + 1; local }; let n = 8; let local = 2; a(local) + b(local) + n == 13"
+              "let pair = function(a: int, b: int): int { a * 10 + b }; var n: int = 1; pair(n, branch when{(true)=>{n = 2; n},else=>{0}}) == 12"
+              "let twice = function(n: int): int { n * 2 }; let left: int = 7; left + twice(twice(3)) + left == 26"
+              "let update = function(n: int): int { var copy: int = n; copy = copy + 1; copy }; var n: int = 5; let a: int = update(n); let b: int = update(n); a + b + n == 17"
+              "let a = function(n: int): int { let local: int = n; local }; let b = function(n: int): int { let local: int = n + 1; local }; let n: int = 8; let local: int = 2; a(local) + b(local) + n == 13"
               "let unused = function(): int { 1 / 0 }; true"
               "let main = function(): int { 7 }; false == false"
               "let Void = function(never: int): int { let string = never; string }; Void(3) == 3"
-              "let Int = function(Bool: bool): bool { Bool }; let Function = true; let return1 = false; let bool1 = true; Int(Function) == bool1"))
+              "let Int = function(Bool: bool): bool { Bool }; let Function: bool = true; let return1: bool = false; let bool1: bool = true; Int(Function) == bool1"))
     (v03-positive source :true))
   (v03-positive "let no = function(): bool { false }; no()" :false t)
   (v03-positive "let mixed = function(a: bool, b: int, c: bool, d: int, e: int, f: bool, g: int, h: bool): bool { branch when{(a)=>{branch when{(c)=>{false},else=>{branch when{(f)=>{false},else=>{branch when{(h)=>{(b == -9223372036854775808) == (d == 9223372036854775807)},else=>{false}}}}}}},else=>{false}} }; mixed(true, -9223372036854775808, false, 9223372036854775807, 8, false, 9, true)" :true)
@@ -28,7 +28,7 @@
             '("let f = function(): int { return 7; }; f() == 7"
               "let f = function(b: bool): int { branch when{(b)=>{return 2;},else=>{3}} }; f(true) + f(false) == 5"
               "let f = function(b: bool): bool { branch when{(b)=>{return true;},else=>{return false;}} }; f(true) != f(false)"
-              "let f = function(stop: bool, n: int): int { let x = branch when{(stop)=>{return n;},else=>{n + 1}}; x * 2 }; f(true, 3) + f(false, 3) == 11"
+              "let f = function(stop: bool, n: int): int { let x: int = branch when{(stop)=>{return n;},else=>{n + 1}}; x * 2 }; f(true, 3) + f(false, 3) == 11"
               "let f = function(): int { return 2; }; let g = function(): int { f() + 3 }; g() == 5"
               "let pair = function(a: int, b: int): int { a + b }; let f = function(): int { pair(branch when{(true)=>{return 7;},else=>{return 8;}}, 1 / 0) }; f() == 7"
               "let f = function(): int { branch when{(branch when{(false)=>{return 7;},else=>{return 8;}})=>{1 / 0},else=>{2 / 0}} }; f() == 8"
@@ -36,8 +36,8 @@
               "let f = function(): int { 3 + branch when{(true)=>{return 7;},else=>{return 8;}} }; f() == 7"
               "let f = function(): int { -(branch when{(true)=>{return 7;},else=>{return 8;}}) }; f() == 7"
               "let f = function(): int { return branch when{(true)=>{return 7;},else=>{return 8;}}; }; f() == 7"
-              "let f = function(b: bool): int { var n = 1; let x = branch when{(b)=>{n = 2; return n;},else=>{n = 3; n}}; n + x }; f(false) == 6"
-              "let f = function(b: bool): int { var n = 1; let x = branch when{(b)=>{n = 2; n},else=>{return 3;}}; n + x }; f(true) == 4"
+              "let f = function(b: bool): int { var n: int = 1; let x: int = branch when{(b)=>{n = 2; return n;},else=>{n = 3; n}}; n + x }; f(false) == 6"
+              "let f = function(b: bool): int { var n: int = 1; let x: int = branch when{(b)=>{n = 2; n},else=>{return 3;}}; n + x }; f(true) == 4"
               "let bad = function(n: int): int { 1 / n }; let f = function(): int { bad(branch when{(true)=>{return 8;},else=>{return 9;}}) }; f() == 8"))
     (v03-positive source :true))
   ;; All source functions remain present, but no call is emitted after a return.
@@ -85,10 +85,10 @@
               "let f = function(x: int): int { let x = 1; x }; true"
               "let f = function(x: int): int { branch when{(false)=>{let x = 2; x},else=>{x}} }; true"
               "let f = function(): int { x }; let x = 1; true"
-              "let f = function(): int { let x = 1; x }; let g = function(): int { x }; true"
+              "let f = function(): int { let x: int = 1; x }; let g = function(): int { x }; true"
               "let f = function(x: int): int { x }; x == 1"
               "let f = function(): int { 1 }; f = 2; true"
-              "let f = 1; f() == 1" "missing()" "let f = function(): int { 1 }; var saved = f; true"
+              "let f: int = 1; f() == 1" "missing()" "let f = function(): int { 1 }; var saved = f; true"
               "let f = function(x: int): int { x }; f() == 1" "let f = function(x: int): int { x }; f(true) == 1"
               "let f = function(): int { true }; true" "let f = function(): int { return true; }; true"
               "let f = function(): int { branch when{(true)=>{return true;},else=>{1}} }; true"
@@ -97,12 +97,12 @@
               "let f = function(): int { let x = branch when{(true)=>{return 1;},else=>{return 2;}}; x }; true"
               "let f = function(): int { (branch when{(true)=>{return 1;},else=>{return 2;}}) + true }; true"
               "let f = function(): int { branch when{(branch when{(true)=>{return 1;},else=>{return 2;}})=>{1},else=>{true}} }; true"
-              "let f = function(): int { var n = 0; n = branch when{(true)=>{return 1;},else=>{return 2;}}; true }; true"
-              "let f = function(): int { var n = 0; n = branch when{(true)=>{return 1;},else=>{return 2;}}; missing }; true"
+              "let f = function(): int { var n: int = 0; n = branch when{(true)=>{return 1;},else=>{return 2;}}; true }; true"
+              "let f = function(): int { var n: int = 0; n = branch when{(true)=>{return 1;},else=>{return 2;}}; missing }; true"
               "let f = function(): int { f() }; true"
               "let f = function(): int { g() }; let g = function(): int { f() }; true"
               "let f = function(): int { branch when{(false)=>{f()},else=>{1}} }; true"
-              "let f = function(): int { var n = 1; n = branch when{(true)=>{return 1;},else=>{return 2;}}; f() }; true"
+              "let f = function(): int { var n: int = 1; n = branch when{(true)=>{return 1;},else=>{return 2;}}; f() }; true"
               "let f = function(): int { let x = x; x }; true"
               "let unused = function(): int { 9223372036854775808 }; true"))
     (v03-reject source "semantic")))
@@ -111,7 +111,7 @@
   (dolist (pair '(("let f = function(a: int, b: int): int { 9223372036854775807 + 1 }; f(1 / 0, 1 % 0) == 0" "division by zero")
                   ("let f = function(a: int): int { 1 % 0 }; f(1) == 0" "remainder by zero")
                   ("let f = function(): int { return 9223372036854775807 + 1; }; f() == 0" "integer overflow")
-                  ("let f = function(): int { 1 / 0 }; let unused = f(); true" "division by zero")
+                  ("let f = function(): int { 1 / 0 }; let unused: int = f(); true" "division by zero")
                   ("let f = function(): int { 1 % 0 }; let g = function(): int { f() + branch when{(true)=>{return 1;},else=>{return 2;}} }; g() == 0" "remainder by zero")))
     (v03-runtime (first pair) (second pair) t)))
 

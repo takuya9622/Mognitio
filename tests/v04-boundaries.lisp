@@ -33,7 +33,7 @@
     (signals internal-failure (mognitio.ir:verify-module module))))
 
 (deftest v04-call-barriers-and-pressure
-  (let* ((module (native-ir "let f = function(x: int): int { x + 1 }; let a = 5; a + f(2) == 8"))
+  (let* ((module (native-ir "let f = function(x: int): int { x + 1 }; let a: int = 5; a + f(2) == 8"))
          (allocation (mognitio.regalloc:allocate-function (first (mognitio.ir:module-functions module))))
          (locations (mognitio.regalloc:allocation-locations allocation)))
     (is (integerp (gethash 1 locations)))
@@ -43,8 +43,8 @@
    (with-output-to-string (out)
      (write-string "let smash = function(a: int, b: int, c: int, d: int, e: int, f: int, g: int, h: int): int { a + b + c + d + e + f + g + h }; " out)
      (write-string "let repeat = function(x: int): int { x + smash(x, x + 1, x + 2, x + 3, x + 4, x + 5, x + 6, x + 7) + x }; " out)
-     (dotimes (i 32) (format out "let x~D = ~D; " i i))
-     (write-string "let n = repeat(3) + repeat(7); " out)
+     (dotimes (i 32) (format out "let x~D: int = ~D; " i i))
+     (write-string "let n: int = repeat(3) + repeat(7); " out)
      (dotimes (i 32) (format out "x~D + " i))
      (write-string "n == 652" out)) :true)
   (v03-positive "let pack = function(a: int, b: int): int { a * 10 + b }; let inc = function(x: int): int { x + 1 }; pack(inc(2), inc(inc(4))) == 36" :true))
@@ -88,7 +88,7 @@
      (write-string "): bool { a0 + a599 == 599 }; many(" out)
      (dotimes (i 600) (when (plusp i) (write-string ", " out)) (format out "~D" i))
      (write-string ")" out)) :true)
-  (let* ((checked (check-program (parse-text "let f = function(x: int): int { return x; }; let g = function(x: int): int { return f(x); }; let x = 5; g(x) == 5")))
+  (let* ((checked (check-program (parse-text "let f = function(x: int): int { return x; }; let g = function(x: int): int { return f(x); }; let x: int = 5; g(x) == 5")))
          (form (mognitio.backend.cl::program-form checked))
          (definitions (second form))
          (names (mapcar #'first definitions))

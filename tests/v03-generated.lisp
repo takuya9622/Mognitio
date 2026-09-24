@@ -56,7 +56,7 @@
         (let* ((initial (- (next 15) 7)) (tree (tree 3)) (state (list initial))
                (expected (catch 'oracle-failure (list (v03-oracle tree state) (car state))))
                (source
-                 (format nil "var x = ~D; let outcome = ~A; ~A" initial (v03-render tree)
+                 (format nil "var x: int = ~D; let outcome: int = ~A; ~A" initial (v03-render tree)
                    (if (listp expected)
                        (format nil "branch when{(outcome == ~D)=>{x == ~D},else=>{false}}" (first expected) (second expected))
                        "true"))))

@@ -11,7 +11,7 @@
                   ((:cmp-imm :rax 6) "4881f806000000")))
     (same (hex-bytes (second pair)) (mognitio.amd64:encode (machine (first pair)))))
   (same #(1 0 0 0 0 0 0 0 2) (mognitio.amd64:encode (machine '(:bytes 1) '(:align 8) '(:bytes 2))))
-  (let* ((module (native-ir "let a=\"A\\0日\"; true"))
+  (let* ((module (native-ir "let a: string=\"A\\0日\"; true"))
          (code (mognitio.machine:lower-module module)))
     (multiple-value-bind (bytes labels) (mognitio.amd64:encode code)
       (dolist (id '(0 1))
@@ -22,7 +22,7 @@
           (same (if (zerop id) 0 5) (image-integer bytes (+ offset 16) 8))
           (same (if (zerop id) 0 3) (image-integer bytes (+ offset 24) 8))
           (when (= id 1) (same #(65 0 230 151 165 0 0 0) (subseq bytes (+ offset 32) (+ offset 40))))))
-      (same bytes (mognitio.amd64:encode (mognitio.machine:lower-module (native-ir "let a=\"A\\0日\"; true"))))))
+      (same bytes (mognitio.amd64:encode (mognitio.machine:lower-module (native-ir "let a: string=\"A\\0日\"; true"))))))
   (dolist (forms '(((:lea-text (:function 1)) (:label (:function 1)) (:ret))
                   ((:call (:text 0)) (:label (:text 0)) (:bytes 0))
                   ((:jb (:text 0)) (:label (:text 0)) (:bytes 0))
@@ -37,7 +37,7 @@
     (reverse capture)))
 
 (deftest v06-native-frame-verifier-negatives
-  (let ((source "let f=function(s:string):string{s}; let x=f(\"x\"); let y=f(x); true"))
+  (let ((source "let f=function(s:string):string{s}; let x: string=f(\"x\"); let y: string=f(x); true"))
     (dolist (mutation '(:reserve-size :missing-root :wrong-home :before-call :no-clear :no-unlink :clobber-result :overlap :missing-site :extra-call))
       (destructuring-bind (function allocation roots layout sections body) (first (v06-frame-capture source))
         (let* ((publication (find :publish sections :key #'first))
@@ -64,7 +64,7 @@
 
 (defun v06-abi-bad () '((:label :bad) (:mov-edi 99) (:mov-eax 60) (:syscall) (:ud2)))
 (deftest v06-generated-caller-handwritten-text-callee
-  (let ((source "let probe=function(s:string,v:void,n:int,b:bool):string{s}; let r=probe(\"a\",void,7,true); let z=probe(r,void,7,true); true")
+  (let ((source "let probe=function(s:string,v:void,n:int,b:bool):string{s}; let r: string=probe(\"a\",void,7,true); let z: string=probe(r,void,7,true); true")
         (callee (append
           '((:label (:function 1)) (:push-rbp) (:mov-reg :rbp :rsp)
             (:mov-reg :rax :rsp) (:imm-rcx 16) (:cqo) (:idiv) (:mov-rax-rdx) (:test) (:jnz :bad)
@@ -83,7 +83,7 @@
       (same 0 code) (same (format nil "true~%") out) (same "" err))))
 
 (deftest v06-handwritten-caller-generated-text-callee
-  (let* ((source "let probe=function(s:string,v:void,n:int,b:bool):string{s}; let unused=\"a\"; true")
+  (let* ((source "let probe=function(s:string,v:void,n:int,b:bool):string{s}; let unused: string=\"a\"; true")
          (caller (append
            '((:label (:function 0)) (:push-rbp) (:mov-reg :rbp :rsp))
            (loop repeat 12 collect '(:push-zero))
@@ -126,7 +126,7 @@
     (mognitio.object:make-code-unit :owner op :entry (list :helper op) :instructions (apply #'machine forms))))
 
 (deftest v06-native-helper-publication-and-loop
-  (let* ((source "let identity=function(s:string):string{s}; var keep=\"a\"; var i=0; loop while(i<100){let temp=keep+\"b\"; let n=temp->length(); keep=keep->slice(0,1); keep=identity(keep); i=i+1;}; true")
+  (let* ((source "let identity=function(s:string):string{s}; var keep: string=\"a\"; var i: int=0; loop while(i<100){let temp: string=keep+\"b\"; let n: int=temp->length(); keep=keep->slice(0,1); keep=identity(keep); i=i+1;}; true")
          (module (native-ir source)) (units nil) code)
     (replacing (mognitio.native.runtime:text-helper-units
                  (lambda (operations literal-count &optional context values)

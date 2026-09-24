@@ -3,7 +3,7 @@
   (asdf:load-asd (merge-pathnames "mognitio.asd" root)))
 (let ((*standard-output* (make-broadcast-stream)) (*error-output* (make-broadcast-stream)))
   (asdf:load-system "mognitio"))
-(let* ((source "type U=struct{s:string;};interface I{let text = function():string;}implement U against I{let text=function():string{this->s};}let make=function():I{U{s:\"a\"+\"b\"}};let held=make();var i=0;loop while(i<10000){let dead=make();i=i+1;};held->text()==\"ab\"")
+(let* ((source "type U=struct{s:string;};interface I{let text = function():string;}implement U against I{let text=function():string{this->s};}let make=function():I{U{s:\"a\"+\"b\"}};let held: I=make();var i: int=0;loop while(i<10000){let dead: I=make();i=i+1;};held->text()==\"ab\"")
        (decoded (mognitio.source:decode-source "values.mgn" (sb-ext:string-to-octets source :external-format :utf-8)))
        (compiled (mognitio.backend.cl:compile-program (mognitio.semantic:check-program
                     (mognitio.frontend:parse-program decoded (mognitio.frontend:lex-source decoded)))))

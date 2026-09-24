@@ -3,16 +3,16 @@
 (deftest v05-void-blocks-and-flow
   (dolist (source
     '("void; {}; true"
-      "let value = {}; var other = void; other = value; other; true"
+      "let value: void = {}; var other: void = void; other = value; other; true"
       "let f = function(x: void, n: int): void { x; branch when{(n == 0)=>{return;}}; void }; f(void, 0); f({}, 1); true"
       "let f = function(): void {}; f(); true"
       "let f = function(): void { return void; }; f(); true"
-      "let f = function(): int { 7 }; let g = { f }; g() == 7"
+      "let f = function(): int { 7 }; ({ f })() == 7"
       "let f = function(): int { 7 }; ({ f })() == 7"
       "let outer = function(flag: bool): int { branch when{(flag)=>{return 7;}}; 8 }; outer(true) + outer(false) == 15"
       "let f = function(): int { ({ return 7; })(1 / 0) }; f() == 7"
       "let f = function(x: int): int { x }; let g = function(): int { f({ return 8; }) }; g() == 8"
-      "var n = 0; let f = function(x: int): int { x }; ({ n = n + 1; f })({ n = n * 10; n }) == 10"
+      "var n: int = 0; let f = function(x: int): int { x }; ({ n = n + 1; f })({ n = n * 10; n }) == 10"
       "let f = function(): int { { return 7; }; }; f() == 7"
       "-(-1) == 1" "10 - (-2) == 12"))
     (v03-positive source :true))
@@ -24,7 +24,7 @@
       "let f = function(): void { 1 }; true" "let f = function(x: void): void {}; f(true); true"
       "let f = function(): int { return 1; 2 }; true"
       "let f = function(): int { {return 1;}; let x = 2; x }; true"
-      "let f = function(): int { var x = 1; x = {return 7;}; true }; true"
+      "let f = function(): int { var x: int = 1; x = {return 7;}; true }; true"
       "let f = function(): int { 1 }; let selected = {f}; let g = function(): int {selected()}; true"
       "let f = function(): int { ({return 1;})(missing) }; true"
       "return true; false"))

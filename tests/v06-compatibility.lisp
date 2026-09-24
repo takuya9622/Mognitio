@@ -17,14 +17,14 @@
               "let yes = function(): bool { true }; let value = function(): int { 42 }; branch when{(yes())=>{value() == 42},else=>{false}}"
               "let later = function(n: int): int { n * 2 }; let first = function(n: int): int { later(n) + later(2) }; first(3) == 10"
               "let add = function(a: int, b: int): int { a + b }; add(add(1, 2), add(3, 4)) == 10"
-              "let pair = function(a: int, b: int): int { a * 10 + b }; var n = 1; pair(n, branch when{(true)=>{n = 2; n},else=>{0}}) == 12"
-              "let twice = function(n: int): int { n * 2 }; let left = 7; left + twice(twice(3)) + left == 26"
-              "let update = function(n: int): int { var copy = n; copy = copy + 1; copy }; var n = 5; let a = update(n); let b = update(n); a + b + n == 17"
-              "let a = function(n: int): int { let local = n; local }; let b = function(n: int): int { let local = n + 1; local }; let n = 8; let local = 2; a(local) + b(local) + n == 13"
+              "let pair = function(a: int, b: int): int { a * 10 + b }; var n: int = 1; pair(n, branch when{(true)=>{n = 2; n},else=>{0}}) == 12"
+              "let twice = function(n: int): int { n * 2 }; let left: int = 7; left + twice(twice(3)) + left == 26"
+              "let update = function(n: int): int { var copy: int = n; copy = copy + 1; copy }; var n: int = 5; let a: int = update(n); let b: int = update(n); a + b + n == 17"
+              "let a = function(n: int): int { let local: int = n; local }; let b = function(n: int): int { let local: int = n + 1; local }; let n: int = 8; let local: int = 2; a(local) + b(local) + n == 13"
               "let unused = function(): int { 1 / 0 }; true"
               "let main = function(): int { 7 }; false == false"
-              "let Void = function(never: int): int { let text_name = never; text_name }; Void(3) == 3"
-              "let Int = function(Bool: bool): bool { Bool }; let Function = true; let return1 = false; let bool1 = true; Int(Function) == bool1"))
+              "let Void = function(never: int): int { let text_name: int = never; text_name }; Void(3) == 3"
+              "let Int = function(Bool: bool): bool { Bool }; let Function: bool = true; let return1: bool = false; let bool1: bool = true; Int(Function) == bool1"))
     (v03-positive source :true))
   (v03-positive "let no = function(): bool { false }; no()" :false t)
   (v03-positive "let mixed = function(a: bool, b: int, c: bool, d: int, e: int, f: bool, g: int, h: bool): bool { branch when{(a)=>{branch when{(c)=>{false},else=>{branch when{(f)=>{false},else=>{branch when{(h)=>{(b == -9223372036854775808) == (d == 9223372036854775807)},else=>{false}}}}}}},else=>{false}} }; mixed(true, -9223372036854775808, false, 9223372036854775807, 8, false, 9, true)" :true)
@@ -66,7 +66,7 @@
   (dolist (name '("Function" "Int" "Bool" "return1" "intValue" "bool1" "Void" "never" "text_name"))
     (v03-positive (format nil "let ~A = function(): bool { true }; ~A()" name name) :true)
     (v03-positive (format nil "let f = function(~A: bool): bool { ~A }; f(true)" name name) :true)
-    (v03-positive (format nil "let ~A = true; ~A" name name) :true))
+    (v03-positive (format nil "let ~A: bool = true; ~A" name name) :true))
   (dolist (name '("Int" "Void" "never" "Unknown"))
     (v03-reject (format nil "let f = function(n: ~A): int { 1 }; true" name) "semantic")
     (v03-reject (format nil "let f = function(): ~A { 1 }; true" name) "semantic"))
