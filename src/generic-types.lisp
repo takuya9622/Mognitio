@@ -144,3 +144,16 @@
 (defun generic-origin-p (context type)
   (and (nominal-type-p type) (type-info-origin (context-type context type))))
 
+
+(defun visible-type-parameters (context)
+  (sort (loop for value being the hash-values of (value-context-names context)
+              when (rigid-type-p value) collect value)
+        (lambda (a b) (or (< (second (second a)) (second (second b)))
+                          (and (= (second (second a)) (second (second b))) (< (third a) (third b)))))))
+
+(defun resolve-function-type-arguments (context signature tokens node)
+  (unless (= (length tokens) (length (signature-type-parameters signature)))
+    (fail-at (node-span node) :semantic "Generic call requires all type arguments"))
+  (let ((arguments (map 'list (lambda (token) (resolve-type-token context token)) tokens)))
+    (unless (every #'generic-argument-p arguments)
+      (fail-at (node-span node) :semantic "Invalid generic function type argument")) arguments))
