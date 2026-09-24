@@ -9,7 +9,7 @@
     ("let" . :let) ("var" . :var)
     ("type" . :type) ("struct" . :struct) ("enum" . :enum) ("interface" . :interface)
     ("implement" . :implement) ("against" . :against) ("this" . :this)
-    ("branch" . :branch) ("when" . :when) ("on" . :on) ("match" . :match)
+    ("try" . :try) ("panic" . :panic) ("branch" . :branch) ("when" . :when) ("on" . :on) ("match" . :match)
     ("while" . :while) ("loop" . :loop) ("break" . :break) ("continue" . :continue) ("string" . :string) ("void" . :void) ("function" . :function) ("return" . :return) ("int" . :int) ("bool" . :bool)))
 (defparameter *operators*
   '(("::" . :scope) ("=>" . :fat-arrow) ("->" . :arrow) ("==" . :eq) ("!=" . :ne) ("<=" . :le) (">=" . :ge)

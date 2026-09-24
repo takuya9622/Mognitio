@@ -1,6 +1,6 @@
 (in-package #:mognitio.syntax)
 
-(defstruct data-declaration name kind target members span)
+(defstruct data-declaration name kind target members span (type-parameters #()))
 (defstruct contract-declaration name methods span)
 (defstruct implementation-declaration target contract methods span)
 (defstruct named-member name value span)
@@ -26,4 +26,5 @@
     (this-expression (this-expression-span node))
     (branch-expression (branch-expression-span node))
     (branch-arm (branch-arm-span node))
-    (variant-pattern (variant-pattern-span node))))
+    (variant-pattern (variant-pattern-span node))
+    (t (error-node-span node))))
