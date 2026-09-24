@@ -28,6 +28,7 @@
   (is (v06-checked (format nil "~C~A" (code-char #xfeff) "\"A\"->length()==1"))))
 
 (deftest v06-postfix-and-static-contracts
+  (is (typep (local-binding-annotation (aref (program-statements (parse-text "let a:string=\"a\"; true")) 0)) 'token))
   (let* ((checked (v06-checked "\"Aあ😀\"->slice(1,3)->length()==2"))
          (outer (binary-expression-left (program-root (checked-program-program checked))))
          (inner (method-call-receiver outer)))
@@ -68,7 +69,7 @@
   (dolist (source '("\"a\"->length" "(\"a\"->length)()")) (v03-reject source "semantic"))
   (dolist (source '("let string=1; true" "let f=function(string:int):int {1}; true"
                     "string::length" "string::length(\"a\")"
-                    "\"a\" \"b\"" "let a:string=\"a\"; true"))
+                    "\"a\" \"b\""))
     (v03-reject source "parse"))
   (dolist (source '("'a'" "\"a\"[0]" "\"a\".length()")) (v03-reject source "lex")))
 

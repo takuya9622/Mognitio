@@ -1,0 +1,19 @@
+{
+  "baseline": "ac5b116ed011d515d9137c730ce3ac41f3e05fde",
+  "baseline_results": {
+    "tests": 156,
+    "assertions": 17510,
+    "processes": 1501,
+    "failures": 0
+  },
+  "source_hash_encoding": "UTF-8 decoded source or generator template",
+  "cases": [
+    {
+      "group": "v06-postfix-and-static-contracts",
+      "source_sha256": "8a3ae0577375392aae68c1984106a5f4f784f271fdc0a021442406fb698bc0f1",
+      "new_source_sha256": "8a3ae0577375392aae68c1984106a5f4f784f271fdc0a021442406fb698bc0f1",
+      "change": "Local annotations now parse; preserve this source as an annotation AST assertion. Type compatibility is tested with the v0.8 binding checks."
+    }
+  ],
+  "keyword_migration": "No existing source fixtures use try or panic as whole identifiers. Both are covered by v08-error-expression-ast rejection cases."
+}
