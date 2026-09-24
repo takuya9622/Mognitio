@@ -78,6 +78,11 @@ The [follow-up review validation](v0.7.0-review.md) covers the current interface
 requirement spelling, isolated rejection fixtures, reused payload initialization,
 and implementation-table layout order.
 
+The [v0.8.0 development validation](v0.8.0.md) covers explicit generics,
+Result propagation and block panic. The source acceptance evidence can be
+reproduced with `python3 scripts/verify-v08.py --output /tmp/v08-results.json`.
+This supplements the cumulative suite and does not create a release.
+
 ## Repository checks
 
 - Run `git diff --check` for whitespace errors.

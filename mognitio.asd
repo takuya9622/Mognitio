@@ -1,6 +1,6 @@
 (asdf:defsystem "mognitio"
   :description "Mognitio compiler"
-  :version "0.7.0"
+  :version "0.8.0"
   :depends-on ("sb-posix")
   :serial t
   :components ((:file "src/packages")
@@ -103,7 +103,10 @@
                (:file "tests/v08-functions")
                (:file "tests/v08-specialization")
                (:file "tests/v08-errors")
-               (:file "tests/v08-runtime"))
+               (:file "tests/v08-runtime")
+               (:file "tests/v08-conformance")
+               (:file "tests/v08-core")
+               (:file "tests/v08-lifetime"))
   :perform (asdf:test-op (op system)
              (declare (ignore op system))
              (uiop:symbol-call :mognitio.tests :run-tests)))
