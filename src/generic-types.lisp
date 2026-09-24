@@ -157,3 +157,8 @@
   (let ((arguments (map 'list (lambda (token) (resolve-type-token context token)) tokens)))
     (unless (every #'generic-argument-p arguments)
       (fail-at (node-span node) :semantic "Invalid generic function type argument")) arguments))
+
+(defun canonical-result-arguments (context type)
+  (when (nominal-type-p type :enum)
+    (let ((info (context-type context type)))
+      (when (eq :result (type-info-origin info)) (type-info-arguments info)))))

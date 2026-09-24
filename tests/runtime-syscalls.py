@@ -30,7 +30,8 @@ def trace(request, pid, data=None):
 
 def main():
     artifact, mode, *options = sys.argv[1:]
-    runtime_failure = options == ["runtime"]
+    runtime_failure = options in (["runtime"], ["panic"], ["panic-empty"])
+    panic = options in (["panic"], ["panic-empty"])
     if options and not runtime_failure:
         raise ValueError("Unknown runtime option")
     if mode not in ("partial-eintr", "zero", "error", "eintr-budget"):
@@ -55,7 +56,8 @@ def main():
             if os.WIFEXITED(status):
                 reaped = True
                 code = os.WEXITSTATUS(status)
-                expected_calls = 5 if mode == "partial-eintr" else (16 if mode == "eintr-budget" else 1)
+                segments = (2 if options == ["panic-empty"] else 3) if panic else 1
+                expected_calls = (4 + segments) if mode == "partial-eintr" else (16 if mode == "eintr-budget" else 1)
                 if writes != expected_calls:
                     raise RuntimeError(f"Expected {expected_calls} writes, got {writes}")
                 if (runtime_failure and code != 4) or (not runtime_failure and ((code == 0) != (mode == "partial-eintr"))):
@@ -68,6 +70,8 @@ def main():
                 raise RuntimeError("Unexpected trace stop")
             regs = Registers()
             trace(12, pid, ctypes.byref(regs))  # GETREGS
+            if entering and writes and panic and regs.orig_rax not in (1, 60):
+                raise RuntimeError("Panic reporter made an allocating or unexpected syscall")
             if entering and regs.orig_rax == 1:
                 writes += 1
                 if regs.rdi != (2 if runtime_failure else 1):

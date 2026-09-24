@@ -57,6 +57,7 @@
 (defpackage #:mognitio.semantic
   (:use #:cl #:mognitio.diagnostics #:mognitio.source #:mognitio.syntax)
   (:export #:checked-program-values #:checked-member #:checked-pack #:checked-value-type #:signature-receiver #:signature-method #:signature-runtime-types #:nominal-type-p #:reference-type-p #:valid-value-type-p #:canonical-type #:context-type #:type-info #:type-info-id #:type-info-kind #:type-info-name #:type-info-fields #:type-info-variants #:type-info-methods #:variant-info #:variant-info-id #:variant-info-name #:variant-info-types #:requirement #:requirement-name #:requirement-parameters #:requirement-result #:implementation-info #:implementation-info-id #:implementation-info-concrete #:implementation-info-contract #:implementation-info-methods #:member-info #:member-info-kind #:member-info-type #:member-info-index #:member-info-variant #:member-info-implementation #:member-info-signature #:member-info-contract #:value-context-types #:value-context-implementations
+           #:checked-error #:error-info-kind #:error-info-operand-type #:error-info-result-type #:error-info-return-type #:error-info-owner
            #:checked-string-literals #:checked-operation #:operation-info #:operation-info-kind #:operation-info-operands
            #:operation-info-parameter-types #:operation-info-result-type
            #:check-program #:checked-program #:checked-program-program #:checked-normal-type #:checked-symbol #:checked-literal #:checked-literal-p #:checked-program-bindings #:local-symbol-id #:local-symbol-type #:local-symbol-mutability
