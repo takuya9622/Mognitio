@@ -1,0 +1,146 @@
+(in-package #:mognitio.semantic)
+
+(defstruct generic-template id declaration name parameters kind fields variants target)
+
+(defun rigid-type-p (type)
+  (and (consp type) (eq (first type) :parameter) (= (length type) 3)))
+(defun application-type-p (type)
+  (and (consp type) (eq (first type) :application) (= (length type) 4)))
+(defun symbolic-type-p (type)
+  (or (rigid-type-p type) (application-type-p type)))
+(defun generic-argument-p (type)
+  (or (member type '(:int :bool :void :string)) (symbolic-type-p type)
+      (nominal-type-p type :struct) (nominal-type-p type :enum)))
+(defun copy-type-names (names)
+  (let ((copy (make-hash-table :test #'equal)))
+    (maphash (lambda (name value) (setf (gethash name copy) value)) names) copy))
+
+(defun initialize-generic-context (context)
+  (let* ((parameters '((:parameter (:builtin :result) 0) (:parameter (:builtin :result) 1)))
+         (template (make-generic-template :id :result :declaration :builtin-result :name "Result"
+                     :parameters parameters :kind :enum
+                     :variants (list (make-variant-info :id 0 :name "Ok" :types (list (first parameters)))
+                                     (make-variant-info :id 1 :name "Err" :types (list (second parameters)))))))
+    (setf (gethash "Result" (value-context-names context)) template
+          (gethash :result (value-context-templates context)) template))
+  context)
+
+(defun call-with-type-parameters (context tokens owner body)
+  (let ((outer (value-context-names context)) (parameters nil))
+    (unwind-protect
+         (progn
+           (setf (value-context-names context) (copy-type-names outer))
+           (loop for token across tokens for ordinal from 0
+                 for name = (token-text token) for type = (list :parameter owner ordinal) do
+             (when (gethash name (value-context-names context))
+               (fail-at (token-span token) :semantic "Type parameter shadows a visible type"))
+             (setf (gethash name (value-context-names context)) type)
+             (push type parameters))
+           (setf parameters (nreverse parameters))
+           (multiple-value-prog1 (funcall body parameters)
+             (loop for token across tokens for parameter in parameters do
+               (unless (gethash parameter (value-context-parameter-uses context))
+                 (fail-at (token-span token) :semantic "Unused type parameter")))))
+      (setf (value-context-names context) outer))))
+
+(defun substitute-generic-type (context type substitutions)
+  (cond ((rigid-type-p type) (or (cdr (assoc type substitutions :test #'equal)) type))
+        ((application-type-p type)
+         (instantiate-generic-type context (gethash (third type) (value-context-templates context))
+                                   (mapcar (lambda (arg) (substitute-generic-type context arg substitutions)) (fourth type))))
+        ((function-type-p type)
+         (list :function (mapcar (lambda (arg) (substitute-generic-type context arg substitutions)) (second type))
+               (substitute-generic-type context (third type) substitutions)))
+        (t type)))
+
+(defun generic-instance-shape (context template arguments)
+  (let ((substitutions (pairlis (generic-template-parameters template) arguments)))
+    (labels ((substitute-type (type) (substitute-generic-type context type substitutions)))
+      (make-type-info :kind (generic-template-kind template) :name (generic-template-name template)
+        :origin (generic-template-id template) :arguments arguments
+        :fields (mapcar (lambda (field) (cons (car field) (substitute-type (cdr field)))) (generic-template-fields template))
+        :variants (mapcar (lambda (variant)
+                            (make-variant-info :id (variant-info-id variant) :name (variant-info-name variant)
+                              :types (mapcar #'substitute-type (variant-info-types variant))))
+                          (generic-template-variants template))))))
+
+(defun instantiate-generic-type (context template arguments)
+  (unless (and (generic-template-p template)
+               (= (length arguments) (length (generic-template-parameters template)))
+               (every #'generic-argument-p arguments))
+    (internal-error "Invalid generic type substitution"))
+  (cond ((eq :alias (generic-template-kind template))
+         (substitute-generic-type context (generic-template-target template)
+                                  (pairlis (generic-template-parameters template) arguments)))
+        ((some #'symbolic-type-p arguments)
+         (list :application (generic-template-kind template) (generic-template-id template) arguments))
+        (t
+         (let* ((key (cons (generic-template-id template) arguments))
+                (found (gethash key (value-context-instances context))))
+           (when (eq found :visiting) (internal-error "Recursive generic type instance"))
+           (or found
+               (progn
+                 (setf (gethash key (value-context-instances context)) :visiting)
+                 (let ((info (generic-instance-shape context template arguments)))
+                   (setf (type-info-id info) (length (value-context-types context)))
+                   (vector-push-extend info (value-context-types context))
+                   (setf (gethash key (value-context-instances context)) (canonical-type info)))))))))
+
+(defun resolve-generic-type (context token)
+  (let* ((name (token-text token)) (binding (gethash name (value-context-names context)))
+         (arguments (when (typep token 'type-syntax) (type-syntax-arguments token))))
+    (unless binding (fail-at (token-span token) :semantic "Unknown or forward type"))
+    (cond ((generic-template-p binding)
+           (unless (and arguments (= (length arguments) (length (generic-template-parameters binding))))
+             (fail-at (token-span token) :semantic "Generic type requires all type arguments"))
+           (let ((types (map 'list (lambda (arg) (resolve-type-token context arg)) arguments)))
+             (unless (every #'generic-argument-p types)
+               (fail-at (token-span token) :semantic "Invalid generic type argument"))
+             (instantiate-generic-type context binding types)))
+          (arguments (fail-at (token-span token) :semantic "Type is not generic"))
+          (t (when (rigid-type-p binding) (setf (gethash binding (value-context-parameter-uses context)) t)) binding))))
+
+(defun declare-generic-type (context node)
+  (let* ((name (data-declaration-name node)) (kind (data-declaration-kind node))
+         (id (value-context-next-template context)) (template nil) (names nil))
+    (when (gethash (token-text name) (value-context-names context))
+      (fail-at (token-span name) :semantic "Duplicate type name"))
+    (incf (value-context-next-template context))
+    (call-with-type-parameters context (data-declaration-type-parameters node) (list :type id)
+      (lambda (parameters)
+        (setf template (make-generic-template :id id :declaration node :name (token-text name)
+                         :parameters parameters :kind kind))
+        (labels ((unique (token)
+                   (when (member (token-text token) names :test #'string=)
+                     (fail-at (token-span token) :semantic "Duplicate member"))
+                   (push (token-text token) names))
+                 (field-type (token)
+                   (let ((type (resolve-type-token context token)))
+                     (when (nominal-type-p type :interface)
+                       (fail-at (token-span token) :semantic "Interface storage is not supported")) type)))
+          (ecase kind
+            (:alias (setf (generic-template-target template) (resolve-type-token context (data-declaration-target node))))
+            (:struct
+             (setf (generic-template-fields template)
+                   (loop for field across (data-declaration-members node) do (unique (named-member-name field))
+                         collect (cons (token-text (named-member-name field)) (field-type (named-member-value field))))))
+            (:enum
+             (setf (generic-template-variants template)
+                   (loop for variant across (data-declaration-members node) for ordinal from 0 do (unique (named-member-name variant))
+                         collect (make-variant-info :id ordinal :name (token-text (named-member-name variant))
+                                   :types (map 'list #'field-type (named-member-value variant))))))))))
+    (setf (gethash (token-text name) (value-context-names context)) template
+          (gethash id (value-context-templates context)) template
+          (gethash node (value-context-members context)) (make-member-info :kind :type-template :index id))
+    template))
+
+(defun generic-template-shape (template)
+  (list (generic-template-id template) (generic-template-declaration template) (generic-template-name template)
+        (generic-template-parameters template) (generic-template-kind template) (generic-template-fields template)
+        (mapcar (lambda (variant) (list (variant-info-id variant) (variant-info-name variant) (variant-info-types variant)))
+                (generic-template-variants template))
+        (generic-template-target template)))
+
+(defun generic-origin-p (context type)
+  (and (nominal-type-p type) (type-info-origin (context-type context type))))
+
