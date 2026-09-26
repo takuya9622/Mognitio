@@ -1,7 +1,7 @@
 (in-package #:mognitio.tests)
 
 (defparameter *v07-gc-source*
-  "type Leaf=struct{s:string;}; type Pair=struct{left:Leaf;right:Leaf;v:void;}; type E=enum{Empty;Item(Pair);}; interface Text{let text = function():string;} implement E against Text{let text=function():string{branch on(this){E::Empty=>\"\",E::Item(p)=>p->left->s+p->right->s}};} let make=function():Text{let leaf: Leaf=Leaf{s:\"keep\"+\"!\"};E::Item(Pair{right:leaf,left:leaf,v:void})}; let discarded: Leaf=Leaf{s:\"trash\"+\"!\"};let held: Text=make();let child: Leaf={let p: Pair=Pair{left:Leaf{s:\"child\"+\"!\"},right:Leaf{s:\"discard\"+\"!\"},v:void};p->left};var i: int=0;loop while(i<2000){let x: Leaf=Leaf{s:\"dead\"+\"?\"};let e: E=E::Item(Pair{left:x,right:x,v:void});i=i+1;};branch when{held->text()==\"keep!keep!\"=>child->s==\"child!\",else=>false}")
+  "type Leaf=struct{s:string;}; type Pair=struct{left:Leaf;right:Leaf;v:void;}; type E=enum{Empty;Item(Pair);}; interface Text{let text = function():string;} implement E against Text{let text=function():string{branch on(this){E::Empty=>\"\",E::Item(p)=>p->left->s+p->right->s}};} let make:function():Text=function():Text{let leaf: Leaf=Leaf{s:\"keep\"+\"!\"};E::Item(Pair{right:leaf,left:leaf,v:void})}; let discarded: Leaf=Leaf{s:\"trash\"+\"!\"};let held: Text=make();let child: Leaf={let p: Pair=Pair{left:Leaf{s:\"child\"+\"!\"},right:Leaf{s:\"discard\"+\"!\"},v:void};p->left};var i: int=0;loop while(i<2000){let x: Leaf=Leaf{s:\"dead\"+\"?\"};let e: E=E::Item(Pair{left:x,right:x,v:void});i=i+1;};branch when{held->text()==\"keep!keep!\"=>child->s==\"child!\",else=>false}")
 
 (deftest v07-transitive-lifetime-and-reclamation
   ;; C07-36..39. Allocate over sixty heap capacities while retaining a box,
@@ -45,7 +45,7 @@
           (with-output-to-string (out)
             (write-string "type T0=struct{s:string;};" out)
             (loop for i from 1 to 40 do (format out "type T~D=struct{a:T~D;b:T~D;};" i (1- i) (1- i)))
-            (write-string "let make=function():T40{let v0:T0=T0{s:\"deep\"+\"!\"};" out)
+            (write-string "let make:function():T40=function():T40{let v0:T0=T0{s:\"deep\"+\"!\"};" out)
             (loop for i from 1 to 40 do (format out "let v~D:T~D=T~D{a:v~D,b:v~D};" i i i (1- i) (1- i)))
             (write-string "v40};let held:T40=make();var i:int=0;loop while(i<200){let dead:T0=T0{s:\"d\"+\"!\"};i=i+1;};held" out)
             (loop repeat 40 do (write-string "->a" out)) (write-string "->s==\"deep!\"" out))))
@@ -63,7 +63,7 @@
     (v03-runtime source "division by zero"))
   (v03-runtime "type U=struct{s:string;x:int;};U{s:\"a\"->slice(-1,0),x:1/0}->x==0" "string_index_out_of_bounds")
   (dolist (source '("type U=struct{};let u: U=U{};let later: int=1/0;true"
-                    "type U=struct{};interface I{}implement U against I{}let f=function(u:I):bool{true};f(U{})"))
+                    "type U=struct{};interface I{}implement U against I{}let f:function(I):bool=function(u:I):bool{true};f(U{})"))
     (multiple-value-bind (out err status)
         (process-result (list (namestring (v06-runtime-artifact source '(:mmap-fail t)))))
       (same 4 status) (same "" out) (same (format nil "runtime: allocation_failed~%") err)))

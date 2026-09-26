@@ -25,7 +25,7 @@
           (gethash :result (value-context-templates context)) template))
   context)
 
-(defun call-with-type-parameters (context tokens owner body)
+(defun call-with-type-parameters (context tokens owner body &optional (check-unused t))
   (let ((outer (value-context-names context)) (parameters nil))
     (unwind-protect
          (progn
@@ -38,9 +38,10 @@
              (push type parameters))
            (setf parameters (nreverse parameters))
            (multiple-value-prog1 (funcall body parameters)
-             (loop for token across tokens for parameter in parameters do
-               (unless (gethash parameter (value-context-parameter-uses context))
-                 (fail-at (token-span token) :semantic "Unused type parameter")))))
+             (when check-unused
+               (loop for token across tokens for parameter in parameters do
+                 (unless (gethash parameter (value-context-parameter-uses context))
+                   (fail-at (token-span token) :semantic "Unused type parameter"))))))
       (setf (value-context-names context) outer))))
 
 (defun substitute-generic-type (context type substitutions)
@@ -115,7 +116,7 @@
                      (fail-at (token-span token) :semantic "Duplicate member"))
                    (push (token-text token) names))
                  (field-type (token)
-                   (let ((type (resolve-type-token context token)))
+                   (let ((type (reject-function-type (resolve-type-token context token) token "Function storage is not supported")))
                      (when (nominal-type-p type :interface)
                        (fail-at (token-span token) :semantic "Interface storage is not supported")) type)))
           (ecase kind
@@ -162,3 +163,40 @@
   (when (nominal-type-p type :enum)
     (let ((info (context-type context type)))
       (when (eq :result (type-info-origin info)) (type-info-arguments info)))))
+
+(defun alpha-normalize (type owner)
+  (cond ((and (rigid-type-p type) (equal (second type) owner))
+         (list :parameter :alpha (third type)))
+        ((application-type-p type)
+         (list :application (second type) (third type)
+               (mapcar (lambda (argument) (alpha-normalize argument owner)) (fourth type))))
+        ((function-type-p type)
+         (list :function (mapcar (lambda (argument) (alpha-normalize argument owner)) (second type))
+               (alpha-normalize (third type) owner)))
+        (t type)))
+
+(defun resolve-binding-signature (context syntax)
+  (call-with-type-parameters context (generic-signature-syntax-type-parameters syntax)
+      (list :binding-signature syntax)
+    (lambda (parameters)
+      (list parameters
+            (map 'list (lambda (part) (resolve-type-token context part)) (generic-signature-syntax-parameters syntax))
+            (resolve-type-token context (generic-signature-syntax-result syntax))))
+    nil))
+
+(defun generic-signature-difference (context syntax signature)
+  (let* ((declared (resolve-binding-signature context syntax))
+         (left (first declared))
+         (right (signature-type-parameters signature)))
+    (if (/= (length left) (length right))
+        "Generic arity mismatch"
+        (let* ((left-owner (second (first left)))
+               (right-owner (second (first right)))
+               (parameters (equal (mapcar (lambda (type) (alpha-normalize type left-owner)) (second declared))
+                                  (mapcar (lambda (type) (alpha-normalize type right-owner)) (signature-parameter-types signature))))
+               (result (equal (alpha-normalize (third declared) left-owner)
+                              (alpha-normalize (signature-result-type signature) right-owner))))
+          (cond ((and parameters result) nil)
+                ((and (not parameters) (not result)) "Generic signature mismatch")
+                ((not parameters) "Parameter type mismatch")
+                (t "Return type mismatch"))))))

@@ -18,7 +18,7 @@
     (same 1 (length (function-expression-parameters signature)))
     (same 1 (length (mognitio.semantic::checked-program-signatures checked)))
     (same 1 (length (mognitio.ir:module-functions (native-ir text)))))
-  (v07-accept "interface Named{let nameText=function():string;let add=function(a:int,b:int,):int;}type U=struct{s:string;};implement U against Named{let nameText=function():string{this->s};let add=function(x:int,y:int):int{x+y};}let use=function(n:Named):bool{branch when{n->nameText()==\"ok\"=>n->add(2,3)==5,else=>false}};use(U{s:\"ok\"})")
+  (v07-accept "interface Named{let nameText=function():string;let add=function(a:int,b:int,):int;}type U=struct{s:string;};implement U against Named{let nameText=function():string{this->s};let add=function(x:int,y:int):int{x+y};}let use:function(Named):bool=function(n:Named):bool{branch when{n->nameText()==\"ok\"=>n->add(2,3)==5,else=>false}};use(U{s:\"ok\"})")
   ;; Each rejection keeps valid surrounding declarations and a bool tail.
   (dolist (source
     '("interface I{function f():int;}true"
@@ -29,9 +29,9 @@
       "interface I{let f=1+2;}true"
       "interface I{true;}true"
       "interface I{let f=function():int;f();}true"
-      "let f=function():int;true"
-      "let f=(function():int);true"
-      "let f=function():int{1};let g=function():int{function():int;1};true"
+      "let f:function():int=function():int;true"
+      "let f:function():int=(function():int);true"
+      "let f:function():int=function():int{1};let g:function():int=function():int{function():int;1};true"
       "type U=struct{};implement U{let f=function():int;}true"))
     (v03-reject source "parse")))
 

@@ -1,6 +1,6 @@
 (asdf:defsystem "mognitio"
   :description "Mognitio compiler"
-  :version "0.8.0"
+  :version "0.8.1"
   :depends-on ("sb-posix")
   :serial t
   :components ((:file "src/packages")

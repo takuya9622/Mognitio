@@ -38,7 +38,7 @@
       (same '((0 2 ((0 5 (1 4)) (0 7 (1 5)))) (1 2 ((0 1 (0 1))))) (v06-root-snapshot plans))
       (is (mognitio.roots:verify-roots module plans))
       (same 0 (v06-evaluate-core module))))
-  (let ((module (v06-native-ir "let f=function():int{1}; f()==1")))
+  (let ((module (v06-native-ir "let f:function():int=function():int{1}; f()==1")))
     ;; Even a no-string call is a safepoint; its frame has zero slots.
     (same '((0 0 ((0 1 nil))) (1 0 nil)) (v06-root-snapshot (mognitio.roots:analyze-roots module)))))
 
@@ -127,7 +127,7 @@
         (signals internal-failure (mognitio.regalloc:verify-allocation allocation))))))
 
 (deftest v06-root-earlier-operands-and-receiver
-  (let ((module (v06-native-ir "let f=function(a:string,b:string):string{a+b}; f(\"a\"+\"b\",\"c\"+\"d\")==\"abcd\"")))
+  (let ((module (v06-native-ir "let f:function(string,string):string=function(a:string,b:string):string{a+b}; f(\"a\"+\"b\",\"c\"+\"d\")==\"abcd\"")))
     (same '((0 3 ((0 3 (1 2)) (0 6 (3 4 5)) (0 7 (3 6)))) (1 2 ((0 0 (0 1)))))
           (v06-root-snapshot (mognitio.roots:analyze-roots module))))
   (let ((module (v06-native-ir "let s: string=\"abc\"; s->slice(0,{let unused: string=\"x\"+\"y\";1})==\"a\"")))

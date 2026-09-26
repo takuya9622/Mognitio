@@ -37,14 +37,14 @@
     (same :text.slice (operation-info-kind (checked-operation checked inner)))
     (same :string (checked-normal-type checked inner)))
   (dolist (source
-    '("let f=function(x:string):string {x}; let a: string=f(\"a\"); var b: string=a; b=\"b\"; a==\"a\""
-      "let length: int=1; let slice: int=2; let string_length=function(x:string):int {x->length()}; let string_slice=string_length; string_slice(\"a\")==1"
+    '("let f:function(string):string=function(x:string):string {x}; let a: string=f(\"a\"); var b: string=a; b=\"b\"; a==\"a\""
+      "let length: int=1; let slice: int=2; let string_length:function(string):int=function(x:string):int {x->length()}; let string_slice:function(string):int=string_length; string_slice(\"a\")==1"
       "let class: int=1; class==1"
-      "let f=function():string {branch when{(true)=>{return \"a\";},else=>{\"b\"}}}; f()==\"a\""
+      "let f:function():string=function():string {branch when{(true)=>{return \"a\";},else=>{\"b\"}}}; f()==\"a\""
       "loop {break \"a\";}==\"a\""
-      "let f=function():int {({return 7;})->unknown(1,2)}; f()==7"
-      "let f=function():int {\"a\"->slice({return 7;},1)->length()}; f()==7"
-      "let f=function():int {({return 7;})+\"a\"}; f()==7"))
+      "let f:function():int=function():int {({return 7;})->unknown(1,2)}; f()==7"
+      "let f:function():int=function():int {\"a\"->slice({return 7;},1)->length()}; f()==7"
+      "let f:function():int=function():int {({return 7;})+\"a\"}; f()==7"))
     (is (v06-checked source)))
   (dolist (source
     '("\"a\"+1==0" "1+\"a\"==0" "\"a\"==1" "true!=\"a\""
@@ -55,19 +55,19 @@
       "\"a\"->length(1)==1" "\"a\"->slice(0)==\"a\"" "\"a\"->slice(0,1,2)==\"a\""
       "\"a\"->slice(false,1)==\"a\"" "\"a\"->slice(0,\"a\")==\"a\""
       "string_length(\"a\")==1" "string_slice(\"a\",0,1)==\"a\""
-      "let a: string=\"a\"; let f=function():string {a}; true"
-      "let f=function():string {f()}; true" "var a: string=\"a\"; a=1; true"
+      "let a: string=\"a\"; let f:function():string=function():string {a}; true"
+      "let f:function():string=function():string {f()}; true" "var a: string=\"a\"; a=1; true"
       "branch when{(true)=>{\"a\"},else=>{1}}" "loop {branch when{(true)=>{break \"a\";}}; break 1;}==\"a\""
       "loop {branch when{(true)=>{break;}}; break \"a\";}; true"
-      "let f=function():string {return;}; true"
-      "let f=function():int {({return 7;})->unknown(missing)}; true"
-      "let f=function():int {\"a\"->slice({return 7;},false)}; true"
-      "let f=function():int {\"a\"->length({return 7;})}; true"
-      "let f=function():int {({return 7;})+true}; true"
+      "let f:function():string=function():string {return;}; true"
+      "let f:function():int=function():int {({return 7;})->unknown(missing)}; true"
+      "let f:function():int=function():int {\"a\"->slice({return 7;},false)}; true"
+      "let f:function():int=function():int {\"a\"->length({return 7;})}; true"
+      "let f:function():int=function():int {({return 7;})+true}; true"
       "branch when{(true)=>{true},else=>{\"a\"->slice(0,false)==\"a\"}}"))
     (v03-reject source "semantic"))
   (dolist (source '("\"a\"->length" "(\"a\"->length)()")) (v03-reject source "semantic"))
-  (dolist (source '("let string=1; true" "let f=function(string:int):int {1}; true"
+  (dolist (source '("let string=1; true" "let f:function(int):int=function(string:int):int {1}; true"
                     "string::length" "string::length(\"a\")"
                     "\"a\" \"b\""))
     (v03-reject source "parse"))
@@ -85,7 +85,7 @@
            (n (binary-expression-left (program-root (checked-program-program c))))
            (op (checked-operation c n)))
       (funcall mutate c n op) (signals internal-failure (verify-checked-program c))))
-  (let* ((c (v06-checked "let f=function():int {({return 7;})->unknown(1)}; f()==7"))
+  (let* ((c (v06-checked "let f:function():int=function():int {({return 7;})->unknown(1)}; f()==7"))
          (function (local-binding-initializer (aref (program-statements (checked-program-program c)) 0)))
          (method (sequence-node-terminal (function-expression-body function))))
     (setf (gethash method (mognitio.semantic::checked-program-operations c))
@@ -101,7 +101,7 @@
            (tokens (lex-source source)) (old (aref tokens 0)))
       (setf (aref tokens 0) (make-token :kind :string-literal :span (token-span old) :payload payload))
       (signals internal-failure (verify-checked-program (check-program (parse-program source tokens))))))
-  (let* ((checked (v06-checked "let f=function():int {\"a\"->slice({return 7;},1)->length()}; f()==7"))
+  (let* ((checked (v06-checked "let f:function():int=function():int {\"a\"->slice({return 7;},1)->length()}; f()==7"))
          (function (local-binding-initializer (aref (program-statements (checked-program-program checked)) 0)))
          (outer (sequence-node-terminal (function-expression-body function)))
          (summary (checked-completion checked outer)))

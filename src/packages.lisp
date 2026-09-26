@@ -15,6 +15,9 @@
   (:use #:cl #:mognitio.source)
   (:export #:concrete-function-reference #:make-concrete-function-reference #:concrete-function-reference-target
            #:type-syntax #:make-type-syntax #:type-syntax-name #:type-syntax-arguments
+           #:function-type-syntax #:make-function-type-syntax #:function-type-syntax-parameters #:function-type-syntax-result #:function-type-syntax-span
+           #:function-type-syntax-p #:generic-signature-syntax #:make-generic-signature-syntax #:generic-signature-syntax-p #:generic-signature-syntax-type-parameters #:generic-signature-syntax-parameters #:generic-signature-syntax-result #:generic-signature-syntax-span
+           #:form-span
            #:data-declaration-type-parameters #:function-expression-type-parameters
            #:local-binding-annotation #:call-expression-type-arguments
            #:try-expression #:make-try-expression #:try-expression-operand

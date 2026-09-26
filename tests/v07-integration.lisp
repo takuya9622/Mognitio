@@ -8,7 +8,7 @@
     (v07-accept (format nil "let ~A:int=7;~A==7" word word)))
   (v03-reject "if(true){true}else{false}" "parse")
   (v03-reject "match(true){true=>true}" "parse")
-  (v07-accept "let f=function(s:string):string{s+\"!\"};var n: int=0;loop while(n<3){branch when{n==1=>{n=n+1;continue;}};n=n+1;};branch when{n==3=>f(\"ok\")==\"ok!\",else=>false}")
+  (v07-accept "let f:function(string):string=function(s:string):string{s+\"!\"};var n: int=0;loop while(n<3){branch when{n==1=>{n=n+1;continue;}};n=n+1;};branch when{n==3=>f(\"ok\")==\"ok!\",else=>false}")
   (dolist (text '("E::A(1)" "E::A (1,)" "E::A()" "E::A" "(E::A)(1)" "E::A(1)(2)"))
     (let* ((node (program-root (parse-text text)))
            (constructor (cond ((typep node 'enum-expression) node)

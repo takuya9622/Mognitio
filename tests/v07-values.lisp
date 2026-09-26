@@ -18,13 +18,13 @@
 (deftest v07-data-and-source-order
   ;; C07-01..10, 45..47, 51: expected values do not use compiler metadata.
   (dolist (source
-    '("type N=int; type S=string; let f=function(n:N,s:S,):int{n+s->length()}; f(2,\"abc\",)==5"
+    '("type N=int; type S=string; let f:function(N,S):int=function(n:N,s:S,):int{n+s->length()}; f(2,\"abc\",)==5"
       "type Z=struct{}; type U=struct{n:int;z:Z;}; type A=U; type E=enum{Zero;Pair(U,string,);}; let e: E=E::Pair(A{z:Z{},n:7,},\"ok\",); branch on(e){E::Zero=>false,E::Pair(u,s,)=>branch when{u->n==7=>s==\"ok\",else=>false,},}"
       "type U=struct{a:int;b:int;}; var n: int=0; let u: U=U{b:{n=n+1;n},a:{n=n+1;n}}; u->a*100+u->b*10+n==212"
       "type U=struct{a:int;b:int;}; var n: int=0; let x: int=loop{U{b:{break 8;},a:{n=n+1;n}}}; x+n==8"
-      "type U=struct{a:int;b:int;}; let f=function():int{U{a:{return 8;},b:1/0}}; f()==8"
+      "type U=struct{a:int;b:int;}; let f:function():int=function():int{U{a:{return 8;},b:1/0}}; f()==8"
       "type U=struct{a:int;}; var u: U=U{a:1}; let old: U=u; u=U{a:2}; old->a*10+u->a==12"
-      "type U=struct{a:int;}; let f=function(U:U):int{U->a}; let U: U=U{a:7}; f(U)==7"
+      "type U=struct{a:int;}; let f:function(U):int=function(U:U):int{U->a}; let U: U=U{a:7}; f(U)==7"
       "type X=enum{A(int);B(int);}; branch on(X::B(2)){X::A(X)=>X==1,X::B(X)=>X==2}"
       "type E=enum{A;B(int);}; branch on(E::B (2,)){E::A=>false,E::B(x)=>x==2}"
       "type E=enum{A;B(int);}; let value: E=E::A;true"
@@ -32,8 +32,8 @@
       "type E=enum{A;B(int);}; branch on(E::A){E::A=>true,E::B(_)=>false}"))
     (v07-accept source))
   (dolist (source
-    '("type A=struct{x:int;}; type B=struct{x:int;}; let f=function(a:A):int{a->x}; f(B{x:1})==1"
-      "type A=struct{x:int;}; type B=struct{x:int;}; let f=function():A{B{x:1}};true"
+    '("type A=struct{x:int;}; type B=struct{x:int;}; let f:function(A):int=function(a:A):int{a->x}; f(B{x:1})==1"
+      "type A=struct{x:int;}; type B=struct{x:int;}; let f:function():A=function():A{B{x:1}};true"
       "type A=struct{x:int;}; type B=struct{x:int;}; var a: A=A{x:1};a=B{x:2};true"
       "type U=struct{x:int;}; U{y:1}->x==1" "type U=struct{x:int;}; U{x:1,x:2}->x==1"
       "type U=struct{x:int;}; U{}->x==1" "type U=struct{x:int;}; U{x:false}->x==1"
@@ -54,8 +54,8 @@
                     "type A=struct{function f():int{1}};true"
                     "type A=struct{x:int;}; A{x:1,,}->x==1"
                     "type A=enum{A(int,,);};true" "type A=enum{A(,);};true"
-                    "let f=function(x:int,,):int{x};true" "let f=function(,):int{1};true"
-                    "let f=function(x:int):int{x}; f(,)==1" "let f=function(x:int):int{x}; f(1,,)==1"))
+                    "let f:function(int):int=function(x:int,,):int{x};true" "let f:function():int=function(,):int{1};true"
+                    "let f:function(int):int=function(x:int):int{x}; f(,)==1" "let f:function(int):int=function(x:int):int{x}; f(1,,)==1"))
     (v03-reject source "parse")))
 
 (deftest v07-branch-contracts
@@ -67,12 +67,12 @@
       "type E=enum{A;B;}; branch on(E::B){E::A=>false,else=>true}"
       "type E=enum{A;}; branch on(E::A){else=>true}"
       "branch when{false=>void};true" "branch when{true=>void,};true"
-      "let f=function():int{branch when{true=>{return 2;},else=>1}};f()==2"
-      "let f=function():int{branch when{{return 7;}=>1/0,else=>2}};f()==7"
-      "type E=enum{A;}; let f=function():int{branch on({return 7;}){E::A=>1/0}};f()==7"
+      "let f:function():int=function():int{branch when{true=>{return 2;},else=>1}};f()==2"
+      "let f:function():int=function():int{branch when{{return 7;}=>1/0,else=>2}};f()==7"
+      "type E=enum{A;}; let f:function():int=function():int{branch on({return 7;}){E::A=>1/0}};f()==7"
       "var i: int=0; let x: int=loop{i=i+1;branch when{i<3=>{continue;},else=>{break 8;}};};x+i==11"
-      "let a=function():int{1};let b=function():int{2};(branch when{false=>a,else=>b})()==2"
-      "let f=function(x:int):int{x};let g=function(x:int):int{x+1}; (branch when{true=>f,else=>g})(7,)==7"))
+      "let a:function():int=function():int{1};let b:function():int=function():int{2};(branch when{false=>a,else=>b})()==2"
+      "let f:function(int):int=function(x:int):int{x};let g:function(int):int=function(x:int):int{x+1}; (branch when{true=>f,else=>g})(7,)==7"))
     (v07-accept source))
   (dolist (source
     '("type E=enum{A;B;};branch on(E::A){E::A=>void};true"
@@ -88,10 +88,10 @@
       "type E=enum{A(int);};branch on(E::A(1)){E::A(x)=>true};x==1"
       "branch when{true=>true,else=>unknown}" "branch when{true=>true,else=>{break;}}"
       "branch when{true=>true,else=>1}" "branch when{true=>true,else=>{let x=1+false;true}}"
-      "let f=function():int{branch on({return 1;}){else=>1}};true"
-      "let f=function():int{branch when{true=>{return 1;},else=>{return 2;}};3};true"
-      "let f=function():int{let x=branch when{true=>{return 1;},else=>{return 2;}};3};true"
-      "let a=function():int{1};let b=function():int{2};let f=branch when{true=>a,else=>b};let g=function():int{f()};true"))
+      "let f:function():int=function():int{branch on({return 1;}){else=>1}};true"
+      "let f:function():int=function():int{branch when{true=>{return 1;},else=>{return 2;}};3};true"
+      "let f:function():int=function():int{let x=branch when{true=>{return 1;},else=>{return 2;}};3};true"
+      "let a:function():int=function():int{1};let b:function():int=function():int{2};let f=branch when{true=>a,else=>b};let g:function():int=function():int{f()};true"))
     (v03-reject source "semantic"))
   (dolist (source '("branch when{true=>return 1;,else=>2}" "branch when{true=>1,,else=>2}"
                     "type E=enum{A(int);};branch on(E::A(1)){E::A(1)=>true}"
