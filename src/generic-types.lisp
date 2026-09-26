@@ -116,7 +116,7 @@
                      (fail-at (token-span token) :semantic "Duplicate member"))
                    (push (token-text token) names))
                  (field-type (token)
-                   (let ((type (resolve-type-token context token)))
+                   (let ((type (reject-function-type (resolve-type-token context token) token "Function storage is not supported")))
                      (when (nominal-type-p type :interface)
                        (fail-at (token-span token) :semantic "Interface storage is not supported")) type)))
           (ecase kind
