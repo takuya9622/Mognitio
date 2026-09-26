@@ -1,7 +1,7 @@
 (in-package #:mognitio.tests)
 
 (defparameter *v08-gc-source*
-  "type Box<T> =struct{value:T;};let discarded:Box<string> =Box<string>{value:\"trash\"+\"!\"};let make=function():Result<int,Box<string>>{Result<int,Box<string>>::Err(Box<string>{value:\"keep\"+\"!\"})};let f=function():Result<bool,Box<string>>{let n:int=try make();Result<bool,Box<string>>::Ok(n==42)};let payload:Box<string> =branch on(f()){Result<bool,Box<string>>::Ok(_)=>Box<string>{value:\"bad\"},Result<bool,Box<string>>::Err(e)=>e};var i:int=0;loop while(i<2000){let dead:Box<string> =Box<string>{value:\"dead\"+\"!\"};i=i+1;};payload->value==\"keep!\"")
+  "type Box<T> =struct{value:T;};let discarded:Box<string> =Box<string>{value:\"trash\"+\"!\"};let make:function():Result<int,Box<string>> =function():Result<int,Box<string>>{Result<int,Box<string>>::Err(Box<string>{value:\"keep\"+\"!\"})};let f:function():Result<bool,Box<string>> =function():Result<bool,Box<string>>{let n:int=try make();Result<bool,Box<string>>::Ok(n==42)};let payload:Box<string> =branch on(f()){Result<bool,Box<string>>::Ok(_)=>Box<string>{value:\"bad\"},Result<bool,Box<string>>::Err(e)=>e};var i:int=0;loop while(i<2000){let dead:Box<string> =Box<string>{value:\"dead\"+\"!\"};i=i+1;};payload->value==\"keep!\"")
 
 (deftest v08-generic-heap-reclamation
   (dolist (stress '(nil t))

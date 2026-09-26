@@ -9,7 +9,7 @@
              (lambda (c) (setf (local-symbol-owner (aref (checked-program-bindings c) 1)) 0))
              (lambda (c) (setf (mognitio.semantic::local-symbol-type (aref (checked-program-bindings c) 0)) nil))
              (lambda (c) (setf (signature-id (aref (checked-program-signatures c) 1)) 99))))
-    (let ((checked (check-program (parse-text "let f = function(x: int): int { return x; }; f(1) == 1"))))
+    (let ((checked (check-program (parse-text "let f :function(int):int= function(x: int): int { return x; }; f(1) == 1"))))
       (funcall mutation checked)
       (signals internal-failure (compile-program checked))
       (signals internal-failure (mognitio.ir:lower-program checked))))
@@ -18,13 +18,13 @@
                   (lambda (call function) (declare (ignore function)) (setf (mognitio.ir:instruction-operands call) nil))
                   (lambda (call function) (declare (ignore function)) (setf (mognitio.ir:instruction-type call) :bool))
                   (lambda (call function) (declare (ignore call)) (setf (mognitio.ir:ir-function-parameter-types function) '(:bool)))))
-    (let* ((module (native-ir "let f = function(x: int): int { x }; f(1) == 1"))
+    (let* ((module (native-ir "let f :function(int):int= function(x: int): int { x }; f(1) == 1"))
            (call (find :call.value (mognitio.ir:basic-block-instructions (first (entry-blocks module)))
                        :key #'mognitio.ir:instruction-op)))
       (funcall mutation call (second (mognitio.ir:module-functions module)))
       (signals internal-failure (mognitio.ir:verify-module module))))
   ;; Callee is changed to call itself while retaining a valid typed SSA graph.
-  (let* ((module (native-ir "let f = function(x: int): int { x + 1 }; f(1) == 2"))
+  (let* ((module (native-ir "let f :function(int):int= function(x: int): int { x + 1 }; f(1) == 2"))
          (function (second (mognitio.ir:module-functions module)))
          (block (first (mognitio.ir:ir-function-blocks function)))
          (inst (find :add (mognitio.ir:basic-block-instructions block) :key #'mognitio.ir:instruction-op)))
@@ -33,7 +33,7 @@
     (signals internal-failure (mognitio.ir:verify-module module))))
 
 (deftest v04-call-barriers-and-pressure
-  (let* ((module (native-ir "let f = function(x: int): int { x + 1 }; let a: int = 5; a + f(2) == 8"))
+  (let* ((module (native-ir "let f :function(int):int= function(x: int): int { x + 1 }; let a: int = 5; a + f(2) == 8"))
          (allocation (mognitio.regalloc:allocate-function (first (mognitio.ir:module-functions module))))
          (locations (mognitio.regalloc:allocation-locations allocation)))
     (is (integerp (gethash 1 locations)))
@@ -41,13 +41,13 @@
     (signals internal-failure (mognitio.regalloc:verify-allocation allocation)))
   (v03-positive
    (with-output-to-string (out)
-     (write-string "let smash = function(a: int, b: int, c: int, d: int, e: int, f: int, g: int, h: int): int { a + b + c + d + e + f + g + h }; " out)
-     (write-string "let repeat = function(x: int): int { x + smash(x, x + 1, x + 2, x + 3, x + 4, x + 5, x + 6, x + 7) + x }; " out)
+     (write-string "let smash :function(int,int,int,int,int,int,int,int):int= function(a: int, b: int, c: int, d: int, e: int, f: int, g: int, h: int): int { a + b + c + d + e + f + g + h }; " out)
+     (write-string "let repeat :function(int):int= function(x: int): int { x + smash(x, x + 1, x + 2, x + 3, x + 4, x + 5, x + 6, x + 7) + x }; " out)
      (dotimes (i 32) (format out "let x~D: int = ~D; " i i))
      (write-string "let n: int = repeat(3) + repeat(7); " out)
      (dotimes (i 32) (format out "x~D + " i))
      (write-string "n == 652" out)) :true)
-  (v03-positive "let pack = function(a: int, b: int): int { a * 10 + b }; let inc = function(x: int): int { x + 1 }; pack(inc(2), inc(inc(4))) == 36" :true))
+  (v03-positive "let pack :function(int,int):int= function(a: int, b: int): int { a * 10 + b }; let inc :function(int):int= function(x: int): int { x + 1 }; pack(inc(2), inc(inc(4))) == 36" :true))
 
 (deftest v04-handwritten-abi
   ;; This caller and callee do not use source lowering or allocation. Assert
@@ -83,12 +83,14 @@
 (deftest v04-large-argument-frame-and-host-symbols
   (v03-positive
    (with-output-to-string (out)
-     (write-string "let many = function(" out)
+     (write-string "let many:function(" out)
+     (dotimes (i 600) (when (plusp i) (write-string "," out)) (write-string "int" out))
+     (write-string "):bool=function(" out)
      (dotimes (i 600) (when (plusp i) (write-string ", " out)) (format out "a~D: int" i))
      (write-string "): bool { a0 + a599 == 599 }; many(" out)
      (dotimes (i 600) (when (plusp i) (write-string ", " out)) (format out "~D" i))
      (write-string ")" out)) :true)
-  (let* ((checked (check-program (parse-text "let f = function(x: int): int { return x; }; let g = function(x: int): int { return f(x); }; let x: int = 5; g(x) == 5")))
+  (let* ((checked (check-program (parse-text "let f :function(int):int= function(x: int): int { return x; }; let g :function(int):int= function(x: int): int { return f(x); }; let x: int = 5; g(x) == 5")))
          (form (mognitio.backend.cl::program-form checked))
          (definitions (second form))
          (names (mapcar #'first definitions))

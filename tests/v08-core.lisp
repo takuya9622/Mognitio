@@ -1,7 +1,7 @@
 (in-package #:mognitio.tests)
 
 (defparameter *v08-err-source*
-  "let f=function(r:Result<int,string>):Result<bool,string>{let n:int=try r;Result<bool,string>::Ok(n==42)};branch on(f(Result<int,string>::Err(\"kept\"+\"!\"))){Result<bool,string>::Ok(_)=>false,Result<bool,string>::Err(e)=>e==\"kept!\"}")
+  "let f:function(Result<int,string>):Result<bool,string> =function(r:Result<int,string>):Result<bool,string>{let n:int=try r;Result<bool,string>::Ok(n==42)};branch on(f(Result<int,string>::Err(\"kept\"+\"!\"))){Result<bool,string>::Ok(_)=>false,Result<bool,string>::Err(e)=>e==\"kept!\"}")
 
 (deftest v08-try-core-guards-and-last-payload-use
   (let* ((module (native-ir *v08-err-source*))
@@ -49,7 +49,7 @@
 (deftest v08-result-private-abi
   ;; A handwritten caller checks argument slots, one-word Result return,
   ;; payload/tag/header offsets, stack restoration and runtime register R15.
-  (let ((source "let forward=function(r:Result<int,string>):Result<int,string>{Result<int,string>::Ok(try r)};let r:Result<int,string> =Result<int,string>::Ok(42);true"))
+  (let ((source "let forward:function(Result<int,string>):Result<int,string> =function(r:Result<int,string>):Result<int,string>{Result<int,string>::Ok(try r)};let r:Result<int,string> =Result<int,string>::Ok(42);true"))
     (multiple-value-bind (out err code)
         (v05-cross-abi source 0
           (append '((:label (:function 0)) (:push-rbp) (:mov-reg :rbp :rsp))

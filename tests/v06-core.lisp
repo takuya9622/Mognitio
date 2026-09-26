@@ -23,7 +23,7 @@
                   (mognitio.ir:basic-block-terminator b))))))
 
 (deftest v06-core-text-lowering
-  (let* ((source "let f=function(s:string):string{s->slice(0,1)+\"\"}; let x: string=\"日本\"; let y: string=f(x); let unused: bool=x!=y; y->length()==1")
+  (let* ((source "let f:function(string):string=function(s:string):string{s->slice(0,1)+\"\"}; let x: string=\"日本\"; let y: string=f(x); let unused: bool=x!=y; y->length()==1")
          (module (v06-native-ir source)))
     (is (mognitio.ir:verify-module module))
     (same (v06-core-snapshot module) (v06-core-snapshot (v06-native-ir source)))
@@ -44,9 +44,9 @@
     (is (not (find :text.slice (mognitio.ir:basic-block-instructions (first (entry-blocks module)))
                    :key #'mognitio.ir:instruction-op)))
     (is (v06-core-op module :text.slice)))
-  (dolist (source '("let f=function():bool{\"x\"->slice({return true;},0)}; f()"
-                    "let f=function():bool{({return true;})->whatever(\"x\"+\"y\")}; f()"
-                    "let f=function():bool{\"x\"+{return true;}}; f()"))
+  (dolist (source '("let f:function():bool=function():bool{\"x\"->slice({return true;},0)}; f()"
+                    "let f:function():bool=function():bool{({return true;})->whatever(\"x\"+\"y\")}; f()"
+                    "let f:function():bool=function():bool{\"x\"+{return true;}}; f()"))
     (let ((module (v06-native-ir source)))
       (is (mognitio.ir:verify-module module))
       (same nil (v06-core-op module :text.slice))
@@ -77,7 +77,7 @@
     (let ((module (v06-native-ir "let n: int=1; let s: string=\"a\"+\"b\"; s->length()==n")))
       (funcall mutate module)
       (signals internal-failure (mognitio.ir:verify-module module))))
-  (let ((module (v06-native-ir "let f=function(s:string):string{s}; f(\"x\")==\"x\"")))
+  (let ((module (v06-native-ir "let f:function(string):string=function(s:string):string{s}; f(\"x\")==\"x\"")))
     (setf (mognitio.ir:instruction-effects (v06-core-op module :call.value)) '(:call-barrier))
     (signals internal-failure (mognitio.ir:verify-module module))))
 
@@ -130,11 +130,11 @@
   (dolist (source
             '("var s: string=\"abc\"; s->slice({s=\"z\"; 0},1)==\"a\""
               "var s: string=\"a\"; s+{s=\"b\"; s}==\"ab\""
-              "let f=function(a:string,b:string):string{a+b}; f(\"先\"+\"行\",\"後\"+\"続\")==\"先行後続\""
-              "let a=function(s:string):string{s+\"a\"}; let b=function(s:string):string{s+\"b\"}; var choose: bool=true; (branch when{(choose)=>{a},else=>{b}})({choose=false; \"x\"})==\"xa\""
+              "let f:function(string,string):string=function(a:string,b:string):string{a+b}; f(\"先\"+\"行\",\"後\"+\"続\")==\"先行後続\""
+              "let a:function(string):string=function(s:string):string{s+\"a\"}; let b:function(string):string=function(s:string):string{s+\"b\"}; var choose: bool=true; (branch when{(choose)=>{a},else=>{b}})({choose=false; \"x\"})==\"xa\""
               "var s: string=\"a\"; let r: string=loop {s=s+\"b\"; branch when{(s->length()<3)=>{continue;}}; break s;}; r==\"abb\""
               "var s: string=\"a\"; loop while(s->length()<5){s=s+\"b\";}; s==\"abbbb\""
-              "let f=function():string{\"x\"->slice({return \"ok\";},0)}; f()==\"ok\""
+              "let f:function():string=function():string{\"x\"->slice({return \"ok\";},0)}; f()==\"ok\""
               "let r: string=loop {\"x\"->slice({break \"ok\";},0);}; r==\"ok\""
               "var n: int=0; loop while(n<2){n=n+1; \"x\"->slice({continue;},0);}; n==2"
               "let a: string=branch when{(true)=>{\"x\"+\"y\"},else=>{\"z\"}}; a==\"xy\""
@@ -170,7 +170,7 @@
     (let ((pool (mognitio.ir:module-literal-pool (v06-native-ir source))))
       (same 0 (length (text-payload-octets (aref pool 0))))
       (same 0 (text-payload-scalar-count (aref pool 0)))))
-  (let* ((module (v06-native-ir "let f=function():string{let nested=function():string{\"first\"}; \"second\"}; let unused: string=\"third\"; f()==\"second\""))
+  (let* ((module (v06-native-ir "let f:function():string=function():string{let nested:function():string=function():string{\"first\"}; \"second\"}; let unused: string=\"third\"; f()==\"second\""))
          (pool (mognitio.ir:module-literal-pool module)))
     (same '("" "first" "second" "third")
           (loop for p across pool collect (sb-ext:octets-to-string (text-payload-octets p) :external-format :utf-8)))

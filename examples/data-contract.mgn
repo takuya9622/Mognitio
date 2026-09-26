@@ -4,7 +4,7 @@ interface Named { let name = function(): string; }
 implement Item against Named {
     let name = function(): string { this->text };
 }
-let display = function(value: Named): string { value->name() };
+let display :function(Named):string= function(value: Named): string { value->name() };
 branch on (State::Ready(Item { text: "data" + "!" })) {
     State::Empty => false,
     State::Ready(item) => display(item) == "data!",

@@ -79,7 +79,7 @@
                  (source
                    (with-output-to-string (out)
                      (dolist (id '(3 2 1 0))
-                       (format out "let f~D = function(n: int, flag: bool): int { var x: int = n; ~A }; " id (v04-render (aref functions id))))
+                       (format out "let f~D:function(int,bool):int=function(n: int, flag: bool): int { var x: int = n; ~A }; " id (v04-render (aref functions id))))
                      (format out "let result: int = ~A; ~A" (v04-render entry)
                              (if (listp expected) (format nil "result == ~D" (first expected)) "true")))))
             (handler-case

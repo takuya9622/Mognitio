@@ -40,9 +40,9 @@
   (dolist (source
     '("\"\"!=\"x\"" "\"A\\0B\"!=\"A\\0C\"" "(\"a\"+\"b\")!=(\"a\"+\"c\")"
       "(\"a\"+\"b\")==\"abc\"->slice(0,2)"
-      "let f=function():string{branch when{(true)=>{return \"x\"+\"日\";},else=>{\"\"}}}; let alias: string=f(); var original: string=alias; original=\"replacement\"+\"!\"; let part: string=alias->slice(1,2); let unused: string=\"new\"+\"value\"; branch when{(part==\"日\")=>{alias==\"x日\"},else=>{false}}"
+      "let f:function():string=function():string{branch when{(true)=>{return \"x\"+\"日\";},else=>{\"\"}}}; let alias: string=f(); var original: string=alias; original=\"replacement\"+\"!\"; let part: string=alias->slice(1,2); let unused: string=\"new\"+\"value\"; branch when{(part==\"日\")=>{alias==\"x日\"},else=>{false}}"
       "let s: string={let inner: string=\"a\"+\"b\"; inner->slice(1,2)}; let x: string=\"other\"+\"value\"; s==\"b\""
-      "let f=function():string{\"a\"+\"b\"}; (branch when{(false)=>{\"\"},else=>{f()}})->slice(0,2)->length()==2"
-      "let string_slice=function(s:string,a:int,b:int):string{s->slice(a,b)}; let alias=string_slice; let length: int=1; let slice: int=2; alias(\"A日😀\",length,slice)==\"日\""))
+      "let f:function():string=function():string{\"a\"+\"b\"}; (branch when{(false)=>{\"\"},else=>{f()}})->slice(0,2)->length()==2"
+      "let string_slice:function(string,int,int):string=function(s:string,a:int,b:int):string{s->slice(a,b)}; let alias:function(string,int,int):string=string_slice; let length: int=1; let slice: int=2; alias(\"A日😀\",length,slice)==\"日\""))
     (expect-source source :true)
     (v06-expect-native source :true '(:stress t :validate t :arena-unit 65536 :cap 65536))))

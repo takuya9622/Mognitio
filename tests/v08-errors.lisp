@@ -12,22 +12,22 @@
 
 (deftest v08-try-result-flow
   (dolist (source
-    '("let f=function():Result<int,string>{Result<int,string>::Ok(try Result<int,string>::Ok(41)+1)};branch on(f()){Result<int,string>::Ok(x)=>x==42,Result<int,string>::Err(_)=>false}"
-      "let f=function():Result<bool,string>{let n:int=try Result<int,string>::Err(\"bad\"+\"!\");Result<bool,string>::Ok(n==42)};branch on(f()){Result<bool,string>::Ok(_)=>false,Result<bool,string>::Err(e)=>e==\"bad!\"}"
-      "type R=Result<int,string>;type E=string;let f=function():Result<bool,E>{let n:int=try R::Err(\"same\");Result<bool,E>::Ok(n==42)};branch on(f()){Result<bool,E>::Ok(_)=>false,Result<bool,E>::Err(e)=>e==\"same\"}"
-      "let f=function<T,E>(r:Result<T,E>):Result<T,E>{Result<T,E>::Ok(try r)};branch on(f<int,string>(Result<int,string>::Ok(42))){Result<int,string>::Ok(n)=>n==42,Result<int,string>::Err(_)=>false}"
-      "let f=function<T,E>(r:Result<T,E>):Result<bool,E>{let n:T=try r;Result<bool,E>::Ok(true)};branch on(f<int,string>(Result<int,string>::Err(\"kept\"))){Result<bool,string>::Ok(_)=>false,Result<bool,string>::Err(e)=>e==\"kept\"}"
-      "let f=function():Result<void,string>{try Result<void,string>::Ok(void);Result<void,string>::Ok(void)};branch on(f()){Result<void,string>::Ok(v)=>{v;true},Result<void,string>::Err(_)=>false}"
-      "let f=function():Result<int,string>{let g=function(x:int,y:int):int{x+y};Result<int,string>::Ok(g(try Result<int,string>::Err(\"early\"),1/0))};branch on(f()){Result<int,string>::Ok(_)=>false,Result<int,string>::Err(e)=>e==\"early\"}"
-      "let f=function():int{try {return 42;}};f()==42"
-      "let f=function():int{panic {return 42;}};f()==42"
-      "let f=function():int{try panic {return 42;}};f()==42"
+    '("let f:function():Result<int,string> =function():Result<int,string>{Result<int,string>::Ok(try Result<int,string>::Ok(41)+1)};branch on(f()){Result<int,string>::Ok(x)=>x==42,Result<int,string>::Err(_)=>false}"
+      "let f:function():Result<bool,string> =function():Result<bool,string>{let n:int=try Result<int,string>::Err(\"bad\"+\"!\");Result<bool,string>::Ok(n==42)};branch on(f()){Result<bool,string>::Ok(_)=>false,Result<bool,string>::Err(e)=>e==\"bad!\"}"
+      "type R=Result<int,string>;type E=string;let f:function():Result<bool,E> =function():Result<bool,E>{let n:int=try R::Err(\"same\");Result<bool,E>::Ok(n==42)};branch on(f()){Result<bool,E>::Ok(_)=>false,Result<bool,E>::Err(e)=>e==\"same\"}"
+      "let f:function<T,E>(Result<T,E>):Result<T,E> =function<T,E>(r:Result<T,E>):Result<T,E>{Result<T,E>::Ok(try r)};branch on(f<int,string>(Result<int,string>::Ok(42))){Result<int,string>::Ok(n)=>n==42,Result<int,string>::Err(_)=>false}"
+      "let f:function<T,E>(Result<T,E>):Result<bool,E> =function<T,E>(r:Result<T,E>):Result<bool,E>{let n:T=try r;Result<bool,E>::Ok(true)};branch on(f<int,string>(Result<int,string>::Err(\"kept\"))){Result<bool,string>::Ok(_)=>false,Result<bool,string>::Err(e)=>e==\"kept\"}"
+      "let f:function():Result<void,string> =function():Result<void,string>{try Result<void,string>::Ok(void);Result<void,string>::Ok(void)};branch on(f()){Result<void,string>::Ok(v)=>{v;true},Result<void,string>::Err(_)=>false}"
+      "let f:function():Result<int,string> =function():Result<int,string>{let g:function(int,int):int=function(x:int,y:int):int{x+y};Result<int,string>::Ok(g(try Result<int,string>::Err(\"early\"),1/0))};branch on(f()){Result<int,string>::Ok(_)=>false,Result<int,string>::Err(e)=>e==\"early\"}"
+      "let f:function():int=function():int{try {return 42;}};f()==42"
+      "let f:function():int=function():int{panic {return 42;}};f()==42"
+      "let f:function():int=function():int{try panic {return 42;}};f()==42"
       "let n:int=loop{panic {break 42;}};n==42"
       "var i:int=0;loop while(i<3){i=i+1;panic {continue;}};i==3"
-      "let f=function():Result<int,string>{let n:int=loop{break try Result<int,string>::Ok(42);};Result<int,string>::Ok(n)};branch on(f()){Result<int,string>::Ok(n)=>n==42,Result<int,string>::Err(_)=>false}"
+      "let f:function():Result<int,string> =function():Result<int,string>{let n:int=loop{break try Result<int,string>::Ok(42);};Result<int,string>::Ok(n)};branch on(f()){Result<int,string>::Ok(n)=>n==42,Result<int,string>::Err(_)=>false}"
       "type U=struct{};interface I{let f=function():Result<int,string>;}implement U against I{let f=function():Result<int,string>{Result<int,string>::Ok(try Result<int,string>::Ok(42))};}branch on(U{}->f()){Result<int,string>::Ok(n)=>n==42,Result<int,string>::Err(_)=>false}"
-      "let f=function():Result<string,int>{Result<string,int>::Ok((try Result<string,int>::Ok(\"abc\"))->slice(1,3))};branch on(f()){Result<string,int>::Ok(s)=>s==\"bc\",Result<string,int>::Err(_)=>false}"
-      "let f=function():Result<int,void>{let x:string=try Result<string,void>::Err(void);Result<int,void>::Ok(x->length())};branch on(f()){Result<int,void>::Ok(_)=>false,Result<int,void>::Err(v)=>{v;true}}"))
+      "let f:function():Result<string,int> =function():Result<string,int>{Result<string,int>::Ok((try Result<string,int>::Ok(\"abc\"))->slice(1,3))};branch on(f()){Result<string,int>::Ok(s)=>s==\"bc\",Result<string,int>::Err(_)=>false}"
+      "let f:function():Result<int,void> =function():Result<int,void>{let x:string=try Result<string,void>::Err(void);Result<int,void>::Ok(x->length())};branch on(f()){Result<int,void>::Ok(_)=>false,Result<int,void>::Err(v)=>{v;true}}"))
     (v07-accept source)))
 
 (deftest v08-error-syntax-and-types
@@ -35,15 +35,15 @@
     (v03-reject source "parse"))
   (dolist (source
     '("panic {}" "panic {42}" "try panic {\"stop\"}" "try Result<int,string>::Ok(42)==42"
-      "let f=function():int{try Result<int,string>::Ok(42)};true"
-      "let f=function():Result<int,string>{Result<int,string>::Ok(try 42)};true"
-      "let f=function():Result<int,int>{Result<int,int>::Ok(try Result<int,string>::Ok(42))};true"
-      "type Fake=enum{Ok(int);Err(string);};let f=function():Result<int,string>{Result<int,string>::Ok(try Fake::Ok(42))};true"
-      "type A=enum{Bad;};type B=enum{Bad;};let f=function():Result<int,A>{Result<int,A>::Ok(try Result<int,B>::Ok(42))};true"
-      "let f=function():Result<int,string>{let g=function():int{try Result<int,string>::Ok(42)};Result<int,string>::Ok(g())};true"
-      "let f=function():int{panic {return 42;\"unreachable\"}};true"
+      "let f:function():int=function():int{try Result<int,string>::Ok(42)};true"
+      "let f:function():Result<int,string> =function():Result<int,string>{Result<int,string>::Ok(try 42)};true"
+      "let f:function():Result<int,int> =function():Result<int,int>{Result<int,int>::Ok(try Result<int,string>::Ok(42))};true"
+      "type Fake=enum{Ok(int);Err(string);};let f:function():Result<int,string> =function():Result<int,string>{Result<int,string>::Ok(try Fake::Ok(42))};true"
+      "type A=enum{Bad;};type B=enum{Bad;};let f:function():Result<int,A> =function():Result<int,A>{Result<int,A>::Ok(try Result<int,B>::Ok(42))};true"
+      "let f:function():Result<int,string> =function():Result<int,string>{let g:function():int=function():int{try Result<int,string>::Ok(42)};Result<int,string>::Ok(g())};true"
+      "let f:function():int=function():int{panic {return 42;\"unreachable\"}};true"
       "panic {let x:string=\"inner\";x};x==\"inner\""
-      "let f=function():int{let x:int=panic {\"stop\"};42};true"))
+      "let f:function():int=function():int{let x:int=panic {\"stop\"};42};true"))
     (v03-reject source "semantic")))
 
 (deftest v08-panic-messages-and-priority
@@ -53,15 +53,15 @@
                   ("panic {\"\"}" "panic: ")
                   ("panic {panic {\"inner\"}}" "panic: inner")
                   ("panic {let n:int=1/0;\"outer\"}" "division by zero")
-                  ("let f=function():bool{try panic {\"stop\"}};f()" "panic: stop")
+                  ("let f:function():bool=function():bool{try panic {\"stop\"}};f()" "panic: stop")
                   ("branch when{true=>panic {\"chosen\"},else=>panic {\"other\"}}" "panic: chosen")
-                  ("let f=function<T>(x:T):T{panic {\"generic\"}};f<int>(42)==42" "panic: generic")))
+                  ("let f:function<T>(T):T=function<T>(x:T):T{panic {\"generic\"}};f<int>(42)==42" "panic: generic")))
     (v08-failure (first pair) (second pair)))
   (let ((message (concatenate 'string "Aあ😀" (string (code-char 0)) (string #\Newline) "Z")))
     (v08-failure "panic {\"Aあ😀\\0\\nZ\"}" (concatenate 'string "panic: " message))))
 
 (deftest v08-error-metadata-and-core-rejection
-  (dolist (source '("panic {\"stop\"}" "let f=function<T,E>(r:Result<T,E>):Result<T,E>{Result<T,E>::Ok(try r)};branch on(f<int,string>(Result<int,string>::Ok(42))){Result<int,string>::Ok(n)=>n==42,Result<int,string>::Err(_)=>false}"))
+  (dolist (source '("panic {\"stop\"}" "let f:function<T,E>(Result<T,E>):Result<T,E> =function<T,E>(r:Result<T,E>):Result<T,E>{Result<T,E>::Ok(try r)};branch on(f<int,string>(Result<int,string>::Ok(42))){Result<int,string>::Ok(n)=>n==42,Result<int,string>::Err(_)=>false}"))
     (dolist (mode '(:source :concrete))
       (dolist (mutation '(:owner :input :result :return :extra))
         (let* ((original (v08-check-template source))

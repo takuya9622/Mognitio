@@ -39,12 +39,12 @@
 
 (deftest v06-native-text-live-roots
   (dolist (source
-    '("let f=function(s:string):string{s+\"!\"}; let a: string=f(\"A\"); let b: string=f(\"B\"); let c: string=f(\"C\"); let d: string=f(\"D\"); let e: string=f(\"E\"); let g: string=f(\"G\"); let h: string=f(\"H\"); a+b+c+d+e+g+h==\"A!B!C!D!E!G!H!\""
-      "let f=function(s:string):string{s+\"!\"}; (f(\"abc\")->slice({let x: string=f(\"other\");1},{let y: string=f(\"value\");3}))+f(\"z\")==\"bcz!\""
-      "let f=function(s:string):string{s+\"!\"}; let g=function(a:string,b:string,c:string):string{a+b+c}; g(f(\"a\"),f(\"b\"),f(\"c\"))==\"a!b!c!\""
-      "let f=function(s:string):string{s+\"!\"}; var s: string=f(\"abc\"); let old: string=s->slice({s=f(\"z\");1},3); old==\"bc\""
-      "let f=function(s:string):string{s+\"!\"}; var i: int=0; var s: string=\"\"; loop while(i<200){s=(loop {let x: string=f(s); break x;}); i=i+1;}; s->length()==200"
-      "let f=function(s:string):string{s+\"!\"}; let g=function(s:string):string{s+\"?\"}; let a: string=(branch when{(true)=>{f},else=>{g}})(\"a\"); (branch when{(true)=>{f},else=>{g}})(a)==\"a!!\""))
+    '("let f:function(string):string=function(s:string):string{s+\"!\"}; let a: string=f(\"A\"); let b: string=f(\"B\"); let c: string=f(\"C\"); let d: string=f(\"D\"); let e: string=f(\"E\"); let g: string=f(\"G\"); let h: string=f(\"H\"); a+b+c+d+e+g+h==\"A!B!C!D!E!G!H!\""
+      "let f:function(string):string=function(s:string):string{s+\"!\"}; (f(\"abc\")->slice({let x: string=f(\"other\");1},{let y: string=f(\"value\");3}))+f(\"z\")==\"bcz!\""
+      "let f:function(string):string=function(s:string):string{s+\"!\"}; let g:function(string,string,string):string=function(a:string,b:string,c:string):string{a+b+c}; g(f(\"a\"),f(\"b\"),f(\"c\"))==\"a!b!c!\""
+      "let f:function(string):string=function(s:string):string{s+\"!\"}; var s: string=f(\"abc\"); let old: string=s->slice({s=f(\"z\");1},3); old==\"bc\""
+      "let f:function(string):string=function(s:string):string{s+\"!\"}; var i: int=0; var s: string=\"\"; loop while(i<200){s=(loop {let x: string=f(s); break x;}); i=i+1;}; s->length()==200"
+      "let f:function(string):string=function(s:string):string{s+\"!\"}; let g:function(string):string=function(s:string):string{s+\"?\"}; let a: string=(branch when{(true)=>{f},else=>{g}})(\"a\"); (branch when{(true)=>{f},else=>{g}})(a)==\"a!!\""))
     (v06-expect-native source :true '(:stress t :validate t :arena-unit 65536 :cap 65536))))
 
 (deftest v06-native-runtime-encoding
