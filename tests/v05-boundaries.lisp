@@ -21,7 +21,7 @@
       (setf (gethash node (mognitio.semantic::checked-program-literals checked)) 0)
       (signals internal-failure (compile-program checked))
       (signals internal-failure (mognitio.ir:lower-program checked))))
-  (let* ((checked (check-program (parse-text "let f=function(): int {1}; let g=function(): int {2}; (branch when{(true)=>{f},else=>{g}})()==1")))
+  (let* ((checked (check-program (parse-text "let f:function():int=function(): int {1}; let g:function():int=function(): int {2}; (branch when{(true)=>{f},else=>{g}})()==1")))
          (call (binary-expression-left (program-root (checked-program-program checked))))
          (callee (call-expression-callee call)))
     (setf (completion-targets (checked-completion checked callee)) '(1)
@@ -29,11 +29,11 @@
     (signals internal-failure (compile-program checked))
     (signals internal-failure (mognitio.ir:lower-program checked)))
 
-  (let* ((checked (check-program (parse-text "let f=function(x: int): int {x}; f(1)==1")))
+  (let* ((checked (check-program (parse-text "let f:function(int):int=function(x: int): int {x}; f(1)==1")))
          (symbol (aref (checked-program-bindings checked) 1)))
     (setf (local-symbol-static-target symbol) 1)
     (signals internal-failure (compile-program checked)))
-  (let* ((checked (check-program (parse-text "let f=function(): int {1}; let selected:int=1; true")))
+  (let* ((checked (check-program (parse-text "let f:function():int=function(): int {1}; let selected:int=1; true")))
          (symbol (aref (checked-program-bindings checked) 1)))
     (setf (local-symbol-static-target symbol) 1)
     (signals internal-failure (compile-program checked))))
@@ -71,7 +71,7 @@
 
 (defun v05-function-cycle-module ()
   (let* ((type '(:function nil :int))
-         (module (native-ir "let f=function(): int {1}; let g=function(): int {2}; true"))
+         (module (native-ir "let f:function():int=function(): int {1}; let g:function():int=function(): int {2}; true"))
          (entry (first (mognitio.ir:module-functions module))))
     (setf (mognitio.ir:ir-function-blocks entry)
       (list
@@ -142,7 +142,7 @@
 
 (deftest v05-host-void-and-dispatch-boundary
   (is (null (symbol-package mognitio.backend.cl::*void-value*)))
-  (let* ((checked (check-program (parse-text "let f=function(): bool {true}; f()")))
+  (let* ((checked (check-program (parse-text "let f:function():bool=function(): bool {true}; f()")))
          (form (mognitio.backend.cl::program-form checked)))
     (labels ((corrupt-dispatch (node)
                (cond ((atom node) node)
@@ -181,7 +181,7 @@
       (process-result (list (namestring path))))))
 
 (defun v05-cross-abi-source (body tail)
-  (format nil "let probe = function(v0: void, a: int, v1: void, b: bool,
+  (format nil "let probe :function(void,int,void,bool,int,void,bool,int):void= function(v0: void, a: int, v1: void, b: bool,
                                    c: int, v2: void, d: bool, e: int): void { ~A };
                ~A" body tail))
 

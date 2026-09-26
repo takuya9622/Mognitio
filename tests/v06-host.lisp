@@ -12,21 +12,21 @@
       "var s: string=\"abc\"; let part: string=s->slice({s=\"z\";1},3); part==\"bc\""
       "var s: string=\"a\"; let result: string=s+{s=\"b\";s}; result==\"ab\""
       "var n: int=0; let s: string={n=n+1;\"abc\"}->slice({n=n*10+2;0},{n=n*10+3;1}); branch when{(n==123)=>{s==\"a\"},else=>{false}}"
-      "let f=function(x:string):string {x+\"!\"}; let g=function():string {f(\"あ\")}; g()==\"あ!\""
-      "let f=function():int {({return 7;})->unknown(1/0)}; f()==7"
-      "let f=function():int {\"abc\"->slice({return 7;},1/0)->length()}; f()==7"
-      "let f=function():int {({return 7;})+\"a\"}; f()==7"
+      "let f:function(string):string=function(x:string):string {x+\"!\"}; let g:function():string=function():string {f(\"あ\")}; g()==\"あ!\""
+      "let f:function():int=function():int {({return 7;})->unknown(1/0)}; f()==7"
+      "let f:function():int=function():int {\"abc\"->slice({return 7;},1/0)->length()}; f()==7"
+      "let f:function():int=function():int {({return 7;})+\"a\"}; f()==7"
       "let v: string=loop {\"a\"->slice({break \"ok\";},1/0);}; v==\"ok\""
       "var i: int=0; loop while(i<3){i=i+1; \"a\"->slice({continue;},1/0);}; i==3"
       "branch when{(true)=>{true},else=>{\"a\"->slice(-1,9)==\"\"}}"
-      "let unused=function():string {\"a\"->slice(-1,9)}; true"
-      "let length: int=1; let slice: int=2; let string_length=function(x:string):int{x->length()}; let measure=string_length; measure(\"aあ😀\"->slice(1,3))==2"
+      "let unused:function():string=function():string {\"a\"->slice(-1,9)}; true"
+      "let length: int=1; let slice: int=2; let string_length:function(string):int=function(x:string):int{x->length()}; let measure:function(string):int=string_length; measure(\"aあ😀\"->slice(1,3))==2"
       "(branch when{(true)=>{\"abc\"},else=>{\"z\"}})->slice(0,1)->length()==1"
       "(loop {break \"abc\";})->length()==3"))
     (expect-source source :true))
   (expect-source "\"a\"==\"A\"" :false)
   (expect-source "\"a\"!=\"a\"" :false)
-  (let ((heading "let heading=function(source:string):string {let size:int=source->length(); var end:int=2; loop while(end<size){branch when{(source->slice(end,end+1)==\"\\n\")=>{break;}}; end=end+1;}; \"<h1>\"+source->slice(2,end)+\"</h1>\"}; "))
+  (let ((heading "let heading:function(string):string=function(source:string):string {let size:int=source->length(); var end:int=2; loop while(end<size){branch when{(source->slice(end,end+1)==\"\\n\")=>{break;}}; end=end+1;}; \"<h1>\"+source->slice(2,end)+\"</h1>\"}; "))
     (dolist (tail '("heading(\"# 題名😀\\n本文\")==\"<h1>題名😀</h1>\""
                     "heading(\"# 題名😀\")==\"<h1>題名😀</h1>\""
                     "heading(\"# \")==\"<h1></h1>\""))
@@ -87,8 +87,8 @@
   (let ((original (fdefinition 'mognitio.text::allocate-bytes)) (allocations 0))
     (replacing (mognitio.text::allocate-bytes
                  (lambda (size) (incf allocations) (sb-ext:gc :full t) (funcall original size)))
-      (same :true (compiled-result "let f=function(s:string):string {s+\"!\"}; let a: string=f(\"A\"); let b: string=f(\"B\"); let c: string=f(\"C\"); var carry: string=\"\"; var i: int=0; loop while(i<5){carry=f(carry); i=i+1;}; branch when{(a+b+c==\"A!B!C!\")=>{carry==\"!!!!!\"},else=>{false}}"))
-      (same :true (compiled-result "let f=function(s:string):string {s+\"!\"}; (f(\"abc\")->slice({let x: string=f(\"other\");1},{let y: string=f(\"value\");3}))+f(\"z\")==\"bcz!\"")))
+      (same :true (compiled-result "let f:function(string):string=function(s:string):string {s+\"!\"}; let a: string=f(\"A\"); let b: string=f(\"B\"); let c: string=f(\"C\"); var carry: string=\"\"; var i: int=0; loop while(i<5){carry=f(carry); i=i+1;}; branch when{(a+b+c==\"A!B!C!\")=>{carry==\"!!!!!\"},else=>{false}}"))
+      (same :true (compiled-result "let f:function(string):string=function(s:string):string {s+\"!\"}; (f(\"abc\")->slice({let x: string=f(\"other\");1},{let y: string=f(\"value\");3}))+f(\"z\")==\"bcz!\"")))
     (is (> allocations 10))))
 
 

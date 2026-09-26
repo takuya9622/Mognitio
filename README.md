@@ -4,11 +4,13 @@ Mognitio is a small language with typed functions, structured iteration,
 and immutable data. Version 0.8.0 adds explicit generics,
 canonical `Result<T, E>`, prefix `try`, and `panic { ... }` to the existing
 struct, enum, interface, method, and garbage-collected value system.
+Version 0.8.1 requires every local binding to declare its type. Non-generic
+function values use function types, and generic templates use binding-only
+generic signatures.
 
 It can run a program through SBCL or build a standalone Linux amd64 executable.
-Ordinary local `let` / `var` bindings require type annotations. Direct function
-signatures and static aliases remain explicit binding forms; selected
-nongeneric function values can be called directly.
+Every local `let` / `var` binding declares its type. Generic templates remain
+compile-time aliases and are not runtime values.
 
 See [v0.8.0 validation](verification/v0.8.0.md) for the acceptance catalog and
 verification boundaries, and [release validation](verification/v0.8.0-release.md)
@@ -106,11 +108,11 @@ text->length() == 3
 ### Function values
 
 ```mgn
-let magnitude = function(value: int): int {
+let magnitude: function(int): int = function(value: int): int {
     branch when { value < 0 => { return -value; } };
     value
 };
-let twice = function(value: int): int { value * 2 };
+let twice: function(int): int = function(value: int): int { value * 2 };
 twice(magnitude(-6)) == 12
 ```
 
@@ -194,7 +196,7 @@ interface Named { let nameText = function(): string; }
 implement Item against Named {
     let nameText = function(): string { this->name };
 }
-let render = function(value: Named): string { value->nameText() };
+let render: function(Named): string = function(value: Named): string { value->nameText() };
 branch on (State::Ready(Item { name: "example" })) {
     State::Empty => false,
     State::Ready(item) => render(item) == "example",
@@ -229,8 +231,8 @@ are invariant. Type parameters cannot shadow visible types or remain unused.
 Bodies are checked with opaque parameters before any concrete call is compiled.
 
 ```mgn
-let identity = function<T>(value: T): T { value };
-let forward = function<T, E>(result: Result<T, E>): Result<T, E> {
+let identity: function<T>(T): T = function<T>(value: T): T { value };
+let forward: function<T, E>(Result<T, E>): Result<T, E> = function<T, E>(result: Result<T, E>): Result<T, E> {
     let value: T = try result;
     Result<T, E>::Ok(value)
 };

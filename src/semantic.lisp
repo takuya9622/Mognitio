@@ -82,6 +82,10 @@
                  (setf (signature-type-parameters sig) parameters (signature-lexical-parameters sig) outer-types
                        (signature-parent sig) owner)
                  (unless existing (vector-push-extend sig signatures))
+                 (loop for param across (function-expression-parameters node)
+                       for type in (signature-parameter-types sig)
+                       do (reject-function-type type (parameter-type param) "Function type is not a parameter type"))
+                 (reject-function-type (signature-result-type sig) (function-expression-result-type node) "Function type is not a return type")
                  (setf (gethash node functions) sig owner id loop-stack nil)
                  (when receiver-type
                    (let ((receiver (make-local-symbol :id (length bindings) :owner id :name "this"
@@ -192,19 +196,27 @@
                   (let* ((entry (declare-local node (local-binding-name node) (local-binding-mutability node) scopes))
                          (child (expression (local-binding-initializer node) scopes :binding)))
                     (unless (normal child) (fail-at (node-span node) :semantic "Initializer has no normal type"))
-                    (when (and (eq (local-binding-mutability node) :var) (function-type-p (normal child)))
-                      (fail-at (node-span node) :semantic "Mutable function values are not supported"))
                     (let* ((annotation (local-binding-annotation node))
                            (static (static-target (local-binding-initializer node)))
                            (template (and static (signature-type-parameters (aref signatures static))))
-                           (type (unless template (if annotation (resolve-type-token values-context annotation) (normal child)))))
-                      (if template
-                          (unless (and (eq (local-binding-mutability node) :let) (null annotation))
-                            (fail-at (node-span node) :semantic "Generic binding requires its explicit function signature"))
-                          (progn
-                            (unless (or annotation (and (eq (local-binding-mutability node) :let) static))
-                              (fail-at (node-span node) :semantic "Ordinary binding requires a type annotation"))
-                            (check-adaptation values-context (local-binding-initializer node) (normal child) type)))
+                           (type nil))
+                      (unless annotation
+                        (fail-at (node-span node) :semantic "Ordinary binding requires a type annotation"))
+                      (cond
+                        ((generic-signature-syntax-p annotation)
+                         (unless (eq (local-binding-mutability node) :let)
+                           (fail-at (generic-signature-syntax-span annotation) :semantic "Var cannot bind a generic function template"))
+                         (unless template
+                           (fail-at (generic-signature-syntax-span annotation) :semantic "Generic signature requires a generic function template"))
+                         (let ((difference (generic-signature-difference values-context annotation (aref signatures static))))
+                           (when difference (fail-at (generic-signature-syntax-span annotation) :semantic difference))))
+                        (template
+                         (fail-at (form-span annotation) :semantic "Generic function template requires a generic signature"))
+                        (t
+                         (setf type (resolve-type-token values-context annotation))
+                         (check-adaptation values-context (local-binding-initializer node) (normal child) type)
+                         (when (and (eq (local-binding-mutability node) :var) (function-type-p type))
+                           (fail-at (node-span node) :semantic "Mutable function values are not supported"))))
                       (setf (local-symbol-type (car entry)) type (cdr entry) :visible
                             (local-symbol-template (car entry)) (when template static)
                             (local-symbol-targets (car entry)) (completion-targets child)

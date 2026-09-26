@@ -374,6 +374,18 @@ process statuses, output bytes, source hashes, and deterministic artifact hashes
 | v08-runtime, v08-core | Terminal roots, Err last-use roots, guarded payloads, frame corruption, private ABI, descriptor bytes, write faults |
 | v08-lifetime | Strong child survival, dead parent reclamation, region reuse, GC mutants, host weak references |
 
+
+## v0.8.1 coverage
+
+v0.8.1 removes the v0.8.0 permission to omit a local annotation on a direct
+function expression or static function alias. Regression sources now carry
+concrete function types or generic binding signatures. `v08-bindings.lisp`
+covers rejected omission, annotated function and branch values, alpha-equivalent
+generic templates and aliases, and signature, arity, parameter, return, `var`,
+and runtime-position rejections. Method declarations and pattern bindings keep
+their existing forms. The v0.8.0 acceptance catalog remains the C08 suite, with
+migrated sources and matching hashes in `verification/v0.8.0-cases.json`.
+
 Existing regression groups remain enabled. `v08-migration.json` records the
 annotation and function-binding fixture changes without changing historical
 release sources or records.

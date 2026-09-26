@@ -38,32 +38,32 @@
      ("type A<T> =A<T>;true" "semantic")
      ("type A<T> =enum{Next(A<T>);};true" "semantic"))
     ("C08-08"
-     ("let identity=function<T>(x:T):T{x};branch when{identity<int>(42)==42=>identity<string>(\"x\")==\"x\",else=>false}" "true"))
+     ("let identity:function<T>(T):T=function<T>(x:T):T{x};branch when{identity<int>(42)==42=>identity<string>(\"x\")==\"x\",else=>false}" "true"))
     ("C08-09"
-     ("let identity=function<T>(x:T):T{x};identity::<int>(42)==42" "parse"))
+     ("let identity:function<T>(T):T=function<T>(x:T):T{x};identity::<int>(42)==42" "parse"))
     ("C08-10"
-     ("let identity=function<T>(x:T):T{x};type T=int;let T:int=1;identity < T > (42)==42" "true")
-     ("let identity=function<T>(x:T):T{x};identity < Missing > (42)==42" "semantic")
-     ("type Box<T> =struct{value:T;};let identity=function<T>(x:T):T{x};identity<Box<Box<int>>>(Box<Box<int>>{value:Box<int>{value:42}})->value->value==42" "true"))
+     ("let identity:function<T>(T):T=function<T>(x:T):T{x};type T=int;let T:int=1;identity < T > (42)==42" "true")
+     ("let identity:function<T>(T):T=function<T>(x:T):T{x};identity < Missing > (42)==42" "semantic")
+     ("type Box<T> =struct{value:T;};let identity:function<T>(T):T=function<T>(x:T):T{x};identity<Box<Box<int>>>(Box<Box<int>>{value:Box<int>{value:42}})->value->value==42" "true"))
     ("C08-11"
-     ("let f=function(x:int):int{x};f<int>(42)==42" "semantic")
-     ("let identity=function<T>(x:T):T{x};identity<bool>(42)" "semantic")
-     ("let identity=function<T>(x:T):T{x};identity<int>(42,1)==42" "semantic"))
+     ("let f:function(int):int=function(x:int):int{x};f<int>(42)==42" "semantic")
+     ("let identity:function<T>(T):T=function<T>(x:T):T{x};identity<bool>(42)" "semantic")
+     ("let identity:function<T>(T):T=function<T>(x:T):T{x};identity<int>(42,1)==42" "semantic"))
     ("C08-12"
-     ("let identity=function<T>(x:T):T{x};let a=identity;let b=(a);b<int>(42)==42" "true")
-     ("let identity=function<T>(x:T):T{x};(identity)<int>(42)==42" "reject")
-     ("let identity=function<T>(x:T):T{x};identity<int>" "reject")
+     ("let identity:function<T>(T):T=function<T>(x:T):T{x};let a:function<T>(T):T=identity;let b:function<T>(T):T=(a);b<int>(42)==42" "true")
+     ("let identity:function<T>(T):T=function<T>(x:T):T{x};(identity)<int>(42)==42" "reject")
+     ("let identity:function<T>(T):T=function<T>(x:T):T{x};identity<int>" "reject")
      ("(function<T>(x:T):T{x})<int>(42)==42" "reject")
-     ("let identity=function<T>(x:T):T{x};(branch when{true=>identity,else=>identity})<int>(42)==42" "reject"))
+     ("let identity:function<T>(T):T=function<T>(x:T):T{x};(branch when{true=>identity,else=>identity})<int>(42)==42" "reject"))
     ("C08-13"
-     ("let identity=function<T>(x:T):T{x};identity(42)==42" "semantic")
+     ("let identity:function<T>(T):T=function<T>(x:T):T{x};identity(42)==42" "semantic")
      ("let r:Result<int,string> =Result::Ok(42);true" "semantic"))
     ("C08-14"
-     ("let identity=function<T>(x:T):T{x};let n:int=identity(42);true" "semantic")
-     ("let identity=function<T>(x:T):T{x};let f=function():int{identity(42)};true" "semantic")
-     ("let identity=function<T>(x:T):T{x};type U=struct{x:int;};let u:U=U{x:identity(42)};true" "semantic")
-     ("let identity=function<T>(x:T):T{x};let n:int=branch when{true=>identity(42),else=>0};true" "semantic")
-     ("let identity=function<T>(x:T):T{x};let n:int=identity(42);n==42" "semantic"))
+     ("let identity:function<T>(T):T=function<T>(x:T):T{x};let n:int=identity(42);true" "semantic")
+     ("let identity:function<T>(T):T=function<T>(x:T):T{x};let f:function():int=function():int{identity(42)};true" "semantic")
+     ("let identity:function<T>(T):T=function<T>(x:T):T{x};type U=struct{x:int;};let u:U=U{x:identity(42)};true" "semantic")
+     ("let identity:function<T>(T):T=function<T>(x:T):T{x};let n:int=branch when{true=>identity(42),else=>0};true" "semantic")
+     ("let identity:function<T>(T):T=function<T>(x:T):T{x};let n:int=identity(42);n==42" "semantic"))
     ("C08-15"
      ("branch on(Result<int,string>::Ok(42)){Result::Ok(v)=>true,Result::Err(_)=>false}" "semantic")
      ("branch on(Result<int,string>::Ok(42)){Result<bool,string>::Ok(v)=>true,Result<bool,string>::Err(_)=>false}" "semantic"))
@@ -73,96 +73,96 @@
      ("branch on(Result<int,string>::Ok(42)){Result<int,string>::Ok(v)=>true,Result<int,string>::Err(_)=>false,else=>false}" "semantic")
      ("let n:bool=branch on(Result<int,string>::Ok(42)){Result<int,string>::Ok(v)=>true,Result<int,string>::Err(_)=>false};v==42" "semantic"))
     ("C08-17"
-     ("let make=function():Result<int,string>{Result<int,string>::Ok(42)};let r:Result<int,string> =make();branch on(r){Result<int,string>::Ok(v)=>v==42,Result<int,string>::Err(_)=>false}" "true"))
+     ("let make:function():Result<int,string> =function():Result<int,string>{Result<int,string>::Ok(42)};let r:Result<int,string> =make();branch on(r){Result<int,string>::Ok(v)=>v==42,Result<int,string>::Err(_)=>false}" "true"))
     ("C08-18"
      ("let r:Result<int,string> =Result<int,string>::Err(\"ordinary\");let n:int=42;branch on(r){Result<int,string>::Ok(_)=>true,Result<int,string>::Err(_)=>n!=42}" "false"))
     ("C08-19"
-     ("type Wrapped=struct{text:string;};let convert=function(r:Result<int,string>):Result<int,Wrapped>{branch on(r){Result<int,string>::Ok(v)=>Result<int,Wrapped>::Ok(v),Result<int,string>::Err(e)=>Result<int,Wrapped>::Err(Wrapped{text:e})}};branch on(convert(Result<int,string>::Err(\"kept\"))){Result<int,Wrapped>::Ok(_)=>false,Result<int,Wrapped>::Err(e)=>e->text==\"kept\"}" "true"))
+     ("type Wrapped=struct{text:string;};let convert:function(Result<int,string>):Result<int,Wrapped> =function(r:Result<int,string>):Result<int,Wrapped>{branch on(r){Result<int,string>::Ok(v)=>Result<int,Wrapped>::Ok(v),Result<int,string>::Err(e)=>Result<int,Wrapped>::Err(Wrapped{text:e})}};branch on(convert(Result<int,string>::Err(\"kept\"))){Result<int,Wrapped>::Ok(_)=>false,Result<int,Wrapped>::Err(e)=>e->text==\"kept\"}" "true"))
     ("C08-20"
-     ("let f=function():Result<void,string>{try Result<void,string>::Ok(void);Result<void,string>::Ok(void)};branch on(f()){Result<void,string>::Ok(v)=>{v;true},Result<void,string>::Err(_)=>false}" "true")
+     ("let f:function():Result<void,string> =function():Result<void,string>{try Result<void,string>::Ok(void);Result<void,string>::Ok(void)};branch on(f()){Result<void,string>::Ok(v)=>{v;true},Result<void,string>::Err(_)=>false}" "true")
      ("let r:Result<void,string> =Result<void,string>::Ok();true" "semantic"))
     ("C08-21"
      ("type Result=int;true" "semantic")
-     ("type Fake=enum{Ok(int);Err(string);};let f=function():Result<int,string>{Result<int,string>::Ok(try Fake::Ok(42))};true" "semantic")
-     ("type R=Result<int,string>;let f=function():R{R::Ok(try R::Ok(42))};branch on(f()){R::Ok(v)=>v==42,R::Err(_)=>false}" "true"))
+     ("type Fake=enum{Ok(int);Err(string);};let f:function():Result<int,string> =function():Result<int,string>{Result<int,string>::Ok(try Fake::Ok(42))};true" "semantic")
+     ("type R=Result<int,string>;let f:function():R=function():R{R::Ok(try R::Ok(42))};branch on(f()){R::Ok(v)=>v==42,R::Err(_)=>false}" "true"))
     ("C08-22"
-     ("let f=function():Result<int,string>{var count:int=0;let n:int=try {count=count+1;Result<int,string>::Ok(count)};Result<int,string>::Ok(count*10+n)};branch on(f()){Result<int,string>::Ok(v)=>v==11,Result<int,string>::Err(_)=>false}" "true"))
+     ("let f:function():Result<int,string> =function():Result<int,string>{var count:int=0;let n:int=try {count=count+1;Result<int,string>::Ok(count)};Result<int,string>::Ok(count*10+n)};branch on(f()){Result<int,string>::Ok(v)=>v==11,Result<int,string>::Err(_)=>false}" "true"))
     ("C08-23"
-     ("let f=function():Result<int,string>{let n:int=try Result<int,string>::Err(\"early\");Result<int,string>::Ok(n+1/0)};branch on(f()){Result<int,string>::Ok(_)=>false,Result<int,string>::Err(e)=>e==\"early\"}" "true"))
+     ("let f:function():Result<int,string> =function():Result<int,string>{let n:int=try Result<int,string>::Err(\"early\");Result<int,string>::Ok(n+1/0)};branch on(f()){Result<int,string>::Ok(_)=>false,Result<int,string>::Err(e)=>e==\"early\"}" "true"))
     ("C08-24"
-     ("let f=function():Result<string,string>{let n:int=try Result<int,string>::Err(\"same\");Result<string,string>::Ok(\"bad\")};branch on(f()){Result<string,string>::Ok(_)=>false,Result<string,string>::Err(e)=>e==\"same\"}" "true"))
+     ("let f:function():Result<string,string> =function():Result<string,string>{let n:int=try Result<int,string>::Err(\"same\");Result<string,string>::Ok(\"bad\")};branch on(f()){Result<string,string>::Ok(_)=>false,Result<string,string>::Err(e)=>e==\"same\"}" "true"))
     ("C08-25"
-     ("let a=function():Result<int,string>{Result<int,string>::Err(\"chain\")};let b=function():Result<int,string>{Result<int,string>::Ok(try a())};let c=function():Result<int,string>{Result<int,string>::Ok(try b())};branch on(c()){Result<int,string>::Ok(_)=>false,Result<int,string>::Err(e)=>e==\"chain\"}" "true"))
+     ("let a:function():Result<int,string> =function():Result<int,string>{Result<int,string>::Err(\"chain\")};let b:function():Result<int,string> =function():Result<int,string>{Result<int,string>::Ok(try a())};let c:function():Result<int,string> =function():Result<int,string>{Result<int,string>::Ok(try b())};branch on(c()){Result<int,string>::Ok(_)=>false,Result<int,string>::Err(e)=>e==\"chain\"}" "true"))
     ("C08-26"
-     ("let a=function(r:Result<int,string>):Result<int,string>{let n:int=try r;Result<int,string>::Ok(n+1)};let b=function(r:Result<int,string>):Result<int,string>{let n:int=branch on(r){Result<int,string>::Ok(v)=>v,Result<int,string>::Err(e)=>{return Result<int,string>::Err(e);}};Result<int,string>::Ok(n+1)};let check=function(r:Result<int,string>):bool{branch on(a(r)){Result<int,string>::Ok(x)=>branch on(b(r)){Result<int,string>::Ok(y)=>x==y,Result<int,string>::Err(_)=>false},Result<int,string>::Err(x)=>branch on(b(r)){Result<int,string>::Ok(_)=>false,Result<int,string>::Err(y)=>x==y}}};branch when{check(Result<int,string>::Ok(41))=>check(Result<int,string>::Err(\"bad\")),else=>false}" "true"))
+     ("let a:function(Result<int,string>):Result<int,string> =function(r:Result<int,string>):Result<int,string>{let n:int=try r;Result<int,string>::Ok(n+1)};let b:function(Result<int,string>):Result<int,string> =function(r:Result<int,string>):Result<int,string>{let n:int=branch on(r){Result<int,string>::Ok(v)=>v,Result<int,string>::Err(e)=>{return Result<int,string>::Err(e);}};Result<int,string>::Ok(n+1)};let check:function(Result<int,string>):bool=function(r:Result<int,string>):bool{branch on(a(r)){Result<int,string>::Ok(x)=>branch on(b(r)){Result<int,string>::Ok(y)=>x==y,Result<int,string>::Err(_)=>false},Result<int,string>::Err(x)=>branch on(b(r)){Result<int,string>::Ok(_)=>false,Result<int,string>::Err(y)=>x==y}}};branch when{check(Result<int,string>::Ok(41))=>check(Result<int,string>::Err(\"bad\")),else=>false}" "true"))
     ("C08-27"
      ("try panic {\"stop\"}" "semantic")
-     ("let f=function():int{try Result<int,string>::Ok(42)};true" "semantic")
-     ("let f=function():Result<int,string>{Result<int,string>::Ok(try 42)};true" "semantic")
-     ("let f=function():Result<int,int>{Result<int,int>::Ok(try Result<int,string>::Ok(42))};true" "semantic"))
+     ("let f:function():int=function():int{try Result<int,string>::Ok(42)};true" "semantic")
+     ("let f:function():Result<int,string> =function():Result<int,string>{Result<int,string>::Ok(try 42)};true" "semantic")
+     ("let f:function():Result<int,int> =function():Result<int,int>{Result<int,int>::Ok(try Result<int,string>::Ok(42))};true" "semantic"))
     ("C08-28"
-     ("let outer=function():bool{let inner=function():Result<int,string>{loop{let n:int=try Result<int,string>::Err(\"inner\");break Result<int,string>::Ok(n);}};branch on(inner()){Result<int,string>::Ok(_)=>false,Result<int,string>::Err(e)=>e==\"inner\"}};outer()" "true"))
+     ("let outer:function():bool=function():bool{let inner:function():Result<int,string> =function():Result<int,string>{loop{let n:int=try Result<int,string>::Err(\"inner\");break Result<int,string>::Ok(n);}};branch on(inner()){Result<int,string>::Ok(_)=>false,Result<int,string>::Err(e)=>e==\"inner\"}};outer()" "true"))
     ("C08-29"
-     ("let f=function():Result<int,string>{Result<int,string>::Ok(try try Result<Result<int,string>,string>::Ok(Result<int,string>::Ok(41))+1)};branch on(f()){Result<int,string>::Ok(n)=>n==42,Result<int,string>::Err(_)=>false}" "true")
-     ("let f=function():bool{try {return true;}};f()" "true"))
+     ("let f:function():Result<int,string> =function():Result<int,string>{Result<int,string>::Ok(try try Result<Result<int,string>,string>::Ok(Result<int,string>::Ok(41))+1)};branch on(f()){Result<int,string>::Ok(n)=>n==42,Result<int,string>::Err(_)=>false}" "true")
+     ("let f:function():bool=function():bool{try {return true;}};f()" "true"))
     ("C08-30"
-     ("let a=function():Result<int,string>{panic {\"callee\"}};let b=function():Result<int,string>{Result<int,string>::Ok(try a())};branch on(b()){Result<int,string>::Ok(_)=>true,Result<int,string>::Err(_)=>false}" "failure:panic: callee")
-     ("let a=function():Result<int,string>{Result<int,string>::Ok(1/0)};let b=function():Result<int,string>{Result<int,string>::Ok(try a())};branch on(b()){Result<int,string>::Ok(_)=>true,Result<int,string>::Err(_)=>false}" "failure:division by zero")
-     ("let a=function():Result<int,string>{Result<int,string>::Ok(\"x\"->slice(0,2)->length())};let b=function():Result<int,string>{Result<int,string>::Ok(try a())};branch on(b()){Result<int,string>::Ok(_)=>true,Result<int,string>::Err(_)=>false}" "failure:string_index_out_of_bounds"))
+     ("let a:function():Result<int,string> =function():Result<int,string>{panic {\"callee\"}};let b:function():Result<int,string> =function():Result<int,string>{Result<int,string>::Ok(try a())};branch on(b()){Result<int,string>::Ok(_)=>true,Result<int,string>::Err(_)=>false}" "failure:panic: callee")
+     ("let a:function():Result<int,string> =function():Result<int,string>{Result<int,string>::Ok(1/0)};let b:function():Result<int,string> =function():Result<int,string>{Result<int,string>::Ok(try a())};branch on(b()){Result<int,string>::Ok(_)=>true,Result<int,string>::Err(_)=>false}" "failure:division by zero")
+     ("let a:function():Result<int,string> =function():Result<int,string>{Result<int,string>::Ok(\"x\"->slice(0,2)->length())};let b:function():Result<int,string> =function():Result<int,string>{Result<int,string>::Ok(try a())};branch on(b()){Result<int,string>::Ok(_)=>true,Result<int,string>::Err(_)=>false}" "failure:string_index_out_of_bounds"))
     ("C08-31"
      ("let n:int=branch when{true=>42,else=>panic {\"unselected\"}};n==42" "true")
      ("branch when{true=>panic {\"all\"},else=>panic {\"other\"}}" "failure:panic: all"))
     ("C08-32"
-     ("let f=function(a:int,b:int):bool{true};f({panic {\"first\"}},1/0)" "failure:panic: first"))
+     ("let f:function(int,int):bool=function(a:int,b:int):bool{true};f({panic {\"first\"}},1/0)" "failure:panic: first"))
     ("C08-33"
-     ("let f=function():bool{panic {return true;}};let n:int=loop{panic {break 42;}};var i:int=0;loop while(i<2){i=i+1;panic {continue;}};branch when{f()=>n+i==44,else=>false}" "true"))
+     ("let f:function():bool=function():bool{panic {return true;}};let n:int=loop{panic {break 42;}};var i:int=0;loop while(i<2){i=i+1;panic {continue;}};branch when{f()=>n+i==44,else=>false}" "true"))
     ("C08-34"
      ("panic {\"tail\"}" "failure:panic: tail")
      ("panic(\"old\")" "parse"))
     ("C08-40"
-     ("type Box<T> =struct{value:T;};let make=function():Result<Box<string>,int>{Result<Box<string>,int>::Ok(Box<string>{value:\"keep\"+\"!\"})};let held:Box<string> =branch on(make()){Result<Box<string>,int>::Ok(v)=>v,Result<Box<string>,int>::Err(_)=>Box<string>{value:\"bad\"}};var i:int=0;loop while(i<2000){let dead:Box<string> =Box<string>{value:\"dead\"+\"!\"};i=i+1;};held->value==\"keep!\"" "true"))
+     ("type Box<T> =struct{value:T;};let make:function():Result<Box<string>,int> =function():Result<Box<string>,int>{Result<Box<string>,int>::Ok(Box<string>{value:\"keep\"+\"!\"})};let held:Box<string> =branch on(make()){Result<Box<string>,int>::Ok(v)=>v,Result<Box<string>,int>::Err(_)=>Box<string>{value:\"bad\"}};var i:int=0;loop while(i<2000){let dead:Box<string> =Box<string>{value:\"dead\"+\"!\"};i=i+1;};held->value==\"keep!\"" "true"))
     ("C08-41"
-     ("let f=function<T>(x:T):T{let g=function<U>(y:U):T{f<T>(x)};x};true" "semantic")
-     ("let f=function<T>(x:T):T{f<int>(42)};true" "semantic"))
+     ("let f:function<T>(T):T=function<T>(x:T):T{let g:function<U>(U):T=function<U>(y:U):T{f<T>(x)};x};true" "semantic")
+     ("let f:function<T>(T):T=function<T>(x:T):T{f<int>(42)};true" "semantic"))
     ("C08-42"
      ("type U=struct{n:int;};interface I{let get=function():int;}implement U against I{let get=function():int{this->n};}let x:I=U{n:40};var n:int=x->get();loop while(n<42){n=n+1;};branch when{n==42=>\"a\"+\"b\"==\"ab\",else=>false}" "true"))
     ("C08-43"
-     ("let unused=function<T>(x:T):T{panic {\"must not run\"}};true" "true"))
+     ("let unused:function<T>(T):T=function<T>(x:T):T{panic {\"must not run\"}};true" "true"))
     ("C08-44"
-     ("let a=function():Result<int,string>{Result<int,string>::Err(\"chain\")};let b=function():Result<int,string>{Result<int,string>::Ok(try a())};let c=function():Result<int,string>{Result<int,string>::Ok(try b())};branch on(c()){Result<int,string>::Ok(_)=>false,Result<int,string>::Err(e)=>e==\"chain\"}" "true"))
+     ("let a:function():Result<int,string> =function():Result<int,string>{Result<int,string>::Err(\"chain\")};let b:function():Result<int,string> =function():Result<int,string>{Result<int,string>::Ok(try a())};let c:function():Result<int,string> =function():Result<int,string>{Result<int,string>::Ok(try b())};branch on(c()){Result<int,string>::Ok(_)=>false,Result<int,string>::Err(e)=>e==\"chain\"}" "true"))
     ("C08-45"
      ("let a:int=40;var b:int=a;b=b+2;b==42" "true")
      ("let a=42;true" "semantic")
      ("var a=42;true" "semantic")
      ("let a:bool=42;true" "semantic"))
     ("C08-46"
-     ("let f=function(x:int):int{x};f(42)==42" "true")
+     ("let f:function(int):int=function(x:int):int{x};f(42)==42" "true")
      ("let f=function(x):int{x};true" "parse")
      ("let f=function(x:int){x};true" "parse")
-     ("var f=function():bool{true};true" "semantic"))
+     ("var f:function():bool=function():bool{true};true" "semantic"))
     ("C08-47"
-     ("let f=function():int{42};let alias=f;alias()==42" "true")
+     ("let f:function():int=function():int{42};let alias:function():int=f;alias()==42" "true")
      ("let x:int=42;let alias=x;true" "semantic"))
     ("C08-48"
      ("type R=Result<int,string>;branch on(R::Ok(42)){R::Ok(n)=>n==42,R::Err(_)=>false}" "true"))
     ("C08-49"
-     ("let identity=function<T>(x:T):T{x};let n:int=identity<int>(41)+1;n==42" "true"))
+     ("let identity:function<T>(T):T=function<T>(x:T):T{x};let n:int=identity<int>(41)+1;n==42" "true"))
     ("C08-50"
      ("type T=int;type A<T> =T;true" "semantic")
-     ("let f=function<T>(x:T):T{let g=function<T>(y:T):T{y};x};true" "semantic")
-     ("let f=function<T>(T:T):T{T};f<bool>(true)" "true")
+     ("let f:function<T>(T):T=function<T>(x:T):T{let g:function<T>(T):T=function<T>(y:T):T{y};x};true" "semantic")
+     ("let f:function<T>(T):T=function<T>(T:T):T{T};f<bool>(true)" "true")
      ("type A<T> =int;true" "semantic"))
     ("C08-51"
-     ("let f=function<T>(x:T):T{x+1};true" "semantic")
-     ("let f=function<T>(x:T):T{x==x};true" "semantic")
-     ("let f=function<T>(x:T):T{x->field};true" "semantic")
-     ("let f=function<T>(x:T):T{x->length()};true" "semantic"))
+     ("let f:function<T>(T):T=function<T>(x:T):T{x+1};true" "semantic")
+     ("let f:function<T>(T):T=function<T>(x:T):T{x==x};true" "semantic")
+     ("let f:function<T>(T):T=function<T>(x:T):T{x->field};true" "semantic")
+     ("let f:function<T>(T):T=function<T>(x:T):T{x->length()};true" "semantic"))
     ("C08-52"
-     ("let f=function<T>(x:T):T{let g=function(y:T):T{y};g(x)};f<int>(42)==42" "true")
-     ("let f=function<T>(x:T):T{let g=function():T{x};g()};true" "semantic"))
+     ("let f:function<T>(T):T=function<T>(x:T):T{let g:function(T):T=function(y:T):T{y};g(x)};f<int>(42)==42" "true")
+     ("let f:function<T>(T):T=function<T>(x:T):T{let g:function():T=function():T{x};g()};true" "semantic"))
     ("C08-53"
-     ("let a=function():int{42};let b=function():int{0};(branch when{true=>a,else=>b})()==42" "true")
-     ("let a=function():int{42};let b=function():int{0};let f=branch when{true=>a,else=>b};f()==42" "semantic"))
+     ("let a:function():int=function():int{42};let b:function():int=function():int{0};(branch when{true=>a,else=>b})()==42" "true")
+     ("let a:function():int=function():int{42};let b:function():int=function():int{0};let f=branch when{true=>a,else=>b};f()==42" "semantic"))
     ("C08-54"
      ("let try:int=42;true" "parse")
      ("let panic:int=42;true" "parse")
@@ -177,12 +177,12 @@
      ("type A=Result<int,string>;type B=A;interface I{}implement B against I{}true" "semantic")
      ("type Box<T> =struct{value:T;};type Wrapper=enum{Value(Box<int>);};type W=Wrapper;implement W{let get=function():int{branch on(this){W::Value(b)=>b->value}};}W::Value(Box<int>{value:42})->get()==42" "true"))
     ("C08-56"
-     ("let forward=function<T,E>(r:Result<T,E>):Result<T,E>{let v:T=try r;Result<T,E>::Ok(v)};branch on(forward<int,string>(Result<int,string>::Ok(42))){Result<int,string>::Ok(v)=>v==42,Result<int,string>::Err(_)=>false}" "true")
-     ("let forward=function<T,E>(r:Result<T,E>):Result<T,E>{let v:T=try r;Result<T,E>::Ok(v)};branch on(forward<int,string>(Result<int,string>::Err(\"err\"))){Result<int,string>::Ok(_)=>false,Result<int,string>::Err(e)=>e==\"err\"}" "true")
-     ("let forward=function<T,E>(r:Result<T,E>):Result<T,E>{let v:T=try r;Result<T,E>::Ok(v)};branch on(forward<string,string>(Result<string,string>::Ok(\"ok\"))){Result<string,string>::Ok(v)=>v==\"ok\",Result<string,string>::Err(_)=>false}" "true")
-     ("let forward=function<T,E>(r:Result<T,E>):Result<T,E>{let v:T=try r;Result<T,E>::Ok(v)};branch on(forward<string,string>(Result<string,string>::Err(\"err\"))){Result<string,string>::Ok(_)=>false,Result<string,string>::Err(e)=>e==\"err\"}" "true")
-     ("let forward=function<T,E>(r:Result<T,E>):Result<T,E>{let v:T=try r;Result<T,E>::Ok(v)};branch on(forward<void,string>(Result<void,string>::Ok(void))){Result<void,string>::Ok(v)=>{v;true},Result<void,string>::Err(_)=>false}" "true")
-     ("let forward=function<T,E>(r:Result<T,E>):Result<T,E>{let v:T=try r;Result<T,E>::Ok(v)};branch on(forward<void,string>(Result<void,string>::Err(\"err\"))){Result<void,string>::Ok(_)=>false,Result<void,string>::Err(e)=>e==\"err\"}" "true"))
+     ("let forward:function<T,E>(Result<T,E>):Result<T,E> =function<T,E>(r:Result<T,E>):Result<T,E>{let v:T=try r;Result<T,E>::Ok(v)};branch on(forward<int,string>(Result<int,string>::Ok(42))){Result<int,string>::Ok(v)=>v==42,Result<int,string>::Err(_)=>false}" "true")
+     ("let forward:function<T,E>(Result<T,E>):Result<T,E> =function<T,E>(r:Result<T,E>):Result<T,E>{let v:T=try r;Result<T,E>::Ok(v)};branch on(forward<int,string>(Result<int,string>::Err(\"err\"))){Result<int,string>::Ok(_)=>false,Result<int,string>::Err(e)=>e==\"err\"}" "true")
+     ("let forward:function<T,E>(Result<T,E>):Result<T,E> =function<T,E>(r:Result<T,E>):Result<T,E>{let v:T=try r;Result<T,E>::Ok(v)};branch on(forward<string,string>(Result<string,string>::Ok(\"ok\"))){Result<string,string>::Ok(v)=>v==\"ok\",Result<string,string>::Err(_)=>false}" "true")
+     ("let forward:function<T,E>(Result<T,E>):Result<T,E> =function<T,E>(r:Result<T,E>):Result<T,E>{let v:T=try r;Result<T,E>::Ok(v)};branch on(forward<string,string>(Result<string,string>::Err(\"err\"))){Result<string,string>::Ok(_)=>false,Result<string,string>::Err(e)=>e==\"err\"}" "true")
+     ("let forward:function<T,E>(Result<T,E>):Result<T,E> =function<T,E>(r:Result<T,E>):Result<T,E>{let v:T=try r;Result<T,E>::Ok(v)};branch on(forward<void,string>(Result<void,string>::Ok(void))){Result<void,string>::Ok(v)=>{v;true},Result<void,string>::Err(_)=>false}" "true")
+     ("let forward:function<T,E>(Result<T,E>):Result<T,E> =function<T,E>(r:Result<T,E>):Result<T,E>{let v:T=try r;Result<T,E>::Ok(v)};branch on(forward<void,string>(Result<void,string>::Err(\"err\"))){Result<void,string>::Ok(_)=>false,Result<void,string>::Err(e)=>e==\"err\"}" "true"))
     ("C08-57"
      ("let n:int=panic {\"stop\"};true" "semantic")
      ("let n:int=branch when{true=>panic {\"a\"},else=>panic {\"b\"}};true" "semantic")
@@ -195,7 +195,7 @@
      ("panic \"old\"" "parse")
      ("panic {\"a\"+\"b\"}" "failure:panic: ab")
      ("var n:int=0;panic {n=n+1;let s:string=branch when{n==1=>\"once\",else=>\"twice\"};s}" "failure:panic: once")
-     ("let f=function():bool{try panic {\"stop\"}};f()" "failure:panic: stop"))
+     ("let f:function():bool=function():bool{try panic {\"stop\"}};f()" "failure:panic: stop"))
     ("C08-59"
      ("panic {panic {\"inner\"}}" "failure:panic: inner")
      ("panic {\"x\"->slice(0,2)}" "failure:string_index_out_of_bounds")
@@ -203,15 +203,15 @@
      ("panic {break;}" "semantic")
      ("panic {continue;}" "semantic")
      ("let n:int=1;panic {let n:string=\"shadow\";n}" "semantic")
-     ("loop{let f=function():void{panic {break;}};break;};true" "semantic")
-     ("loop{let f=function():void{panic {continue;}};break;};true" "semantic")
-     ("let f=function():bool{panic {return true;\"dead\"}};true" "semantic")
-     ("let f=function():bool{panic {let x:string=\"private\";x}};x==\"private\"" "semantic"))
+     ("loop{let f:function():void=function():void{panic {break;}};break;};true" "semantic")
+     ("loop{let f:function():void=function():void{panic {continue;}};break;};true" "semantic")
+     ("let f:function():bool=function():bool{panic {return true;\"dead\"}};true" "semantic")
+     ("let f:function():bool=function():bool{panic {let x:string=\"private\";x}};x==\"private\"" "semantic"))
     ("C08-60"
-     ("let identity=function<T>(x:T):T{x};let alias=(identity);let other=alias;true" "true")
-     ("let identity=function<T>(x:T):T{x};identity;true" "semantic")
-     ("let identity=function<T>(x:T):T{x};let alias={identity};true" "semantic")
-     ("let identity=function<T>(x:T):T{x};let alias=loop{break identity;};true" "semantic")
+     ("let identity:function<T>(T):T=function<T>(x:T):T{x};let alias:function<T>(T):T=(identity);let other:function<T>(T):T=alias;true" "true")
+     ("let identity:function<T>(T):T=function<T>(x:T):T{x};identity;true" "semantic")
+     ("let identity:function<T>(T):T=function<T>(x:T):T{x};let alias={identity};true" "semantic")
+     ("let identity:function<T>(T):T=function<T>(x:T):T{x};let alias=loop{break identity;};true" "semantic")
      ("function<T>(x:T):T{x}" "semantic"))
     ))
 

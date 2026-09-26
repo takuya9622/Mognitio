@@ -5,7 +5,7 @@
 (let ((*standard-output* (make-broadcast-stream)) (*error-output* (make-broadcast-stream)))
   (asdf:load-system "mognitio"))
 (let* ((input (make-string 65536 :initial-element #\A))
-       (source (format nil "let allocate=function(s:string):string{s+s}; let keep:string=allocate(~S); var current:string=keep; var i:int=0; loop while(i<9000){current=allocate(~S); i=i+1;}; branch when{(current==keep)=>{keep->length()==131072},else=>{false}}" input input))
+       (source (format nil "let allocate:function(string):string=function(s:string):string{s+s}; let keep:string=allocate(~S); var current:string=keep; var i:int=0; loop while(i<9000){current=allocate(~S); i=i+1;}; branch when{(current==keep)=>{keep->length()==131072},else=>{false}}" input input))
        (decoded (mognitio.source:decode-source "gc.mgn" (sb-ext:string-to-octets source :external-format :utf-8)))
        (compiled (mognitio.backend.cl:compile-program
                    (mognitio.semantic:check-program

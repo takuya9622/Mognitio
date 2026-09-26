@@ -144,8 +144,10 @@
                  (source
                    (with-output-to-string (out)
                      (loop for fn across functions for id from 0 do
-                       (format out "let f~D = function(~{~A~^,~}): int {~A}; " id
-                               (mapcar (lambda (p) (format nil "~(~A~): int" p)) (first fn)) (v05-render (second fn))))
+                       (format out "let f~D:function(~{~A~^,~}):int=function(~{~A~^,~}): int {~A}; " id
+                               (mapcar (constantly "int") (first fn))
+                               (mapcar (lambda (p) (format nil "~(~A~): int" p)) (first fn))
+                               (v05-render (second fn))))
                      (format out "let result: int = ~A; ~A" (v05-render entry)
                              (if (stringp expected) "true" (format nil "result == (~D)" (second expected)))))))
             (handler-case
