@@ -40,7 +40,7 @@ def main():
     parser.add_argument("--output", required=True, type=pathlib.Path)
     args = parser.parse_args()
     rows = []
-    manifest = json.loads((ROOT / "verification/v0.8.0-cases.json").read_text())["fixtures"]
+    manifest = json.loads((ROOT / "verification/v0.8.1-cases.json").read_text())["fixtures"]
     with tempfile.TemporaryDirectory(prefix="mognitio-v08-") as directory:
         source_path = pathlib.Path(directory) / "case.mgn"
         artifact = pathlib.Path(directory) / "program"

@@ -358,9 +358,11 @@ fixtures bind their result before a valid bool tail to isolate the violation.
 
 ## v0.8.0 coverage
 
-The 55 versioned acceptance IDs have 156 source fixtures in
-`v08-conformance.lisp`; source hashes and explicit expected outcomes are in
-`../verification/v0.8.0-cases.json`. Successful fixtures run on both backends,
+The 55 versioned acceptance IDs have 156 source fixtures. The release-time
+hashes and expected outcomes are in `../verification/v0.8.0-cases.json`,
+paired with `../verification/v0.8.0-results.json`. v0.8.1 keeps the annotated
+sources in `v08-conformance.lisp` and their hashes in
+`../verification/v0.8.1-cases.json`. Successful fixtures run on both backends,
 including native GC stress. Rejected sources check phase and existing artifact
 preservation. `scripts/verify-v08.py` independently records CLI and standalone
 process statuses, output bytes, source hashes, and deterministic artifact hashes.
@@ -383,8 +385,11 @@ concrete function types or generic binding signatures. `v08-bindings.lisp`
 covers rejected omission, annotated function and branch values, alpha-equivalent
 generic templates and aliases, and signature, arity, parameter, return, `var`,
 and runtime-position rejections. Method declarations and pattern bindings keep
-their existing forms. The v0.8.0 acceptance catalog remains the C08 suite, with
-migrated sources and matching hashes in `verification/v0.8.0-cases.json`.
+their existing forms. The v0.8.0 acceptance catalog remains the C08 suite. Migrated sources and
+their hashes are in `verification/v0.8.1-cases.json`, which
+`scripts/verify-v08.py` checks. `verification/v0.8.0-cases.json` and
+`verification/v0.8.0-results.json` stay the release-time pair. Generic struct
+fields and enum payloads reject function types.
 
 Existing regression groups remain enabled. `v08-migration.json` records the
 annotation and function-binding fixture changes without changing historical

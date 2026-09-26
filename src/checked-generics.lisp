@@ -17,6 +17,7 @@
                  (setf (gethash (token-text token) seen) t))
                (resolve (token)
                  (let ((type (resolve-type-token context token)))
+                   (verification-ensure (not (function-type-p type)) "Invalid generic function storage")
                    (verification-ensure (not (nominal-type-p type :interface)) "Invalid generic storage") type)))
           (case kind
             (:alias (setf (generic-template-target template) (resolve-type-token context (data-declaration-target node))))

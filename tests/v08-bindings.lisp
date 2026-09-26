@@ -32,7 +32,8 @@ let x:I=Value {n:42}; var y:I=x; y=Value {n:43}; x->get()+y->get()==85" :true))
                     "let identity:function<T>(T):T=function<T>(value:T):T{value}; identity<int>(42)==42"
                     "let identity:function<A>(A):A=function<T>(value:T):T{value}; identity<int>(42)==42"
                     "let identity:function<T>(T):T=function<T>(value:T):T{value}; let alias:function<A>(A):A=identity; alias<int>(42)==42"
-                    "let identity:function<T>(T):T=function<T>(value:T):T{value}; let alias:function<A>(A):A=(identity); alias<string>(\"ok\")==\"ok\""))
+                    "let identity:function<T>(T):T=function<T>(value:T):T{value}; let alias:function<A>(A):A=(identity); alias<string>(\"ok\")==\"ok\""
+                    "let f:function():int=function():int{1}; let fromBlock:function():int={f}; let fromLoop:function():int=loop{break f;}; fromBlock()+fromLoop()==2"))
     (v07-accept source :true))
   (dolist (source '("let x=42; true"
                     "let f=function(value:int):int{value}; true"
@@ -52,6 +53,8 @@ let x:I=Value {n:42}; var y:I=x; y=Value {n:43}; x->get()+y->get()==85" :true))
                     "function(value:function(int):int):int{value(1)}"
                     "function():function():int{function():int{1}}"
                     "type Holder=struct{value:function(int):int;}; true"
-                    "type Choice=enum{Wrap(function(int):int);}; true"))
+                    "type Choice=enum{Wrap(function(int):int);}; true"
+                    "type Holder<T> =struct{value:T;f:function(int):int;}; true"
+                    "type Choice<T> =enum{Value(T);F(function(int):int);}; true"))
     (v03-reject source "semantic"))
   (v03-reject "function consume(f:function<T>(T):T):int{1}" "parse"))
